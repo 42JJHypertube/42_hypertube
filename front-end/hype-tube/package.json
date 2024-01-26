@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "prepare": "cd ../.. && husky install front-end/hype-tube/.husky",
     "lint": "next lint",
     "lint-staged": "lint-staged"
   },
@@ -37,10 +38,5 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": ["eslint --fix", "prettier --write", "git add"]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run lint-staged"
-    }
   }  
 }
