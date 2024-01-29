@@ -34,6 +34,8 @@ replay_pid*
 !.vscode/launch.json
 !.vscode/extensions.json
 !.vscode/*.code-snippets
+*.DS_Store
+.DS_Store
 
 # Local History for Visual Studio Code
 .history/
@@ -74,6 +76,7 @@ gradle-app.setting
 *.hprof
 
 *.yml
+!docker-compose.yml
 !.gitignore/
 *.properties
 # End of https://www.toptal.com/developers/gitignore/api/java,visualstudiocode,gradle
