@@ -1,26 +1,26 @@
 .container {
-    position: relative;
-    bottom: 0;
-    width: 100%;
-    height: auto;
-    padding: 0.5rem 0;
-    background: black;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+  position: relative;
+  bottom: 0;
+  width: 100%;
+  height: auto;
+  padding: 0.5rem 0;
+  background: black;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .title {
-    font-size: 2rem;
-    font-weight: 600;
-    color:rgb(240, 47, 47)
+  font-size: 2rem;
+  font-weight: 600;
+  color: rgb(240, 47, 47);
 }
 
 .people {
-    font-size: 0.5rem;
+  font-size: 0.5rem;
 }
 
 .at {
-    font-size: 0.5rem;
+  font-size: 0.5rem;
 }
