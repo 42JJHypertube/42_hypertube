@@ -3,7 +3,7 @@ version: '3'
 services:
   frontend:
     build:
-      context: ./front-end/hype-tube
+      context: ./front-end
       dockerfile: Dockerfile
 
     depends_on:
