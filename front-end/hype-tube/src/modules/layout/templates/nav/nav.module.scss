@@ -1,0 +1,21 @@
+.stickyContainer {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: auto;
+  padding: 0.5rem 0;
+  background: rgb(32, 32, 32);
+}
+
+.navContainer {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+}
+
+.menuContainer {
+    position: relative;
+    display: flex;
+}
