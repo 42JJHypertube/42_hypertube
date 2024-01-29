@@ -1,8 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    sassOptions: {
-        includePaths: [path.join(__dirname, 'styles')], // 2. sassOptions 옵션 추가
-    },
-};
+//   distDir: 'build',
+//   output: 'export'
+}
 
-export default nextConfig;
+export default nextConfig

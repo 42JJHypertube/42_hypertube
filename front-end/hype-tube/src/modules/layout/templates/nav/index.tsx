@@ -1,8 +1,10 @@
+import styles from './nav.module.scss'
+
 export default function Nav() {
   return (
-    <div className="sticky-container">
+    <div className={styles.stickyContainer}>
       <header>
-        <nav>
+        <nav className={styles.navContainer}>
           <div>main logo</div>
           <div className="menubar">menuBar</div>
           <div className="searchBar">serachBar</div>
