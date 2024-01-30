@@ -9,5 +9,4 @@ class HypertubeApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-
 }

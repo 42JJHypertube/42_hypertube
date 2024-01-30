@@ -1,10 +1,25 @@
-FROM openjdk:17-jdk
+# 빌드
+FROM gradle:jdk17 AS builder
 
 WORKDIR /app
 
-ARG WAR_FILE=build/libs/hypertube-0.0.1-SNAPSHOT.war
+COPY . .
 
-COPY ${WAR_FILE} .
+RUN gradle wrapper
+RUN ./gradlew build -x test
+
+# 최종 실행
+FROM openjdk:17-jdk
+
+ENV MYSQL_ROOT_PASSWORD=123456789
+ENV MYSQL_DATABASE=hypertube
+ENV MYSQL_USER=jaehyuki
+ENV MYSQL_PASSWORD=123456789
+ENV MYSQL_HOST=mysql
+
+WORKDIR /app
+
+COPY --from=builder /app/build/libs/hypertube-0.0.1-SNAPSHOT.war .
 
 EXPOSE 8080
 
