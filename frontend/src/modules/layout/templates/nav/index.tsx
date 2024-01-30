@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import styles from './nav.module.scss'
 
 export default function Nav() {
@@ -8,7 +9,9 @@ export default function Nav() {
           <div>main logo</div>
           <div className="menubar">menuBar</div>
           <div className="searchBar">serachBar</div>
-          <div className="Account">Account</div>
+          <Link className={styles.link} href="/account">
+            Account
+          </Link>
           <div className="Language">Language</div>
         </nav>
       </header>

@@ -4,13 +4,9 @@ type Props = {
   setCurrentView: React.Dispatch<React.SetStateAction<LoginViewEnum>>
 }
 
-function Login({ setCurrentView }: Props) {
+function FindPw({ setCurrentView }: Props) {
   return (
-    <div>
-      <form>
-        <input />
-        <input />
-      </form>
+    <>
       <button
         type="button"
         onClick={() => setCurrentView(LoginViewEnum.REGISTER)}
@@ -19,12 +15,12 @@ function Login({ setCurrentView }: Props) {
       </button>
       <button
         type="button"
-        onClick={() => setCurrentView(LoginViewEnum.FIND_PW)}
+        onClick={() => setCurrentView(LoginViewEnum.SIGN_IN)}
       >
-        find pwd
+        go login
       </button>
-    </div>
+    </>
   )
 }
 
-export default Login
+export default FindPw
