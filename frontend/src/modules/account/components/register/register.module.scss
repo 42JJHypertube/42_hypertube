@@ -1,0 +1,23 @@
+.mainContainer {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 0 auto;
+    text-align: center;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.h1 {
+    padding: 1rem 0;
+}
+
+.registForm {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
