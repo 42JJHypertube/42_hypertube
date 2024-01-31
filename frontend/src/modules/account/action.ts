@@ -6,6 +6,11 @@ interface RegisterInfo {
   password: string
 }
 
+interface LoginInfo {
+  id: string
+  password: string
+}
+
 export async function registUser(currentState: unknown, formData: FormData) {
   const info = {
     email: formData.get('email'),
@@ -18,6 +23,11 @@ export async function registUser(currentState: unknown, formData: FormData) {
   console.log(info)
 }
 
-export async function becauselint() {
-  console.log('hello')
+export async function loginUser(currentState: unknown, formData: FormData) {
+  const info = {
+    id: formData.get('userId'),
+    password: formData.get('password'),
+  } as LoginInfo
+
+  console.log(info)
 }

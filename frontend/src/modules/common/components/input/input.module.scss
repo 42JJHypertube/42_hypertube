@@ -1,27 +1,27 @@
 .inputContainer {
-    position: relative;
-    display: flex;
-    justify-items: center;
-    width: 100%;
+  position: relative;
+  display: flex;
+  justify-items: center;
+  width: 100%;
 }
 
 .input {
-    position: relative;
-    color: yellow;
-    padding: 0.5rem 0.2rem 0rem 0.2rem;
-    height: 2.3rem;
-    width: 100%;
-    font-size: 0.6rem;
+  position: relative;
+  padding: 0.5rem 0.2rem 0rem 0.5rem;
+  height: 2.3rem;
+  width: 100%;
+  font-size: 0.7rem;
 }
 
 .label {
-    padding: 0.2rem 0.2rem;
-    font-size: 0.5rem;
-    position: absolute;
+    color:rgb(162, 162, 162);
+  padding: 0.2rem 0.2rem;
+  font-size: 0.6rem;
+  position: absolute;
 }
 
 .required {
-    padding-left: 0.1rem;
-    font-size: 0.5rem;
-    color: red;
+  padding-left: 0.1rem;
+  font-size: 0.5rem;
+  color: red;
 }

@@ -15,7 +15,7 @@ function Input({ type, name, required }: InputProps) {
       />
       <label htmlFor={name} className={styles.label}>
         {name}
-        <span className={styles.required}>*</span>
+        {required && <span className={styles.required}>*</span>}
       </label>
     </div>
   )
