@@ -19,3 +19,9 @@
   position: relative;
   display: flex;
 }
+
+.link {
+  &:hover {
+    color: red;
+  }
+}
