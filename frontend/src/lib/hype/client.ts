@@ -41,9 +41,9 @@ class Client {
     userHeaders: RequestOptions,
     method: RequestMethod,
     path: string,
-    customHeaders: Record<string, string> = {},
+    customHeaders: Record<string, unknown> = {},
   ): AxiosRequestHeaders {
-    let defaultHeaders: Record<string, string> = {
+    let defaultHeaders: Record<string, unknown> = {
       Accept: 'application/json',
       'Content-Type': 'application/json',
     }
@@ -71,18 +71,17 @@ class Client {
   async request(
     method: RequestMethod,
     path: string,
-    payload: Record<string, string> = {},
+    payload: Record<string, unknown> = {},
     options: RequestOptions = {},
-    customHeaders: Record<string, string> = {},
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ): Promise<any> {
+    customHeaders: Record<string, unknown> = {},
+  ): Promise<unknown> {
     const reqOpts: {
       method: RequestMethod
       withCredentials: boolean
       url: string
       json: boolean
       headers: AxiosRequestHeaders
-      data: Record<string, string>
+      data: Record<string, unknown>
     } = {
       method,
       withCredentials: true,
