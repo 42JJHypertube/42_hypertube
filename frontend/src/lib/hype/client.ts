@@ -67,7 +67,6 @@ class Client {
    * @param customHeaders custom request headers
    * @return
    */
-
   async request(
     method: RequestMethod,
     path: string,
