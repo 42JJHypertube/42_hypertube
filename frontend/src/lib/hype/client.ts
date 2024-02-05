@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestHeaders } from 'axios' // axiosError 추가 필요
-import JwtManager from './jwtManger'
+import TokenManager from './tokenManger'
 
 export interface Config {
   baseURL: string // 기본 baseURL 설정
@@ -49,11 +49,18 @@ class Client {
     }
 
     /* JWT token 이 존재할 경우 베어럴로 추가해준다 */
-    if (JwtManager.getJwt())
+    /* JWT token 이 존재하지않고 , 2FA 토큰이 존재하면 베어럴로 추가 */
+    if (TokenManager.getJwt()) {
       defaultHeaders = {
         ...defaultHeaders,
-        Authorization: `Bearer ${JwtManager.getJwt()}`,
+        Authorization: `Bearer ${TokenManager.getJwt()}`,
       }
+    } else if (TokenManager.get2FA()) {
+      defaultHeaders = {
+        ...defaultHeaders,
+        Authorization: `Bearer ${TokenManager.get2FA()}`,
+      }
+    }
 
     return { ...defaultHeaders, ...customHeaders } as AxiosRequestHeaders
   }

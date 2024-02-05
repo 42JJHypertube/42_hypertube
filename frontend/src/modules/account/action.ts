@@ -25,9 +25,16 @@ export async function registUser(currentState: unknown, formData: FormData) {
 
 export async function loginUser(currentState: unknown, formData: FormData) {
   const info = {
-    id: formData.get('userId'),
+    id: formData.get('id'),
     password: formData.get('password'),
   } as LoginInfo
 
+  console.log(info)
+}
+
+export async function confirm2FA(currentState: unknown, formData: FormData) {
+  const info = {
+    code: formData.get('code'),
+  }
   console.log(info)
 }

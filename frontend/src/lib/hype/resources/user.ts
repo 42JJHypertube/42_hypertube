@@ -1,11 +1,5 @@
-import Client from '../client'
+import BaseResource from './base'
 
-class UserResource {
-  private client: Client
-
-  constructor(client: Client) {
-    this.client = client
-  }
-}
+class UserResource extends BaseResource {}
 
 export default UserResource
