@@ -1,3 +1,5 @@
+import { testAuth } from '@/modules/account/action'
+
 export default async function AccountPageLayout({
   userInfo,
   login,
@@ -5,7 +7,8 @@ export default async function AccountPageLayout({
   userInfo?: React.ReactNode
   login?: React.ReactNode
 }) {
-  const isLogined = false
+  const isLogined = await testAuth()
 
-  return <div>{isLogined ? userInfo : login}</div>
+  console.log('refreshed')
+  return <div>{!isLogined ? userInfo : login}</div>
 }
