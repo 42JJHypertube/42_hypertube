@@ -3,7 +3,7 @@
 import { useFormState } from 'react-dom'
 import Input from '@/modules/common/components/input'
 import { confirm2FA } from '@/modules/account/action'
-import styles from './auth2FA.module.scss'
+import styles from './auth.module.scss'
 
 export default function Auth2FA() {
   const [message, formAction] = useFormState(confirm2FA, null)

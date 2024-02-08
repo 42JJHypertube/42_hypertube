@@ -1,7 +1,5 @@
 'use server'
 
-import { revalidateTag } from 'next/cache'
-
 interface RegisterInfo {
   email: string
   username: string
@@ -15,7 +13,18 @@ interface LoginInfo {
   password: string
 }
 
-export async function registUser(currentState: unknown, formData: FormData) {
+export type LoginFormInfo = {
+  auth_token: string | null
+}
+
+export type RegisterFormInfo = {
+  auth_token: string | null
+}
+
+export async function registUser(
+  currentState: RegisterFormInfo,
+  formData: FormData,
+) {
   const info = {
     email: formData.get('email'),
     username: formData.get('username'),
@@ -24,18 +33,42 @@ export async function registUser(currentState: unknown, formData: FormData) {
     password: formData.get('password'),
   } as RegisterInfo
 
-  revalidateTag('auth')
   console.log(info)
+
+  if (!currentState.auth_token) {
+    console.log('check 2fa')
+    return {
+      auth_token: 'iamtoken',
+    }
+  }
+
+  return {
+    auth_token: null,
+  }
 }
 
-export async function loginUser(currentState: unknown, formData: FormData) {
+export async function loginUser(
+  currentState: LoginFormInfo,
+  formData: FormData,
+) {
   const info = {
     id: formData.get('id'),
     password: formData.get('password'),
   } as LoginInfo
 
-  revalidateTag('auth')
   console.log(info)
+  // if auth_token is null => check 2fa first;
+  if (!currentState.auth_token) {
+    console.log('get auth_token')
+    return {
+      auth_token: 'hello',
+    }
+  }
+
+  // if have auth_token do login logic
+  return {
+    auth_token: null,
+  }
 }
 
 export async function confirm2FA(currentState: unknown, formData: FormData) {
