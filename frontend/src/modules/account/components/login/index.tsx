@@ -9,6 +9,7 @@ type Props = {
 }
 
 const initialState: LoginFormInfo = {
+  error_message: null,
   auth_token: null,
 }
 
