@@ -32,6 +32,7 @@ public class AuthController {
     @GetMapping("/2fa/singup/verify-code")
     public ResponseEntity<String> verifyCode(@Param("email") String email, @Param("code") String code) {
         authService.verifyCode(email, code);
-        return ResponseEntity.ok("Verify Code Success!");
+        String token = authService.generateSignupToken(email);
+        return ResponseEntity.ok(token);
     }
 }

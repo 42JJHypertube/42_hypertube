@@ -1,11 +1,13 @@
 package com.seoulJJ.hypertube.domain.auth;
 
 import java.util.Random;
+import java.util.UUID;
 
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import com.seoulJJ.hypertube.domain.auth.exception.AuthVerifyCodeFailedException;
+import com.seoulJJ.hypertube.domain.user.exception.UserVerifySignupTokenFailedException;
 import com.seoulJJ.hypertube.global.utils.RedisUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -13,22 +15,32 @@ import lombok.extern.log4j.Log4j2;
 
 @Service
 @RequiredArgsConstructor
-@Log4j2
+
 public class AuthService {
 
     private final RedisUtils redis;
 
     public String createCode(@NonNull String email) {
-        log.info("email : " + email );
         String code = generateCode();
         redis.setData(email, code, 300000L);
         return code;
     }
 
     public void verifyCode(@NonNull String email, @NonNull String code) {
-        log.info("email : " + email + " code : " + code + " redis : " + redis.getData(email));
         if (!code.equals(redis.getData(email))) {
             throw new AuthVerifyCodeFailedException();
+        }
+    }
+
+    public String generateSignupToken(@NonNull String email) {
+        String token = UUID.randomUUID().toString();
+        redis.setData(token, email, 600000L);
+        return token;
+    }
+    
+    public void verifySignupToken(@NonNull String token, @NonNull String email) {
+        if (!email.equals(redis.getData(token))) {
+            throw new UserVerifySignupTokenFailedException();
         }
     }
 
