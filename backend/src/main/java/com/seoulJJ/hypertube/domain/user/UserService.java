@@ -23,7 +23,7 @@ public class UserService {
     public User createUser(CreateUserDto createUserDto) {
         User user = new User(
             createUserDto.getNickname(),
-            createUserDto.getEMail(),
+            createUserDto.getEmail(),
             passwordEncoder.encode(createUserDto.getPassword()),
             createUserDto.getFirstName(),
             createUserDto.getLastName(),
