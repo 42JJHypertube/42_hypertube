@@ -5,17 +5,16 @@ import java.util.UUID;
 
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.seoulJJ.hypertube.domain.auth.exception.AuthVerifyCodeFailedException;
 import com.seoulJJ.hypertube.domain.user.exception.UserVerifySignupTokenFailedException;
 import com.seoulJJ.hypertube.global.utils.RedisUtils;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 
 @Service
 @RequiredArgsConstructor
-
 public class AuthService {
 
     private final RedisUtils redis;
@@ -37,7 +36,7 @@ public class AuthService {
         redis.setData(token, email, 600000L);
         return token;
     }
-    
+
     public void verifySignupToken(@NonNull String token, @NonNull String email) {
         if (!email.equals(redis.getData(token))) {
             throw new UserVerifySignupTokenFailedException();

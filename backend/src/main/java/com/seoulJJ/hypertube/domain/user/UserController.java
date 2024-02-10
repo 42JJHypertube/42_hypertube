@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,13 +34,13 @@ public class UserController {
     }
     
     @PostMapping
-    public String createUser(@Valid @RequestBody CreateUserDto createUserDto) {
+    public ResponseEntity<String> createUser(@Valid @RequestBody CreateUserDto createUserDto) {
 
         if (!createUserDto.getPassword().equals(createUserDto.getPassword2()))
             throw new InvalidParameterException("비밀번호가 일치하지 않습니다.", ErrorCode.VALID_FAILED);
         authService.verifySignupToken(createUserDto.getToken(), createUserDto.getEmail());
         userService.createUser(createUserDto);
 
-        return createUserDto.toString();
+        return ResponseEntity.ok("회원가입 성공!");
     }
 }
