@@ -55,11 +55,6 @@ class Client {
         ...defaultHeaders,
         Authorization: `Bearer ${TokenManager.getJwt()}`,
       }
-    } else if (TokenManager.get2FA()) {
-      defaultHeaders = {
-        ...defaultHeaders,
-        Authorization: `Bearer ${TokenManager.get2FA()}`,
-      }
     }
 
     return { ...defaultHeaders, ...customHeaders } as AxiosRequestHeaders
