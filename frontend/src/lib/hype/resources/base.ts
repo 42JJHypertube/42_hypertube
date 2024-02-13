@@ -1,7 +1,7 @@
 import Client from '../client'
 
 class BaseResource {
-  private client: Client
+  public client: Client
 
   constructor(client: Client) {
     this.client = client

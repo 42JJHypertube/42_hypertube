@@ -1,5 +1,7 @@
 'use server'
 
+import { getAuthCode, goLogin } from '@/lib/data'
+
 interface RegisterInfo {
   email: string
   username: string
@@ -9,16 +11,23 @@ interface RegisterInfo {
 }
 
 interface LoginInfo {
-  id: string
+  email: string
   password: string
 }
 
 export type LoginFormInfo = {
+  email: string
+  password: string
   error_message: string | null
   auth_token: string | null
 }
 
 export type RegisterFormInfo = {
+  email: string
+  username: string
+  lastname: string
+  firstname: string
+  password: string
   error_message: string | null
   auth_token: string | null
 }
@@ -27,44 +36,41 @@ export async function registUser(
   currentState: RegisterFormInfo,
   formData: FormData,
 ) {
-  const info = {
-    email: formData.get('email'),
-    username: formData.get('username'),
-    lastname: formData.get('lastname'),
-    firstname: formData.get('firstname'),
-    password: formData.get('password'),
-  } as RegisterInfo
-
-  console.log(info)
-
   if (!currentState.auth_token) {
     console.log('check 2fa')
-    const payload = {
+    const info = {
       email: formData.get('email'),
-    }
-    const ret = await fetch(
-      'http://localhost:8080/api/auth/2fa/singup/send-code',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'text/plain',
-        },
-        body: JSON.stringify(payload),
-      },
-    )
-      .then((res) => res.text())
-      .catch(() => console.log('error'))
+      username: formData.get('username'),
+      lastname: formData.get('lastname'),
+      firstname: formData.get('firstname'),
+      password: formData.get('password'),
+    } as RegisterInfo
 
-    console.log(ret)
+    const payload = {
+      email: info.email,
+    }
+
+    const ret = await getAuthCode(payload)
+      .then((res) => res)
+      .catch(() => 'error')
+
     return {
+      email: info.email,
+      username: info.username,
+      lastname: info.lastname,
+      firstname: info.firstname,
+      password: info.firstname,
       error_message: null,
       auth_token: ret as string,
     }
   }
 
-  console.log(info)
   return {
+    email: currentState.email,
+    username: currentState.username,
+    lastname: currentState.lastname,
+    firstname: currentState.firstname,
+    password: currentState.firstname,
     error_message: null,
     auth_token: null,
   }
@@ -74,16 +80,23 @@ export async function loginUser(
   currentState: LoginFormInfo,
   formData: FormData,
 ) {
-  const info = {
-    id: formData.get('id'),
-    password: formData.get('password'),
-  } as LoginInfo
-
-  console.log(info)
   // if auth_token is null => check 2fa first;
   if (!currentState.auth_token) {
-    console.log('get auth_token')
+    const info = {
+      email: formData.get('email'),
+      password: formData.get('password'),
+    } as LoginInfo
+
+    // const ret = await getAuthCode({email: info.email}).then((res) => res).catch(() => "error")
+
+    const ret = await goLogin({ email: info.email, password: info.password })
+      .then((res) => res)
+      .catch(() => 'login Error')
+
+    console.log('login : ', ret)
     return {
+      email: info.email,
+      password: info.password,
       error_message: null,
       auth_token: 'hello',
     }
@@ -91,6 +104,8 @@ export async function loginUser(
 
   // if have auth_token do login logic
   return {
+    email: currentState.email,
+    password: currentState.password,
     error_message: null,
     auth_token: null,
   }
@@ -101,15 +116,4 @@ export async function confirm2FA(currentState: unknown, formData: FormData) {
     code: formData.get('code'),
   }
   console.log(info)
-}
-
-export async function testAuth() {
-  const ret = await fetch(
-    'https://92af7888-f61c-4352-afe5-4941e8a2905b.mock.pstmn.io/auth',
-    { next: { tags: ['auth'] } },
-  )
-    .then((res) => res.json())
-    .catch(() => console.log('error'))
-  console.log(ret)
-  return ret
 }

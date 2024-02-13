@@ -9,6 +9,8 @@ type Props = {
 }
 
 const initialState: LoginFormInfo = {
+  email: '',
+  password: '',
   error_message: null,
   auth_token: null,
 }
@@ -22,8 +24,8 @@ function Login({ setCurrentView }: Props) {
       <form className={styles.loginForm} action={formAction}>
         {formInfo.auth_token == null ? (
           <>
-            <Input name="id" />
-            <Input name="password" type="password" />
+            <Input name="email" type="email" required />
+            <Input name="password" type="password" required />
           </>
         ) : (
           <Input name="code" />

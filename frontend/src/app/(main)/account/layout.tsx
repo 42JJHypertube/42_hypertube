@@ -10,6 +10,5 @@ export default async function AccountPageLayout({
   // const isLogined = await testAuth()
   const isLogined = true
 
-  console.log('refreshed')
   return <div>{!isLogined ? userInfo : login}</div>
 }

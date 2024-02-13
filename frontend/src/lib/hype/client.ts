@@ -44,7 +44,7 @@ class Client {
     customHeaders: Record<string, unknown> = {},
   ): AxiosRequestHeaders {
     let defaultHeaders: Record<string, unknown> = {
-      Accept: 'application/json',
+      Accept: '*/*',
       'Content-Type': 'application/json',
     }
 
