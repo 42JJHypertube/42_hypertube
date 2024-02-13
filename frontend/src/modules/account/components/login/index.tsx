@@ -1,23 +1,35 @@
 import { LoginViewEnum } from '@/types/account/type'
 import Input from '@/modules/common/components/input'
 import { useFormState } from 'react-dom'
-import { loginUser } from '../../action'
+import { loginUser, LoginFormInfo } from '../../action'
 import styles from './login.module.scss'
 
 type Props = {
   setCurrentView: React.Dispatch<React.SetStateAction<LoginViewEnum>>
 }
 
-function Login({ setCurrentView }: Props) {
-  const [message, formAction] = useFormState(loginUser, null)
+const initialState: LoginFormInfo = {
+  email: '',
+  password: '',
+  error_message: null,
+  auth_token: null,
+}
 
-  console.log(message) // must delete
+function Login({ setCurrentView }: Props) {
+  const [formInfo, formAction] = useFormState(loginUser, initialState)
+
   return (
     <div className={styles.loginContainer}>
       <h3 className={styles.loginTitle}> LogIn </h3>
       <form className={styles.loginForm} action={formAction}>
-        <Input name="id" />
-        <Input name="password" type="password" />
+        {formInfo.auth_token == null ? (
+          <>
+            <Input name="email" type="email" required />
+            <Input name="password" type="password" required />
+          </>
+        ) : (
+          <Input name="code" />
+        )}
         <button type="submit"> Submit </button>
       </form>
       <button
