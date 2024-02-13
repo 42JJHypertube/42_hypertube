@@ -11,6 +11,12 @@ export interface RequestOptions {
   numberOfRetries?: number // 몇회까지 반복할지 설정
 }
 
+// Api Response 형태
+export interface ApiResponse {
+  data: Record<string, string>
+  response: Record<string, string>
+}
+
 export type RequestMethod = 'DELETE' | 'POST' | 'GET'
 
 class Client {
@@ -75,7 +81,7 @@ class Client {
     payload: Record<string, unknown> = {},
     options: RequestOptions = {},
     customHeaders: Record<string, unknown> = {},
-  ): Promise<unknown> {
+  ): Promise<ApiResponse> {
     const reqOpts: {
       method: RequestMethod
       withCredentials: boolean

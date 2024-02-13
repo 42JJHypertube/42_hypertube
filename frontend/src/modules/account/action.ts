@@ -51,9 +51,10 @@ export async function registUser(
     }
 
     const ret = await getAuthCode(payload)
-      .then((res) => res)
+      .then((res) => res?.response)
       .catch(() => 'error')
 
+    console.log(ret)
     return {
       email: info.email,
       username: info.username,
@@ -61,7 +62,7 @@ export async function registUser(
       firstname: info.firstname,
       password: info.firstname,
       error_message: null,
-      auth_token: ret as string,
+      auth_token: 'hello',
     }
   }
 

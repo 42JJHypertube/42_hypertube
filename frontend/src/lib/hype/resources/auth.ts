@@ -1,4 +1,5 @@
 import BaseResource from './base'
+import { ApiResponse } from '../client'
 
 class AuthResource extends BaseResource {
   /**
@@ -9,8 +10,8 @@ class AuthResource extends BaseResource {
   sendCode(
     payload: Record<string, string | null>,
     customHeaders?: Record<string, string | null>,
-  ): Promise<unknown> {
-    const path = '/auth/2fa/signup/send-code'
+  ): Promise<ApiResponse> {
+    const path = '/auth/2fa/singup/send-code'
     return this.client.request('POST', path, payload, {}, customHeaders)
   }
 
@@ -27,7 +28,7 @@ class AuthResource extends BaseResource {
   goLogin(
     payload: Record<string, string | null>,
     customHeaders?: Record<string, string | null>,
-  ): Promise<unknown> {
+  ): Promise<ApiResponse> {
     const path = 'auth/login'
     return this.client.request('POST', path, payload, {}, customHeaders)
   }
