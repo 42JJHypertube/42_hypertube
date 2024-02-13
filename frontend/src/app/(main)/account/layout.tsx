@@ -2,8 +2,8 @@ export default async function AccountPageLayout({
   userInfo,
   login,
 }: {
-  userInfo?: React.ReactNode
-  login?: React.ReactNode
+  userInfo: React.ReactNode
+  login: React.ReactNode
 }) {
   const isLogined = false
 
