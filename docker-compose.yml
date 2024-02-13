@@ -1,16 +1,25 @@
 version: '3'
 
 services:
-  frontend:
+  frontend-server:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile_Server
+    ports:
+      - 3000:3000
+
+  frontend-nginx:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile_Nginx
 
     depends_on:
       - backend
+      - frontend-server
     ports:
       - "443:443"
       - "80:80"
+      
 
   backend:
     restart: always
