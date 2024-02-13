@@ -10,7 +10,7 @@ class AuthResource extends BaseResource {
     payload: Record<string, string | null>,
     customHeaders?: Record<string, string | null>,
   ): Promise<unknown> {
-    const path = '/auth/2fa/singup/send-code'
+    const path = '/auth/2fa/signup/send-code'
     return this.client.request('POST', path, payload, {}, customHeaders)
   }
 
@@ -20,7 +20,7 @@ class AuthResource extends BaseResource {
    * @returns
    */
   verifyCode(payload: Record<string, string | null>) {
-    const path = '/api/auth/2fa/singup/verify-code'
+    const path = '/auth/2fa/signup/verify-code'
     return this.client.request('GET', path, payload)
   }
 
