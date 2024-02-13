@@ -75,7 +75,8 @@ class Client {
     payload: Record<string, unknown> = {},
     options: RequestOptions = {},
     customHeaders: Record<string, unknown> = {},
-  ): Promise<unknown> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ): Promise<any> {
     const reqOpts: {
       method: RequestMethod
       withCredentials: boolean

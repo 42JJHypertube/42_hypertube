@@ -1,24 +1,24 @@
 .twoFAContainer {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    padding: 0 auto;
-    text-align: center;
-    align-items: center;
-    gap: 0.3rem;
-  }
-  
-  .twoFATitle {
-    padding: 1rem 0;
-  }
-  
-  .twoFAForm {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-width: 12rem;
-    gap: 1rem;
-  }
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 0 auto;
+  text-align: center;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.twoFATitle {
+  padding: 1rem 0;
+}
+
+.twoFAForm {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-width: 12rem;
+  gap: 1rem;
+}

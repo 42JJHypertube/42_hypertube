@@ -9,6 +9,11 @@ type Props = {
 }
 
 const initialState: RegisterFormInfo = {
+  email: '',
+  username: '',
+  lastname: '',
+  firstname: '',
+  password: '',
   error_message: null,
   auth_token: null,
 }
