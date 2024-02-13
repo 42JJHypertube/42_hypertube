@@ -22,14 +22,14 @@ public class AuthController {
     private final AuthService authService;
     private final SnsMailSender snsMailSender;
 
-    @PostMapping("/2fa/singup/send-code")
+    @PostMapping("/2fa/signup/send-code")
     public ResponseEntity<String> sendMailCheckCode(@Valid @RequestBody AuthSendCodeRequestDto requestDto) {
         String code = authService.createCode(requestDto.getEmail());
         snsMailSender.send2FACode(requestDto.getEmail(), code);
         return ResponseEntity.ok("Send Code Success!" + code);
     }
 
-    @GetMapping("/2fa/singup/verify-code")
+    @GetMapping("/2fa/signup/verify-code")
     public ResponseEntity<String> verifyCode(@Param("email") String email, @Param("code") String code) {
         authService.verifyCode(email, code);
         String token = authService.generateSignupToken(email);
