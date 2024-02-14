@@ -9,6 +9,9 @@ public enum ErrorCode {
     //common
     NULL_POINT(500, "G100", "NULL POINT EXCEPTION"),
 
+    //auth
+    BAD_CREDENTIALS(401, "AU100", "BAD CREDENTIALS"),
+    
     //user
     USER_NOT_FOUND(404, "UR100", "USER NOT FOUND"),
     USER_IMAGE_NOT_FOUND(404, "UR200", "USER IMAGE NOT FOUND"),
@@ -29,6 +32,7 @@ public enum ErrorCode {
     VALID_FAILED(400, "CM007" , "Valid Test Failed."),
     BAD_ARGU(400, "ARGUMENT-ERR-400", "잘못된 argument 입니다."),
     UNREADABLE_HTTP_MESSAGE(400, "CM008", "유효하지 않은 HTTP 메시지입니다.");
+
 
     private final int status;
     private final String errCode;

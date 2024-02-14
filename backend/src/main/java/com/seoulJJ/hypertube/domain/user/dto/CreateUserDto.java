@@ -39,7 +39,7 @@ public class CreateUserDto {
     public String toString() {
         return "CreateUserDto{" +
                 "nickname='" + nickname + '\'' +
-                ", eMail='" + email + '\'' +
+                ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", password2='" + password2 + '\'' +
                 ", firstName='" + firstName + '\'' +
