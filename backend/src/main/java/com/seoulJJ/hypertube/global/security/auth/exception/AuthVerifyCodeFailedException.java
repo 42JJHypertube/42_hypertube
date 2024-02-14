@@ -1,4 +1,4 @@
-package com.seoulJJ.hypertube.domain.auth.exception;
+package com.seoulJJ.hypertube.global.security.auth.exception;
 
 import com.seoulJJ.hypertube.global.exception.ErrorCode;
 import com.seoulJJ.hypertube.global.exception.custom.AuthenticationException;

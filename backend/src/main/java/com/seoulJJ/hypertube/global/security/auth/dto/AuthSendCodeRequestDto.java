@@ -1,4 +1,4 @@
-package com.seoulJJ.hypertube.domain.auth.dto;
+package com.seoulJJ.hypertube.global.security.auth.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
