@@ -27,7 +27,7 @@ public class User extends BaseTimeEntity implements Serializable {
     private String nickname;
 
     @Column(name = "e_mail", length = 60, unique = true)
-    private String eMail;
+    private String email;
 
     @Column(name = "password")
     private String password;
@@ -45,9 +45,9 @@ public class User extends BaseTimeEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     private RoleType roleType;
 
-    public User(String nickname, String eMail, String password, String firstName, String lastName, String imageUrl, RoleType roleType) {
+    public User(String nickname, String email, String password, String firstName, String lastName, String imageUrl, RoleType roleType) {
         this.nickname = nickname;
-        this.eMail = eMail;
+        this.email = email;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -59,7 +59,7 @@ public class User extends BaseTimeEntity implements Serializable {
         return "User{" +
                 "id=" + id +
                 ", nickname='" + nickname + '\'' +
-                ", eMail='" + eMail + '\'' +
+                ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +

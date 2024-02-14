@@ -3,10 +3,12 @@ package com.seoulJJ.hypertube.global.exception;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.catalina.connector.Response;
 import org.springframework.boot.context.properties.bind.BindException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -128,5 +130,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MissingServletRequestParameterException.class)
     protected ResponseEntity handleException(MissingServletRequestParameterException e) {
         return ResponseEntity.badRequest().body(ErrorCode.BAD_ARGU.getMessage());
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    protected ResponseEntity handleException(BadCredentialsException e) {
+        ErrorResponse response = new ErrorResponse(ErrorCode.BAD_CREDENTIALS);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 }

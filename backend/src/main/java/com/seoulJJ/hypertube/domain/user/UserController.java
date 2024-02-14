@@ -2,10 +2,10 @@ package com.seoulJJ.hypertube.domain.user;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import com.seoulJJ.hypertube.domain.auth.AuthService;
 import com.seoulJJ.hypertube.domain.user.dto.CreateUserDto;
 import com.seoulJJ.hypertube.global.exception.ErrorCode;
 import com.seoulJJ.hypertube.global.exception.custom.InvalidParameterException;
+import com.seoulJJ.hypertube.global.security.auth.AuthService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
