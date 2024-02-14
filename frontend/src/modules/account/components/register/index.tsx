@@ -10,12 +10,14 @@ type Props = {
 
 const initialState: RegisterFormInfo = {
   email: '',
-  username: '',
-  lastname: '',
-  firstname: '',
+  nickname: '',
+  lastName: '',
+  firstName: '',
   password: '',
+  password2: '',
   error_message: null,
-  auth_token: null,
+  code: null,
+  token: null,
 }
 
 function Register({ setCurrentView }: Props) {
@@ -25,17 +27,19 @@ function Register({ setCurrentView }: Props) {
     <div className={styles.mainContainer}>
       <h3 className={styles.h1}> Register </h3>
       <form className={styles.registForm} action={formAction}>
-        {formInfo.auth_token == null ? (
+        {formInfo.token == null ? (
           <>
             <Input name="email" type="email" required />
-            <Input name="username" required />
+            <Input name="nickname" required />
             <Input name="firstname" required />
             <Input name="lastname" required />
-            <Input name="password" type="password" required />
+            <Input name="password1" type="password" required />
+            <Input name="password2" type="password" required />
           </>
         ) : (
           <Input name="code" required />
         )}
+        <h2> {formInfo.error_message} </h2>
         <button type="submit"> Submit </button>
       </form>
       <button

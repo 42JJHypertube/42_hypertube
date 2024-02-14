@@ -98,7 +98,7 @@ class Client {
     }
 
     const { data, ...response } = await this.axiosClient(reqOpts)
-    return { ...data, response }
+    return { data, response }
   }
 }
 
