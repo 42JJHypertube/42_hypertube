@@ -9,6 +9,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.seoulJJ.hypertube.global.security.jwt.JwtAuthenticationFilter;
 import com.seoulJJ.hypertube.global.security.jwt.JwtTokenProvider;
@@ -26,7 +29,8 @@ public class SecurityConfig {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
 		http
-				// .httpBasic((httpBasicConfig) -> httpBasicConfig.disable())
+				.httpBasic((httpBasicConfig) -> httpBasicConfig.disable())
+				.cors((corsConfig) -> corsConfig.configurationSource(corsConfigurationSource()))
 				.csrf((csrfConfig) -> csrfConfig.disable())
 				.sessionManagement(
 						(sessionManagement) -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -53,4 +57,20 @@ public class SecurityConfig {
 		return new BCryptPasswordEncoder();
 	}
 
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration configuration = new CorsConfiguration();
+		configuration.addAllowedOrigin("https://localhost");
+		configuration.addAllowedMethod("GET");
+		configuration.addAllowedMethod("POST");
+		configuration.addAllowedMethod("DELETE");
+		configuration.addAllowedMethod("PUT");
+		configuration.addAllowedMethod("PATCH");
+		configuration.addAllowedHeader("*");
+		configuration.setAllowCredentials(true);
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", configuration);
+
+		return source;
+	}
 }

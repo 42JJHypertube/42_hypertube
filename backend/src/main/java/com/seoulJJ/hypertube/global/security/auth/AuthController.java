@@ -52,8 +52,6 @@ public class AuthController {
         String email = signInDto.getEmail();
         String password = signInDto.getPassword();
 
-        User user = userService.findUserByEmail(email);
-
         authService.signIn(email, password);
         JwtTokenDto jwtToken = authService.signIn(email, password);
         return jwtToken;
