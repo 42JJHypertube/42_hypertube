@@ -69,12 +69,21 @@ export async function registUser(
       .then((res) => res?.data)
       .catch(() => 'error')
 
-    console.log(ret)
-    return {
-      ...formInfo,
-      error_message: null,
-      code: null,
-      token: 'true',
+    switch (ret.response.status) {
+      case 200:
+        return {
+          ...formInfo,
+          error_message: null,
+          code: null,
+          token: 'true',
+        }
+      default:
+        return {
+          ...formInfo,
+          error_message: ret.response.data.message,
+          code: null,
+          token: null,
+        }
     }
   }
 
@@ -103,7 +112,6 @@ export async function registUser(
       break
     }
     case 401:
-      console.log(ret.data)
       return {
         ...currentInfo,
         error_message: ret.response.data.message as string,
@@ -111,7 +119,6 @@ export async function registUser(
         token: 'true',
       }
     default:
-      console.log(ret.data)
       return {
         ...currentInfo,
         error_message: ret.response.data.message as string,

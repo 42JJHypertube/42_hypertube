@@ -40,5 +40,5 @@ export async function goLogin(payload: { email: string; password: string }) {
   return HypeClient.auth
     .signIn(payload)
     .then((res) => res)
-    .catch(() => console.log('login Error'))
+    .catch((error) => error)
 }
