@@ -80,7 +80,7 @@ export async function registUser(
       default:
         return {
           ...formInfo,
-          error_message: ret.response.data.message,
+          error_message: ret.response.data.message as string,
           code: null,
           token: null,
         }
