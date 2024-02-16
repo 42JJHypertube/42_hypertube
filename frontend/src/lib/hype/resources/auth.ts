@@ -1,6 +1,6 @@
 import BaseResource from './base'
 
-import { ResSendCode } from '../type/auth'
+import { ResSendCode, ResSignIn } from '../type/auth'
 import { ResponsePromise } from '../type/common'
 
 class AuthResource extends BaseResource {
@@ -30,11 +30,11 @@ class AuthResource extends BaseResource {
     return this.client.request('GET', path, payload, {}, customHeaders)
   }
 
-  goLogin(
+  signIn(
     payload: Record<string, string | null>,
     customHeaders?: Record<string, string | null>,
-  ): ResponsePromise<void> {
-    const path = 'auth/login'
+  ): ResponsePromise<ResSignIn> {
+    const path = '/auth/sign-in'
     return this.client.request('POST', path, payload, {}, customHeaders)
   }
 }

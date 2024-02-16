@@ -1,4 +1,7 @@
+'use server'
+
 import { getAuthCode, goLogin, veriftyAuthCode, makeUser } from '@/lib/data'
+import { cookies } from 'next/headers'
 
 interface RegisterInfo {
   email: string
@@ -63,7 +66,7 @@ export async function registUser(
     }
 
     const ret = await getAuthCode(payload)
-      .then((res) => res?.response)
+      .then((res) => res?.data)
       .catch(() => 'error')
 
     console.log(ret)
@@ -80,23 +83,46 @@ export async function registUser(
     code: formData.get('code') as string,
   })
     .then((res) => res)
-    .catch(() => 'errror')
+    .catch((error) => error)
 
-  console.log(ret)
-  console.log(currentInfo.email)
-
-  if (ret.response.status === 200) {
-    const ret2 = await makeUser({
-      ...currentInfo,
-      token: ret.data,
-      imageUrl: '',
-    })
-    if (ret2.response.status === 200) console.log('make User Success')
+  switch (ret.response.status) {
+    case 200: {
+      const ret2 = await makeUser({
+        ...currentInfo,
+        token: ret.data,
+        imageUrl: '',
+      })
+      if (ret2.response.status === 200) {
+        return {
+          ...currentInfo,
+          error_message: '',
+          code: 'true',
+          token: 'true',
+        }
+      }
+      break
+    }
+    case 401:
+      console.log(ret.data)
+      return {
+        ...currentInfo,
+        error_message: ret.response.data.message as string,
+        code: null,
+        token: 'true',
+      }
+    default:
+      console.log(ret.data)
+      return {
+        ...currentInfo,
+        error_message: ret.response.data.message as string,
+        code: null,
+        token: null,
+      }
   }
 
   return {
     ...currentInfo,
-    error_message: '2FA 중 에러가 발생했습니다.',
+    error_message: ret.response.data.message as string,
     code: null,
     token: null,
   }
@@ -117,9 +143,18 @@ export async function loginUser(
 
     const ret = await goLogin({ email: info.email, password: info.password })
       .then((res) => res)
-      .catch(() => 'login Error')
+      .catch((error) => error)
 
-    console.log('login : ', ret)
+    // if login success
+    if (ret.response.status === 200) {
+      cookies().set('access_token', ret.data.accessToken, {
+        httpOnly: true,
+      })
+      cookies().set('refresh_token', ret.data.refreshToken, {
+        httpOnly: true,
+      })
+    }
+
     return {
       email: info.email,
       password: info.password,

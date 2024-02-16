@@ -1,14 +1,24 @@
 /* sigleton으로 Token을 관리하는 Manager */
 
 class TokenManager {
-  private jwtToken: string | null = null
+  private jwtToken_access: string | null = null
 
-  registJwt(token: string) {
-    this.jwtToken = token
+  private jwtToken_refresh: string | null = null
+
+  registAccessToken(token: string) {
+    this.jwtToken_access = token
   }
 
-  getJwt() {
-    return this.jwtToken
+  registRefreshToken(token: string) {
+    this.jwtToken_refresh = token
+  }
+
+  getAccessToken() {
+    return this.jwtToken_access
+  }
+
+  getRefreshToken() {
+    return this.jwtToken_refresh
   }
 }
 

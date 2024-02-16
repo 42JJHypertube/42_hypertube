@@ -1,3 +1,5 @@
+'use server'
+
 import HypeClient from '../config'
 
 /**
@@ -8,7 +10,7 @@ export async function getAuthCode(payload: { email: string }) {
   return HypeClient.auth
     .sendCode(payload)
     .then((res) => res)
-    .catch((error) => console.log(error))
+    .catch((error) => error)
 }
 
 export async function veriftyAuthCode(payload: {
@@ -18,7 +20,7 @@ export async function veriftyAuthCode(payload: {
   return HypeClient.auth
     .verifyCode(payload)
     .then((res) => res)
-    .catch((error) => console.log(error))
+    .catch((error) => error)
 }
 
 export async function makeUser(payload: {
@@ -36,7 +38,7 @@ export async function makeUser(payload: {
 
 export async function goLogin(payload: { email: string; password: string }) {
   return HypeClient.auth
-    .goLogin(payload)
+    .signIn(payload)
     .then((res) => res)
     .catch(() => console.log('login Error'))
 }
