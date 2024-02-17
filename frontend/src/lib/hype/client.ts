@@ -1,5 +1,4 @@
 import axios, { AxiosInstance, AxiosRequestHeaders } from 'axios' // axiosError 추가 필요
-import * as https from 'https'
 import TokenManager from './tokenManger'
 
 export interface Config {
@@ -23,13 +22,8 @@ class Client {
 
   // eslint-disable-next-line class-methods-use-this
   createClient(config: Config): AxiosInstance {
-    const agent = new https.Agent({
-      rejectUnauthorized: false, // SSL 인증서 검증 비활성화
-    })
-
     const client = axios.create({
       baseURL: config.baseURL,
-      httpsAgent: agent, // 설정한 httpsAgent 사용
     })
 
     return client

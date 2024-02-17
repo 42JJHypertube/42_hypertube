@@ -7,6 +7,7 @@ const nextConfig = {
   },
   env: {
     BACKEND: process.env.BACKEND,
+    TMBD_API_KEY: process.env.TMBD_API_KEY,
   },
 }
 

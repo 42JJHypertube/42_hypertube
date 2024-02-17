@@ -1,3 +1,4 @@
+// import { getMovie } from '@/lib/data'
 import styles from './main.module.scss'
 
 export default function Home() {
