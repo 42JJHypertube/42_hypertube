@@ -7,6 +7,8 @@ services:
       dockerfile: Dockerfile_Server
     ports:
       - 3000:3000
+    environment:
+      - BACKEND=backend 
 
   frontend-nginx:
     build:

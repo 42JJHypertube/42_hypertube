@@ -6,7 +6,7 @@ const nextConfig = {
     },
   },
   env: {
-    BACKEND: '10.12.8.3',
+    BACKEND: process.env.BACKEND,
   },
 }
 

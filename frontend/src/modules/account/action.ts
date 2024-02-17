@@ -66,9 +66,10 @@ export async function registUser(
     }
 
     const ret = await getAuthCode(payload)
-      .then((res) => res?.data)
+      .then((res) => res)
       .catch(() => 'error')
 
+    console.log(ret)
     switch (ret.response.status) {
       case 200:
         return {
@@ -94,6 +95,7 @@ export async function registUser(
     .then((res) => res)
     .catch((error) => error)
 
+  console.log(ret)
   switch (ret.response.status) {
     case 200: {
       const ret2 = await makeUser({
