@@ -42,3 +42,10 @@ export async function goLogin(payload: { email: string; password: string }) {
     .then((res) => res)
     .catch((error) => error)
 }
+
+export async function getMovie() {
+  return HypeClient.movie
+    .getMovieTopRated()
+    .then((res) => res)
+    .catch((error) => error)
+}
