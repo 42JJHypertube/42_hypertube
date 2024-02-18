@@ -1,6 +1,6 @@
 import BaseResource from './base'
 
-import { ResSendCode } from '../type/auth'
+import { ResSendCode, ResSignIn } from '../type/auth'
 import { ResponsePromise } from '../type/common'
 
 class AuthResource extends BaseResource {
@@ -13,7 +13,7 @@ class AuthResource extends BaseResource {
     payload: Record<string, string | null>,
     customHeaders?: Record<string, string | null>,
   ): ResponsePromise<ResSendCode> {
-    const path = '/auth/2fa/singup/send-code'
+    const path = '/auth/2fa/signup/send-code'
     return this.client.request('POST', path, payload, {}, customHeaders)
   }
 
@@ -22,16 +22,19 @@ class AuthResource extends BaseResource {
    * @param payload {email: ,code: }
    * @returns
    */
-  verifyCode(payload: Record<string, string | null>) {
-    const path = '/auth/2fa/signup/verify-code'
-    return this.client.request('GET', path, payload)
-  }
-
-  goLogin(
+  verifyCode(
     payload: Record<string, string | null>,
     customHeaders?: Record<string, string | null>,
-  ): ResponsePromise<void> {
-    const path = 'auth/login'
+  ) {
+    const path = `/auth/2fa/signup/verify-code?email=${payload.email}&code=${payload.code}`
+    return this.client.request('GET', path, payload, {}, customHeaders)
+  }
+
+  signIn(
+    payload: Record<string, string | null>,
+    customHeaders?: Record<string, string | null>,
+  ): ResponsePromise<ResSignIn> {
+    const path = '/auth/sign-in'
     return this.client.request('POST', path, payload, {}, customHeaders)
   }
 }

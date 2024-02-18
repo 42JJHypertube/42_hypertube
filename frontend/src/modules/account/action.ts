@@ -1,13 +1,16 @@
 'use server'
 
-import { getAuthCode, goLogin } from '@/lib/data'
+import { getAuthCode, goLogin, veriftyAuthCode, makeUser } from '@/lib/data'
+import { cookies } from 'next/headers'
 
 interface RegisterInfo {
   email: string
-  username: string
-  lastname: string
-  firstname: string
+  nickname: string
+  lastName: string
+  firstName: string
   password: string
+  password2: string
+  code: string
 }
 
 interface LoginInfo {
@@ -19,61 +22,118 @@ export type LoginFormInfo = {
   email: string
   password: string
   error_message: string | null
-  auth_token: string | null
+  token: string | null
 }
 
 export type RegisterFormInfo = {
   email: string
-  username: string
-  lastname: string
-  firstname: string
+  nickname: string
+  lastName: string
+  firstName: string
   password: string
+  password2: string
   error_message: string | null
-  auth_token: string | null
+  code: string | null
+  token: string | null
 }
 
 export async function registUser(
   currentState: RegisterFormInfo,
   formData: FormData,
 ) {
-  if (!currentState.auth_token) {
-    console.log('check 2fa')
-    const info = {
-      email: formData.get('email'),
-      username: formData.get('username'),
-      lastname: formData.get('lastname'),
-      firstname: formData.get('firstname'),
-      password: formData.get('password'),
-    } as RegisterInfo
+  const formInfo = {
+    email: formData.get('email'),
+    nickname: formData.get('nickname'),
+    lastName: formData.get('lastname'),
+    firstName: formData.get('firstname'),
+    password: formData.get('password1'),
+    password2: formData.get('password2'),
+    code: formData.get('code'),
+  } as RegisterInfo
 
+  const currentInfo = {
+    nickname: currentState.nickname,
+    email: currentState.email,
+    password: currentState.password,
+    password2: currentState.password2,
+    firstName: currentState.firstName,
+    lastName: currentState.lastName,
+  }
+
+  if (!currentState.token) {
     const payload = {
-      email: info.email,
+      email: formInfo.email,
     }
 
     const ret = await getAuthCode(payload)
-      .then((res) => res?.response)
+      .then((res) => res)
       .catch(() => 'error')
 
     console.log(ret)
-    return {
-      email: info.email,
-      username: info.username,
-      lastname: info.lastname,
-      firstname: info.firstname,
-      password: info.firstname,
-      error_message: null,
-      auth_token: 'hello',
+    switch (ret.response.status) {
+      case 200:
+        return {
+          ...formInfo,
+          error_message: null,
+          code: null,
+          token: 'true',
+        }
+      default:
+        return {
+          ...formInfo,
+          error_message: ret.response.data.message as string,
+          code: null,
+          token: null,
+        }
     }
   }
 
-  return {
+  const ret = await veriftyAuthCode({
     email: currentState.email,
-    username: currentState.username,
-    lastname: currentState.lastname,
-    firstname: currentState.firstname,
-    password: currentState.firstname,
-    error_message: null,
-    auth_token: null,
+    code: formData.get('code') as string,
+  })
+    .then((res) => res)
+    .catch((error) => error)
+
+  console.log(ret)
+  switch (ret.response.status) {
+    case 200: {
+      const ret2 = await makeUser({
+        ...currentInfo,
+        token: ret.data,
+        imageUrl: '',
+      })
+      if (ret2.response.status === 200) {
+        return {
+          ...currentInfo,
+          error_message: '',
+          code: 'true',
+          token: 'true',
+        }
+      }
+      break
+    }
+    case 401:
+      return {
+        ...currentInfo,
+        error_message: ret.response.data.message as string,
+        code: null,
+        token: 'true',
+      }
+    default:
+      return {
+        ...currentInfo,
+        error_message: ret.response.data.message as string,
+        code: null,
+        token: null,
+      }
+  }
+
+  return {
+    ...currentInfo,
+    error_message: ret.response.data.message as string,
+    code: null,
+    token: null,
   }
 }
 
@@ -81,8 +141,8 @@ export async function loginUser(
   currentState: LoginFormInfo,
   formData: FormData,
 ) {
-  // if auth_token is null => check 2fa first;
-  if (!currentState.auth_token) {
+  // if token is null => check 2fa first;
+  if (!currentState.token) {
     const info = {
       email: formData.get('email'),
       password: formData.get('password'),
@@ -92,29 +152,31 @@ export async function loginUser(
 
     const ret = await goLogin({ email: info.email, password: info.password })
       .then((res) => res)
-      .catch(() => 'login Error')
+      .catch((error) => error)
 
-    console.log('login : ', ret)
+    // if login success
+    if (ret.response.status === 200) {
+      cookies().set('access_token', ret.data.accessToken, {
+        httpOnly: true,
+      })
+      cookies().set('refresh_token', ret.data.refreshToken, {
+        httpOnly: true,
+      })
+    }
+
     return {
       email: info.email,
       password: info.password,
       error_message: null,
-      auth_token: 'hello',
+      token: 'hello',
     }
   }
 
-  // if have auth_token do login logic
+  // if have token do login logic
   return {
     email: currentState.email,
     password: currentState.password,
     error_message: null,
-    auth_token: null,
+    token: null,
   }
-}
-
-export async function confirm2FA(currentState: unknown, formData: FormData) {
-  const info = {
-    code: formData.get('code'),
-  }
-  console.log(info)
 }

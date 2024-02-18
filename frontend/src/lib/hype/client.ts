@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestHeaders } from 'axios' // axiosError 추가 필요
+import * as https from 'https'
 import TokenManager from './tokenManger'
 
 export interface Config {
@@ -22,9 +23,15 @@ class Client {
 
   // eslint-disable-next-line class-methods-use-this
   createClient(config: Config): AxiosInstance {
+    const agent = new https.Agent({
+      rejectUnauthorized: false, // SSL 인증서 검증 비활성화
+    })
+
     const client = axios.create({
       baseURL: config.baseURL,
+      httpsAgent: agent, // 설정한 httpsAgent 사용
     })
+
     return client
   }
 
@@ -50,10 +57,10 @@ class Client {
 
     /* JWT token 이 존재할 경우 베어럴로 추가해준다 */
     /* JWT token 이 존재하지않고 , 2FA 토큰이 존재하면 베어럴로 추가 */
-    if (TokenManager.getJwt()) {
+    if (TokenManager.getAccessToken()) {
       defaultHeaders = {
         ...defaultHeaders,
-        Authorization: `Bearer ${TokenManager.getJwt()}`,
+        Authorization: `Bearer ${TokenManager.getAccessToken()}`,
       }
     }
 
@@ -98,7 +105,7 @@ class Client {
     }
 
     const { data, ...response } = await this.axiosClient(reqOpts)
-    return { ...data, response }
+    return { data, response }
   }
 }
 

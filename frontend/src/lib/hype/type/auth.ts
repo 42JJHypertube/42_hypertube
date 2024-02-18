@@ -3,3 +3,11 @@ export type ResSendCode = {
     code: string
   }
 }
+
+export type ResSignIn = {
+  data: {
+    grantType: string
+    accessToken: string
+    refreshToken: string
+  }
+}

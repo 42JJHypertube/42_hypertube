@@ -3,7 +3,7 @@ import styles from './input.module.scss'
 
 type InputProps = React.InputHTMLAttributes<HTMLInputElement>
 
-function Input({ type, name, required }: InputProps) {
+function Input({ type, name, required, value }: InputProps) {
   return (
     <div className={styles.inputContainer}>
       <input
@@ -11,6 +11,7 @@ function Input({ type, name, required }: InputProps) {
         id={name}
         name={name}
         required={required}
+        value={value}
         className={styles.input}
       />
       <label htmlFor={name} className={styles.label}>

@@ -7,6 +7,8 @@ services:
       dockerfile: Dockerfile_Server
     ports:
       - 3000:3000
+    environment:
+      - BACKEND=backend 
 
   frontend-nginx:
     build:
@@ -30,7 +32,6 @@ services:
       - "8080:8080"
     depends_on:
       - mysql
-      - redis
     env_file:
       - .env
 
@@ -48,5 +49,4 @@ services:
     image: redis:latest
     ports:
       - "6379:6379"
-
   

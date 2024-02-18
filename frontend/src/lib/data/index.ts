@@ -1,3 +1,5 @@
+'use server'
+
 import HypeClient from '../config'
 
 /**
@@ -5,25 +7,38 @@ import HypeClient from '../config'
  * @param payload {email: }
  */
 export async function getAuthCode(payload: { email: string }) {
-  const customHeaders = {
-    'Content-Type': 'application/json',
-    Accept: '*/*',
-  }
-
   return HypeClient.auth
-    .sendCode(payload, customHeaders)
+    .sendCode(payload)
     .then((res) => res)
-    .catch((error) => console.log(error))
+    .catch((error) => error)
+}
+
+export async function veriftyAuthCode(payload: {
+  email: string
+  code: string
+}) {
+  return HypeClient.auth
+    .verifyCode(payload)
+    .then((res) => res)
+    .catch((error) => error)
+}
+
+export async function makeUser(payload: {
+  nickname: string
+  email: string
+  password: string
+  password2: string
+  firstName: string
+  lastName: string
+  imageUrl: string
+  token: string
+}) {
+  return HypeClient.user.makeUser(payload)
 }
 
 export async function goLogin(payload: { email: string; password: string }) {
-  const customHeaders = {
-    'Content-Type': 'application/json',
-    Accept: '*/*',
-  }
-
   return HypeClient.auth
-    .goLogin(payload, customHeaders)
+    .signIn(payload)
     .then((res) => res)
-    .catch(() => console.log('login Error'))
+    .catch((error) => error)
 }
