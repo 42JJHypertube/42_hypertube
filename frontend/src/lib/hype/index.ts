@@ -18,7 +18,7 @@ class Hype {
     this.user = new UserResource(this.client)
     this.movie = new MovieResource(
       new Client({
-        baseURL: `https://https://api.themoviedb.org/3`,
+        baseURL: `https://api.themoviedb.org/3`,
         maxRetries: 3,
       }),
     )

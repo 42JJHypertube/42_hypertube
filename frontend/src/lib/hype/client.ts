@@ -84,14 +84,13 @@ class Client {
       url: string
       json: boolean
       headers: AxiosRequestHeaders
-      data: Record<string, unknown>
+      data?: Record<string, unknown>
     } = {
       method,
       withCredentials: true,
       url: path,
       json: true,
       headers: this.setHeaders(options, method, path, customHeaders),
-      data: {},
     }
 
     if (['POST', 'DELETE'].includes(method)) {

@@ -8,7 +8,8 @@ services:
     ports:
       - 3000:3000
     environment:
-      - BACKEND=backend 
+      BACKEND: backend
+      TMDB_API_KEY: ${TMDB_API_KEY} 
 
   frontend-nginx:
     build:
