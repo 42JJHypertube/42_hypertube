@@ -3,7 +3,7 @@ import MovieCard from '@/modules/main/components/movieCard'
 import styles from './main.module.scss'
 
 export default async function Home() {
-  const ret = await getMovie()
+  const ret = await getMovie(1)
 
   if (ret.response.status !== 200) return <div> Error </div>
 
