@@ -3,7 +3,6 @@ package com.seoulJJ.hypertube.global.exception;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.catalina.connector.Response;
 import org.springframework.boot.context.properties.bind.BindException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +24,7 @@ import com.seoulJJ.hypertube.global.exception.custom.ForbiddenException;
 import com.seoulJJ.hypertube.global.exception.custom.NotExistException;
 import com.seoulJJ.hypertube.global.exception.custom.PageNotFoundException;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -97,6 +97,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> authenticationException(AuthenticationException ex) {
         log.error("authentication exception");
         ErrorResponse response = new ErrorResponse(ex.getErrorCode());
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+    }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<ErrorResponse> expiredJwtException(ExpiredJwtException ex) {
+        log.error("expired jwt exception");
+        ErrorResponse response = new ErrorResponse(ErrorCode.EXPIRED_JWT);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 

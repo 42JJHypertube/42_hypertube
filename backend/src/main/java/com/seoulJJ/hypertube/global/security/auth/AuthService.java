@@ -13,11 +13,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.seoulJJ.hypertube.domain.user.exception.UserVerifySignupTokenFailedException;
+import com.seoulJJ.hypertube.global.security.auth.dto.AuthAccessTokenRequestDto;
 import com.seoulJJ.hypertube.global.security.auth.exception.AuthVerifyCodeFailedException;
 import com.seoulJJ.hypertube.global.security.jwt.JwtTokenProvider;
+import com.seoulJJ.hypertube.global.security.jwt.RedisRefreshToken.RefreshTokenService;
 import com.seoulJJ.hypertube.global.security.jwt.dto.JwtTokenDto;
 import com.seoulJJ.hypertube.global.utils.RedisUtils;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -33,6 +36,9 @@ public class AuthService {
 
     @Autowired
     private final JwtTokenProvider jwtTokenProvider;
+
+    @Autowired
+    private final RefreshTokenService refreshTokenService;
 
     public String createCode(@NonNull String email) {
         String code = generateCode();
@@ -58,19 +64,6 @@ public class AuthService {
         }
     }
 
-    private String generateCode() {
-        String characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-        StringBuilder code = new StringBuilder();
-        Random random = new Random();
-
-        for (int i = 0; i < 6; i++) {
-            int index = random.nextInt(characters.length());
-            code.append(characters.charAt(index));
-        }
-
-        return code.toString();
-    }
-
     @Transactional
     public JwtTokenDto signIn(String email, String password) {
         // 1. username + password 를 기반으로 Authentication 객체 생성
@@ -87,5 +80,40 @@ public class AuthService {
         JwtTokenDto jwtToken = jwtTokenProvider.generateToken(authentication);
 
         return jwtToken;
+    }
+
+    @Transactional
+    public JwtTokenDto regenerateToken(AuthAccessTokenRequestDto accessTokenRequestDto) {
+
+        String accessToken = accessTokenRequestDto.getAccessToken();
+        String refreshToken = accessTokenRequestDto.getRefreshToken();
+        String foundRefreshToken = refreshTokenService.findByAccesstoken(accessTokenRequestDto.getAccessToken()).getRefreshToken();
+
+        if (!foundRefreshToken.equals(refreshToken)) {
+            throw new BadCredentialsException("Invalid refresh token");
+        }
+        else if (jwtTokenProvider.isExpired(refreshToken)) {
+            throw new ExpiredJwtException(null, null, "Expired Refresh Token");
+        }
+        else if (!jwtTokenProvider.validateToken(refreshToken)) {
+            throw new BadCredentialsException("Invalid refresh token");
+        }
+
+        refreshTokenService.removeRefreshToken(accessToken);
+        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
+        return jwtTokenProvider.generateToken(authentication);    
+    }
+
+    private String generateCode() {
+        String characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        StringBuilder code = new StringBuilder();
+        Random random = new Random();
+
+        for (int i = 0; i < 6; i++) {
+            int index = random.nextInt(characters.length());
+            code.append(characters.charAt(index));
+        }
+
+        return code.toString();
     }
 }

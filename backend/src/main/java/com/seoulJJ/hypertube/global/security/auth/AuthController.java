@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.seoulJJ.hypertube.domain.user.User;
 import com.seoulJJ.hypertube.domain.user.UserService;
+import com.seoulJJ.hypertube.global.security.auth.dto.AuthAccessTokenRequestDto;
 import com.seoulJJ.hypertube.global.security.auth.dto.AuthSendCodeRequestDto;
 import com.seoulJJ.hypertube.global.security.auth.dto.AuthSignInDto;
 import com.seoulJJ.hypertube.global.security.jwt.dto.JwtTokenDto;
@@ -19,10 +20,7 @@ import com.seoulJJ.hypertube.global.utils.SnsMailSender;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.web.bind.annotation.RequestParam;
 
-
-@Log4j2
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
@@ -30,8 +28,6 @@ public class AuthController {
 
     private final AuthService authService;
     private final SnsMailSender snsMailSender;
-    private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/2fa/signup/send-code")
     public ResponseEntity<String> sendMailCheckCode(@Valid @RequestBody AuthSendCodeRequestDto requestDto) {
@@ -46,6 +42,12 @@ public class AuthController {
         String token = authService.generateSignupToken(email);
         return ResponseEntity.ok(token);
     }
+
+    @PostMapping("/accessToken")
+    public JwtTokenDto gerateAccessToken(@RequestBody AuthAccessTokenRequestDto accessTokenRequestDto) {
+        return authService.regenerateToken(accessTokenRequestDto);
+    }
+    
 
     @PostMapping("/sign-in")
     public JwtTokenDto signIn(@RequestBody AuthSignInDto signInDto) {

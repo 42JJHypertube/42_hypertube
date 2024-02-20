@@ -13,6 +13,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.seoulJJ.hypertube.global.security.jwt.ExceptionHandlerFilter;
 import com.seoulJJ.hypertube.global.security.jwt.JwtAuthenticationFilter;
 import com.seoulJJ.hypertube.global.security.jwt.JwtTokenProvider;
 
@@ -35,7 +36,8 @@ public class SecurityConfig {
 				.sessionManagement(
 						(sessionManagement) -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.headers(
-						(headerConfig) -> headerConfig.frameOptions(frameOptionsConfig -> frameOptionsConfig.disable()));
+						(headerConfig) -> headerConfig
+								.frameOptions(frameOptionsConfig -> frameOptionsConfig.disable()));
 
 		http
 				.authorizeHttpRequests((authorizeRequests) -> authorizeRequests
@@ -47,7 +49,10 @@ public class SecurityConfig {
 						.anyRequest().authenticated());
 
 		http
-			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+				.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
+						UsernamePasswordAuthenticationFilter.class)
+				.addFilterBefore(new ExceptionHandlerFilter(),
+						JwtAuthenticationFilter.class);
 
 		return http.build();
 	}
