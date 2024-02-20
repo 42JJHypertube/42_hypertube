@@ -2,13 +2,9 @@ package com.seoulJJ.hypertube.global.security.jwt;
 
 import java.io.IOException;
 
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
-import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seoulJJ.hypertube.global.exception.ErrorCode;
