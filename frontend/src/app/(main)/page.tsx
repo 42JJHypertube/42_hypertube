@@ -12,15 +12,19 @@ export default async function Home() {
   return (
     <div className={styles.main}>
       <h3>Most Popular Movies</h3>
-      <div className={styles.mainMovieCardContainer}>
-        {movieInfo.map((info: Record<string, string>) => (
-          <MovieCard
-            key={info.title}
-            title={info.title}
-            imgUrl={`https://image.tmdb.org/t/p/w500${info.poster_path}`}
-          />
-        ))}
+      <div className={styles.InfiniteContainer}>
+        <div className={styles.mainMovieCardContainer}>
+          {movieInfo.map((info: Record<string, unknown>) => (
+            <MovieCard
+              key={info.id as number}
+              title={info.title as string}
+              imgUrl={`https://image.tmdb.org/t/p/w500${info.poster_path}`}
+            />
+          ))}
+          <div className={styles.last}> HElllllllllllllllllllllllllll </div>
+        </div>
       </div>
+      {/* <InfiniteMovie/> */}
     </div>
   )
 }

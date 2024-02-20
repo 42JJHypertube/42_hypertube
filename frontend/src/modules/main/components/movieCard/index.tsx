@@ -8,15 +8,11 @@ type MovieCardProps = {
 
 function MovieCard({ title, imgUrl }: MovieCardProps) {
   return (
-    <div className={style.movieCard}>
-      <Image
-        src={imgUrl}
-        alt={title}
-        width={300}
-        height={500}
-        layout="responsive"
-      />
-      {title}
+    <div className={style.movieContainer}>
+      <div className={style.movieCard}>
+        <Image src={imgUrl} alt={title} fill />
+      </div>
+      <span>{title}</span>
     </div>
   )
 }
