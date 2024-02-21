@@ -1,0 +1,58 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  padding: 6rem;
+  min-height: 100vh;
+}
+
+/* 화면 폭이 600px 미만인 경우: 2개의 열로 설정 */
+
+@media screen and (max-width: 599px) {
+  .mainMovieCardContainer {
+    grid-template-columns: repeat(1, 160px);
+  }
+}
+
+@media screen and (min-width: 600px) and (max-width: 849px) {
+  .mainMovieCardContainer {
+    grid-template-columns: repeat(2, 160px);
+  }
+}
+
+/* 화면 폭이 900px 미만인 경우: 4개의 열로 설정 */
+@media screen and (min-width: 850px) and (max-width: 999px) {
+  .mainMovieCardContainer {
+    grid-template-columns: repeat(4, 160px);
+  }
+}
+
+/* 화면 폭이 1200px 미만인 경우: 5개의 열로 설정 */
+@media screen and (min-width: 1000px) and (max-width: 2000px) {
+  .mainMovieCardContainer {
+    grid-template-columns: repeat(5, 160px);
+  }
+}
+
+.InfiniteContainer {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  .mainMovieCardContainer {
+    grid-area: movieCards;
+    display: grid;
+    width: 80vw;
+    max-height: 50vh;
+    justify-content: center;
+    grid-auto-rows: 270px;
+    gap: 10px;
+
+    .last {
+      // 새로운 행에 모든 열의 크기를 갖고있도록한다
+      grid-column: 1 / -1;
+      height: 1rem;
+      text-align: center;
+    }
+  }
+}

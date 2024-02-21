@@ -4,34 +4,50 @@ import { useState } from 'react'
 
 type InfiniteQeuryParam = {
   key: string
-  fetchNextPage: (page: number) => void
+  fetchNextPage: (page: number) => Promise<any>
 }
 
-function useInfiniteQuery({ key, fetchNextPage }: InfiniteQeuryParam) {
-  const [data, setData] = useState<Record<string, string> | null>(null)
+/**
+ *
+ * @param param0
+ * key : Cache를 위한 key
+ * fetchNextPage : (key, page) page번호와 검색을위한 key를 받아서 다음 페이지를 받아오는 함수
+ * @returns
+ */
+function useInfiniteQuery({ fetchNextPage }: InfiniteQeuryParam) {
+  const [data, setData] = useState<any | null>(null)
   const [offset, setOffset] = useState<number>(1)
   const [isfetching, setIsfetching] = useState<boolean>(false)
-  const [error, setError] = useState<Record<string, string> | null>(null)
-  const [status, setStatus] = useState<number | null>(null)
-  const [lastPage, setLastPage] = useState<number | null>(null)
+  const [isError, setIsError] = useState<boolean>(false)
+  const [hasNextPage, setHasNextPage] = useState<boolean>(true)
 
   const handleNextPage = async () => {
     if (isfetching) return
     setIsfetching(true)
     const ret = await fetchNextPage(offset)
-    console.log(ret)
+    if (ret?.response.status === 200) {
+      setData(ret)
+      setOffset((prevOffset) => prevOffset + 1)
+      setIsError(false)
+      setIsfetching(false)
+
+      if (ret.data.page === ret.data.total_pages) setHasNextPage(false)
+      return
+    }
+
+    setIsError(true)
+    setData(ret)
     setIsfetching(false)
   }
 
-  console.log(key)
-  setData(null)
-  setOffset(1)
-  setStatus(1)
-  console.log(lastPage)
-  setError(null)
-  setLastPage(1)
-
-  return { data, offset, error, status, fetchNextPage: handleNextPage }
+  return {
+    data,
+    offset,
+    isError,
+    isfetching,
+    hasNextPage,
+    fetchNextPage: handleNextPage,
+  }
 }
 
 export default useInfiniteQuery
