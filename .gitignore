@@ -81,4 +81,5 @@ hypertube_docs/
 !docker-compose.yml
 !.gitignore/
 *.properties
+.front_env
 # End of https://www.toptal.com/developers/gitignore/api/java,visualstudiocode,gradle

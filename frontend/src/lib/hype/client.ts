@@ -25,6 +25,7 @@ class Client {
     const client = axios.create({
       baseURL: config.baseURL,
     })
+
     return client
   }
 
@@ -50,10 +51,10 @@ class Client {
 
     /* JWT token 이 존재할 경우 베어럴로 추가해준다 */
     /* JWT token 이 존재하지않고 , 2FA 토큰이 존재하면 베어럴로 추가 */
-    if (TokenManager.getJwt()) {
+    if (TokenManager.getAccessToken()) {
       defaultHeaders = {
         ...defaultHeaders,
-        Authorization: `Bearer ${TokenManager.getJwt()}`,
+        Authorization: `Bearer ${TokenManager.getAccessToken()}`,
       }
     }
 
@@ -83,14 +84,13 @@ class Client {
       url: string
       json: boolean
       headers: AxiosRequestHeaders
-      data: Record<string, unknown>
+      data?: Record<string, unknown>
     } = {
       method,
       withCredentials: true,
       url: path,
       json: true,
       headers: this.setHeaders(options, method, path, customHeaders),
-      data: {},
     }
 
     if (['POST', 'DELETE'].includes(method)) {
@@ -98,7 +98,7 @@ class Client {
     }
 
     const { data, ...response } = await this.axiosClient(reqOpts)
-    return { ...data, response }
+    return { data, response }
   }
 }
 

@@ -12,7 +12,7 @@ const initialState: LoginFormInfo = {
   email: '',
   password: '',
   error_message: null,
-  auth_token: null,
+  token: null,
 }
 
 function Login({ setCurrentView }: Props) {
@@ -22,7 +22,7 @@ function Login({ setCurrentView }: Props) {
     <div className={styles.loginContainer}>
       <h3 className={styles.loginTitle}> LogIn </h3>
       <form className={styles.loginForm} action={formAction}>
-        {formInfo.auth_token == null ? (
+        {formInfo.token == null ? (
           <>
             <Input name="email" type="email" required />
             <Input name="password" type="password" required />
