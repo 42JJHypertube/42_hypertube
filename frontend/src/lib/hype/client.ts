@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestHeaders } from 'axios' // axiosError 추가 필요
 import TokenManager from './tokenManger'
-
+import { AxiosResponse } from 'axios'
 export interface Config {
   baseURL: string // 기본 baseURL 설정
   maxRetries: number // 몇번 반복할지 설정
@@ -96,7 +96,6 @@ class Client {
     if (['POST', 'DELETE'].includes(method)) {
       reqOpts.data = payload
     }
-
     const { data, ...response } = await this.axiosClient(reqOpts)
     return { data, response }
   }

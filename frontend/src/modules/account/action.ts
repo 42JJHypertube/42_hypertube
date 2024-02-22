@@ -148,18 +148,16 @@ export async function loginUser(
       password: formData.get('password'),
     } as LoginInfo
 
-    // const ret = await getAuthCode({email: info.email}).then((res) => res).catch(() => "error")
-
-    const ret = await goLogin({ email: info.email, password: info.password })
-      .then((res) => res)
-      .catch((error) => error)
+    const {data, response} = await goLogin({ email: info.email, password: info.password })
 
     // if login success
-    if (ret.response.status === 200) {
-      cookies().set('access_token', ret.data.accessToken, {
+    if (response?.status === 200) {
+      if (data?.accessToken)
+      cookies().set('access_token', data?.accessToken, {
         httpOnly: true,
       })
-      cookies().set('refresh_token', ret.data.refreshToken, {
+      if (data?.refreshToken)
+      cookies().set('refresh_token', data?.refreshToken, {
         httpOnly: true,
       })
     }

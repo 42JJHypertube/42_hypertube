@@ -40,12 +40,19 @@ export async function goLogin(payload: { email: string; password: string }) {
   return HypeClient.auth
     .signIn(payload)
     .then((res) => res)
-    .catch((error) => error)
+    .catch(() => {
+      const response = {status: 400}
+      return {data: undefined, response}
+    })
 }
 
 export async function getMovie(page: number) {
   return HypeClient.movie
     .getMovieTopRated(page)
-    .then((res) => res)
+    .then((res) => {
+      console.log(res.data)
+      console.log(res.response)
+    return {data: "hi", response:{status: 200}}
+})
     .catch((error) => error)
 }
