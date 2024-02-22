@@ -14,6 +14,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.seoulJJ.hypertube.global.security.handler.OAuthAuthenticationSuccessHandler;
 import com.seoulJJ.hypertube.global.security.jwt.ExceptionHandlerFilter;
 import com.seoulJJ.hypertube.global.security.jwt.JwtAuthenticationFilter;
 import com.seoulJJ.hypertube.global.security.jwt.JwtTokenProvider;
@@ -29,6 +30,8 @@ public class SecurityConfig {
 	private final JwtTokenProvider jwtTokenProvider;
 
 	private final CustomOAuth2UserService customOAuth2UserService;
+
+	private final OAuthAuthenticationSuccessHandler oAuthAuthenticationSuccessHandler;
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -64,8 +67,8 @@ public class SecurityConfig {
 						.authorizationEndpoint(endpoint -> endpoint.baseUri("/api/auth/oauth2/login"))
 						.redirectionEndpoint(endpoint -> endpoint.baseUri("/api/auth/oauth2/code/*"))
 						.userInfoEndpoint((userInfoEndpoint) -> userInfoEndpoint
-								.userService(customOAuth2UserService)));
-								// .successHandler(null)
+								.userService(customOAuth2UserService))
+								.successHandler(oAuthAuthenticationSuccessHandler));
 								// .failureHandler(null));
 
 		return http.build();
