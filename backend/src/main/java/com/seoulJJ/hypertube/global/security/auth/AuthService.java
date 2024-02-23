@@ -9,19 +9,26 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.seoulJJ.hypertube.domain.user.exception.UserVerifySignupTokenFailedException;
+import com.seoulJJ.hypertube.domain.user.User;
+import com.seoulJJ.hypertube.domain.user.UserService;
+import com.seoulJJ.hypertube.global.security.UserPrincipal;
+import com.seoulJJ.hypertube.global.security.auth.RedisEmailToken.EmailTokenService;
+import com.seoulJJ.hypertube.global.security.auth.dto.AuthAccessTokenRequestDto;
 import com.seoulJJ.hypertube.global.security.auth.exception.AuthVerifyCodeFailedException;
+import com.seoulJJ.hypertube.global.security.auth.exception.AuthVerifyEmailTokenFailedException;
 import com.seoulJJ.hypertube.global.security.jwt.JwtTokenProvider;
+import com.seoulJJ.hypertube.global.security.jwt.RedisRefreshToken.RefreshTokenService;
 import com.seoulJJ.hypertube.global.security.jwt.dto.JwtTokenDto;
 import com.seoulJJ.hypertube.global.utils.RedisUtils;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 
-@Log4j2
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -33,6 +40,18 @@ public class AuthService {
 
     @Autowired
     private final JwtTokenProvider jwtTokenProvider;
+
+    @Autowired
+    private final RefreshTokenService refreshTokenService;
+
+    @Autowired
+    private final UserService userService;
+
+    @Autowired
+    private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private final EmailTokenService emailTokenService;
 
     public String createCode(@NonNull String email) {
         String code = generateCode();
@@ -46,33 +65,14 @@ public class AuthService {
         }
     }
 
-    public String generateSignupToken(@NonNull String email) {
-        String token = UUID.randomUUID().toString();
-        redis.setData(token, email, 600000L);
-        return token;
-    }
-
-    public void verifySignupToken(@NonNull String token, @NonNull String email) {
-        if (!email.equals(redis.getData(token))) {
-            throw new UserVerifySignupTokenFailedException();
-        }
-    }
-
-    private String generateCode() {
-        String characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-        StringBuilder code = new StringBuilder();
-        Random random = new Random();
-
-        for (int i = 0; i < 6; i++) {
-            int index = random.nextInt(characters.length());
-            code.append(characters.charAt(index));
-        }
-
-        return code.toString();
+    public String generateEmailToken(@NonNull String email) {
+        String emailToken = UUID.randomUUID().toString();
+        emailTokenService.saveTokenInfo(email, emailToken);
+        return emailToken;
     }
 
     @Transactional
-    public JwtTokenDto signIn(String email, String password) {
+    public JwtTokenDto signInWithPassword(String email, String password) {
         // 1. username + password 를 기반으로 Authentication 객체 생성
         // 이때 authentication 은 인증 여부를 확인하는 authenticated 값이 false
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email,
@@ -87,5 +87,52 @@ public class AuthService {
         JwtTokenDto jwtToken = jwtTokenProvider.generateToken(authentication);
 
         return jwtToken;
+    }
+
+    @Transactional
+    public JwtTokenDto signInWithEmailToken(String email, String emailToken) {
+
+        emailTokenService.verifyEmailToken(emailToken, email);
+        User user = userService.findUserByEmail(email);
+        UserPrincipal userPrincipal = UserPrincipal.create(user);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userPrincipal, null,
+                userPrincipal.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        return jwtTokenProvider.generateToken(authentication);
+    }
+
+    @Transactional
+    public JwtTokenDto regenerateToken(AuthAccessTokenRequestDto accessTokenRequestDto) {
+
+        String accessToken = accessTokenRequestDto.getAccessToken();
+        String refreshToken = accessTokenRequestDto.getRefreshToken();
+        String foundRefreshToken = refreshTokenService.findByAccesstoken(accessTokenRequestDto.getAccessToken())
+                .getRefreshToken();
+
+        if (!foundRefreshToken.equals(refreshToken)) {
+            throw new BadCredentialsException("Invalid refresh token");
+        } else if (jwtTokenProvider.isExpired(refreshToken)) {
+            throw new ExpiredJwtException(null, null, "Expired Refresh Token");
+        } else if (!jwtTokenProvider.validateToken(refreshToken)) {
+            throw new BadCredentialsException("Invalid refresh token");
+        }
+
+        refreshTokenService.removeRefreshToken(accessToken);
+        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
+        return jwtTokenProvider.generateToken(authentication);
+    }
+
+    private String generateCode() {
+        String characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        StringBuilder code = new StringBuilder();
+        Random random = new Random();
+
+        for (int i = 0; i < 6; i++) {
+            int index = random.nextInt(characters.length());
+            code.append(characters.charAt(index));
+        }
+
+        return code.toString();
     }
 }

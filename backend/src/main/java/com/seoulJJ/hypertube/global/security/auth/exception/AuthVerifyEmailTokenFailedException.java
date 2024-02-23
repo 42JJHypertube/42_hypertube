@@ -1,10 +1,10 @@
-package com.seoulJJ.hypertube.domain.user.exception;
+package com.seoulJJ.hypertube.global.security.auth.exception;
 
 import com.seoulJJ.hypertube.global.exception.ErrorCode;
 import com.seoulJJ.hypertube.global.exception.custom.AuthenticationException;
 
-public class UserVerifySignupTokenFailedException extends AuthenticationException{
-     public UserVerifySignupTokenFailedException() {
+public class AuthVerifyEmailTokenFailedException extends AuthenticationException{
+     public AuthVerifyEmailTokenFailedException() {
         super("Invalid signup token", ErrorCode.UNAUTHORIZED);
     }
 }
