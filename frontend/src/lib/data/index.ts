@@ -41,8 +41,8 @@ export async function goLogin(payload: { email: string; password: string }) {
     .signIn(payload)
     .then((res) => res)
     .catch(() => {
-      const response = {status: 400}
-      return {data: undefined, response}
+      const response = { status: 400 }
+      return { data: undefined, response }
     })
 }
 
@@ -51,7 +51,28 @@ export async function getMovie(page: number) {
     .getMovieTopRated(page)
     .then((res) => {
       console.log(res.response)
-      return {data: res.data, response: {status: 200} }
+      return { data: res.data, response: { status: 200 } }
     })
+    .catch((error) => error)
+}
+
+export async function checkEmail(email: string) {
+  return HypeClient.auth
+    .checkEmail({ email })
+    .then((res) => res)
+    .catch((error) => error)
+}
+
+export async function loginEmailToken(email: string, code: string) {
+  return HypeClient.auth
+    .loginEmailToken({ email, code })
+    .then((res) => res)
+    .catch((error) => error)
+}
+
+export async function loginPassword(email: string, password: string) {
+  return HypeClient.auth
+    .loginPassword({ email, password })
+    .then((res) => res)
     .catch((error) => error)
 }

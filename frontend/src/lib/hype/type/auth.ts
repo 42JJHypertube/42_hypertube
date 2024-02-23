@@ -11,3 +11,10 @@ export type ResSignIn = {
     refreshToken: string
   }
 }
+
+export type ResCheckEmail = {
+  data: {
+    emailExist: boolean
+    passwordExist: boolean
+  }
+}

@@ -1,34 +1,40 @@
 'use client'
 
 import MovieCard from '@/modules/main/components/movieCard'
-import styles from './main.module.scss'
 import { useEffect, useRef, useState } from 'react'
 import UseIntersectionObserve from '@/lib/hooks/useIntersectionObserve'
 import { getMovie } from '@/lib/data'
+import styles from './main.module.scss'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function MovieSection(initData: any) {
+  const { data: initialData } = initData
   const last = useRef(null)
-  const [data, setData] = useState<Record<string, any>[]>(initData.data)
-  const [isFetching, setIsfetching] = useState<Boolean>(false)
-  const [inView, setInview] = useState<Boolean>(false)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [data, setData] = useState<Record<string, any>[]>(initialData)
+  const [isFetching, setIsfetching] = useState<boolean>(false)
+  const [inView, setInview] = useState<boolean>(false)
   const [pages, setPages] = useState<number>(1)
 
   async function loadMovies() {
-    console.log('loadMovies')
     setIsfetching(true)
-    const next = pages + 1;
-    const ret = await getMovie(next).then((res) => res).catch((error) => {console.log(error)})
-    
-    if (ret?.response.status === 200){
-      setData([...data, ...(ret.data.results)])
+    const next = pages + 1
+    const ret = await getMovie(next)
+      .then((res) => res)
+      .catch((error) => {
+        console.log(error)
+      })
+
+    if (ret?.response.status === 200) {
+      setData([...data, ...ret.data.results])
       setPages(pages + 1)
     }
   }
 
   useEffect(() => {
     if (inView && !isFetching) {
-        loadMovies()
-        setIsfetching(false)
+      loadMovies()
+      setIsfetching(false)
     }
   }, [inView, isFetching])
 
@@ -37,10 +43,10 @@ export default function MovieSection(initData: any) {
     observer: IntersectionObserver,
   ) => {
     entries.forEach((entry) => {
+      console.log(observer)
       if (entry.isIntersecting) {
         setInview(true)
-      } else
-      setInview(false)
+      } else setInview(false)
     })
   }
 
@@ -51,6 +57,7 @@ export default function MovieSection(initData: any) {
       <h3>Most Popular Movies</h3>
       <div className={styles.InfiniteContainer}>
         <div className={styles.mainMovieCardContainer}>
+          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
           {data.map((info: any) => (
             <MovieCard
               key={info.id as number}
@@ -58,7 +65,7 @@ export default function MovieSection(initData: any) {
               imgUrl={`https://image.tmdb.org/t/p/w500${info.poster_path}`}
             />
           ))}
-          {(isFetching) ? (
+          {isFetching ? (
             <div className={styles.last}> loading .... </div>
           ) : (
             <div ref={last} className={styles.last}>
