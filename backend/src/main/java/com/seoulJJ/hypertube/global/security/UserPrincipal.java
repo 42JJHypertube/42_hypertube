@@ -8,11 +8,12 @@ import java.util.ArrayList;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import com.seoulJJ.hypertube.domain.user.User;
 import com.seoulJJ.hypertube.domain.user.type.RoleType;
 
-public class UserPrincipal implements UserDetails {
+public class UserPrincipal implements OAuth2User, UserDetails{
 
     private final Long id;
 	private final Collection<? extends GrantedAuthority> authorities;
@@ -38,8 +39,23 @@ public class UserPrincipal implements UserDetails {
 		return new UserPrincipal(user.getId(), user.getEmail(), user.getPassword(), authorities);
 	}
 
+	public static UserPrincipal create(User user, Map<String, Object> attributes) {
+		UserPrincipal userPrincipal = UserPrincipal.create(user);
+		userPrincipal.setAttributes(attributes);
+		return userPrincipal;
+	}
+
     public Long getId() {
         return id;
+    }
+
+    public void setAttributes(Map<String, Object> attributes) {
+		this.attributes = attributes;
+	}
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return this.attributes;
     }
 
     @Override
@@ -77,4 +93,8 @@ public class UserPrincipal implements UserDetails {
         return true;
     }
 
+    @Override
+	public String getName() {
+		return String.valueOf(id);
+	}
 }

@@ -10,9 +10,6 @@ import com.seoulJJ.hypertube.domain.user.User;
 import com.seoulJJ.hypertube.domain.user.UserRepository;
 import com.seoulJJ.hypertube.global.security.UserPrincipal;
 
-import lombok.extern.log4j.Log4j2;
-
-@Log4j2
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 

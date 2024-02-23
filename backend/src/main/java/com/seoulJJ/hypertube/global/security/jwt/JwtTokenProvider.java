@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -13,7 +14,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import com.seoulJJ.hypertube.global.exception.custom.ExpiredException;
 import com.seoulJJ.hypertube.global.security.UserPrincipal;
+import com.seoulJJ.hypertube.global.security.jwt.RedisRefreshToken.RefreshTokenService;
 import com.seoulJJ.hypertube.global.security.jwt.dto.JwtTokenDto;
 
 import io.jsonwebtoken.Claims;
@@ -23,6 +26,7 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
+import jakarta.transaction.Transactional;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.Date;
@@ -33,15 +37,27 @@ public class JwtTokenProvider {
 
     private final Key key;
 
-    public JwtTokenProvider(@Value("${spring.jwt.secret}") String secretKey) {
+    private final long accessTokenExpiresIn;
+
+    private final long refreshTokenExpiresIn;
+
+    private final RefreshTokenService refreshTokenService;
+
+    public JwtTokenProvider(@Value("${spring.jwt.secret}") String secretKey,
+            @Value("${spring.jwt.access-token-expiration}") long accessTokenExpiresIn,
+            @Value("${spring.jwt.refresh-token-expiration}") long refreshTokenExpiresIn,
+            @Autowired RefreshTokenService refreshTokenService) {
         byte[] keyBytes = secretKey.getBytes();
         this.key = Keys.hmacShaKeyFor(keyBytes);
+        this.accessTokenExpiresIn = accessTokenExpiresIn;
+        this.refreshTokenExpiresIn = refreshTokenExpiresIn;
+        this.refreshTokenService = refreshTokenService;
     }
 
     public JwtTokenDto generateToken(Authentication authentication) {
 
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-        
+
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
@@ -49,7 +65,7 @@ public class JwtTokenProvider {
         long now = (new Date()).getTime();
 
         // Access Token 생성
-        Date accessTokenExpiresIn = new Date(now + 86400000);
+        Date accessTokenExpiresIn = new Date(now + this.accessTokenExpiresIn);
         String accessToken = Jwts.builder()
                 .setSubject(userPrincipal.getId().toString())
                 .setIssuedAt(new Date())
@@ -61,12 +77,14 @@ public class JwtTokenProvider {
 
         // Refresh Token 생성
         String refreshToken = Jwts.builder()
-                .setExpiration(new Date(now + 86400000))
+                .setExpiration(new Date(now + this.refreshTokenExpiresIn))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
+        refreshTokenService.saveTokenInfo(userPrincipal.getId(), refreshToken, accessToken);
         return new JwtTokenDto("Bearer", accessToken, refreshToken);
     }
+    
 
     public Authentication getAuthentication(String accessToken) {
         // Jwt 토큰 복호화
@@ -83,12 +101,13 @@ public class JwtTokenProvider {
 
         // UserDetails 객체를 만들어서 Authentication return
         // UserDetails: interface, User: UserDetails를 구현한 class
-        UserDetails principal = new UserPrincipal(Long.valueOf(claims.getSubject()), claims.get("email").toString(), "", authorities);
+        UserDetails principal = new UserPrincipal(Long.valueOf(claims.getSubject()), claims.get("email").toString(), "",
+                authorities);
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
     // 토큰 정보를 검증하는 메서드
-    public boolean validateToken(String token) {
+    public boolean validateToken(String token) throws ExpiredException{
         try {
             Jwts.parserBuilder()
                     .setSigningKey(key)
@@ -97,8 +116,8 @@ public class JwtTokenProvider {
             return true;
         } catch (SecurityException | MalformedJwtException e) {
             log.info("Invalid JWT Token", e);
-        } catch (ExpiredJwtException e) {
-            log.info("Expired JWT Token", e);
+        // } catch (ExpiredJwtException e) {
+        //     log.info("Expired JWT Token", e);
         } catch (UnsupportedJwtException e) {
             log.info("Unsupported JWT Token", e);
         } catch (IllegalArgumentException e) {
@@ -107,14 +126,21 @@ public class JwtTokenProvider {
         return false;
     }
 
-    public Long getUserIdFromAccessToken(String accessToken) {
-		Claims claims = parseClaims(accessToken);
-		if (claims == null) {
-			return null;
-		}
-		return Long.valueOf(claims.getSubject());
-	}
+    public boolean isExpired(String token) {
+        Claims claims = parseClaims(token);
+        if (claims == null) {
+            return true;
+        }
+        return claims.getExpiration().before(new Date());
+    }
 
+    public Long getUserIdFromAccessToken(String accessToken) {
+        Claims claims = parseClaims(accessToken);
+        if (claims == null) {
+            return null;
+        }
+        return Long.valueOf(claims.getSubject());
+    }
 
     // accessToken
     private Claims parseClaims(String accessToken) {
