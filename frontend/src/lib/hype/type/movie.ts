@@ -1,0 +1,3 @@
+type ResGetMovieTopRated = {
+    data: any
+}

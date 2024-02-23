@@ -17,16 +17,15 @@ export default function MovieSection(initData: any) {
     console.log('loadMovies')
     setIsfetching(true)
     const next = pages + 1;
-    const ret = await getMovie(next)
-    console.log(ret)
-    // if (ret.response.status === 200){
-    //   // setData([...data, ...(ret.data.results)])
-    //   setPages(pages + 1)
-    // }
+    const ret = await getMovie(next).then((res) => res).catch((error) => {console.log(error)})
+    
+    if (ret?.response.status === 200){
+      setData([...data, ...(ret.data.results)])
+      setPages(pages + 1)
+    }
   }
 
   useEffect(() => {
-    console.log('useEFfect: ', inView, " , ", isFetching)
     if (inView && !isFetching) {
         loadMovies()
         setIsfetching(false)
@@ -52,13 +51,13 @@ export default function MovieSection(initData: any) {
       <h3>Most Popular Movies</h3>
       <div className={styles.InfiniteContainer}>
         <div className={styles.mainMovieCardContainer}>
-          {/* {data.map((info: any) => (
+          {data.map((info: any) => (
             <MovieCard
               key={info.id as number}
               title={info.title as string}
               imgUrl={`https://image.tmdb.org/t/p/w500${info.poster_path}`}
             />
-          ))} */}
+          ))}
           {(isFetching) ? (
             <div className={styles.last}> loading .... </div>
           ) : (

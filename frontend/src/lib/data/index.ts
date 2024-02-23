@@ -50,9 +50,8 @@ export async function getMovie(page: number) {
   return HypeClient.movie
     .getMovieTopRated(page)
     .then((res) => {
-      console.log(res.data)
       console.log(res.response)
-    return {data: "hi", response:{status: 200}}
-})
+      return {data: res.data, response: {status: 200} }
+    })
     .catch((error) => error)
 }
