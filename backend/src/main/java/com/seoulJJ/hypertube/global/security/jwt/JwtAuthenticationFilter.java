@@ -1,11 +1,13 @@
 package com.seoulJJ.hypertube.global.security.jwt;
 
-import org.springframework.core.annotation.Order;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
+
+import com.seoulJJ.hypertube.global.security.cookie.CookieUtil;
 
 import java.io.IOException;
 
@@ -13,11 +15,12 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Component
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class JwtAuthenticationFilter extends GenericFilterBean{
 
     private final JwtTokenProvider jwtTokenProvider;
@@ -39,11 +42,17 @@ public class JwtAuthenticationFilter extends GenericFilterBean{
         chain.doFilter(request, response);
     }
 
-    // Request Header에서 토큰 정보 추출
+    // Request에서 토큰 정보 추출
     private String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")) {
             return bearerToken.substring(7);
+        }
+
+        CookieUtil cookieUtil = new CookieUtil();
+        if (cookieUtil.getCookie(request, "access_token").isPresent()) {
+            Cookie cookie = cookieUtil.getCookie(request, "access_token").get();
+            return cookie.getValue();
         }
         return null;
     }

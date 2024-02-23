@@ -2,7 +2,6 @@ package com.seoulJJ.hypertube.global.security.jwt.RedisRefreshToken;
 
 import org.springframework.stereotype.Service;
 
-import com.seoulJJ.hypertube.global.exception.ErrorCode;
 import com.seoulJJ.hypertube.global.security.auth.exception.AuthVerifyCodeFailedException;
 
 import jakarta.transaction.Transactional;

@@ -7,7 +7,6 @@ import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.data.redis.RedisProperties.Lettuce.Cluster.Refresh;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Component;
 
 import com.seoulJJ.hypertube.global.exception.custom.ExpiredException;
 import com.seoulJJ.hypertube.global.security.UserPrincipal;
-import com.seoulJJ.hypertube.global.security.jwt.RedisRefreshToken.RefreshTokenRepository;
 import com.seoulJJ.hypertube.global.security.jwt.RedisRefreshToken.RefreshTokenService;
 import com.seoulJJ.hypertube.global.security.jwt.dto.JwtTokenDto;
 
@@ -67,7 +65,7 @@ public class JwtTokenProvider {
         long now = (new Date()).getTime();
 
         // Access Token 생성
-        Date accessTokenExpiresIn = new Date(now + this.accessTokenExpiresIn * 60000);
+        Date accessTokenExpiresIn = new Date(now + this.accessTokenExpiresIn);
         String accessToken = Jwts.builder()
                 .setSubject(userPrincipal.getId().toString())
                 .setIssuedAt(new Date())
@@ -79,7 +77,7 @@ public class JwtTokenProvider {
 
         // Refresh Token 생성
         String refreshToken = Jwts.builder()
-                .setExpiration(new Date(now + this.refreshTokenExpiresIn * 60000))
+                .setExpiration(new Date(now + this.refreshTokenExpiresIn))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
