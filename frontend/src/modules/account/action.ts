@@ -6,7 +6,10 @@ import {
   veriftyAuthCode,
   makeUser,
   checkEmail,
+  loginPassword,
+  loginEmailToken,
 } from '@/lib/data'
+import { LoginForm } from '@/types/account/type'
 import { cookies } from 'next/headers'
 
 interface RegisterInfo {
@@ -188,122 +191,69 @@ export async function loginUser(
   }
 }
 
-export async function validEmail(
-  currentState: {
-    email: string | null
-    auth: string | null
-    message: string | null
-  },
-  formData: FormData,
-) {
+export async function validEmail(currentState: LoginForm, formData: FormData) {
   const email = formData.get('email') as string
   const { data, response } = await checkEmail(email)
 
-  console.log(data)
+  const defaultRes: LoginForm = {
+    email,
+    auth: currentState.auth,
+    password: currentState.password,
+    code: currentState.code,
+    message: currentState.message,
+  }
+
   if (data.emailExist && data.passwordExist)
     return {
-      email,
+      ...defaultRes,
       auth: 'password',
       message: null,
     }
 
   if (data.emailExist)
     return {
-      email,
+      ...defaultRes,
       auth: 'email',
       message: null,
     }
 
   if (response.status !== 200) {
     return {
-      email,
-      auth: null,
+      ...defaultRes,
+      auth: 'none',
       message: '에러가 발생했습니다.',
     }
   }
   return {
-    email,
-    auth: 'password',
+    ...defaultRes,
+    auth: 'email',
     message: '존재하지 않는 아이디 입니다.',
   }
 }
 
-export async function loginByEmail(
-  currentState: {
-    email: string | null
-    auth: string | null
-    message: string | null
-  },
-  formData: FormData,
-) {
+export async function loginByAuth(currentState: LoginForm, formData: FormData) {
   const email = currentState.email as string
-  const code = formData.get('code') as string
-  const { data, response } = await checkEmail(code)
-
-  if (data.emailExist && data.passwordExist)
-    return {
-      email,
-      auth: 'password',
-      message: null,
-    }
-
-  if (data.emailExist)
-    return {
-      email,
-      auth: 'email',
-      message: null,
-    }
-
-  if (response.status !== 200) {
-    return {
-      email,
-      auth: null,
-      message: '에러가 발생했습니다.',
-    }
+  const defaultRes: LoginForm = {
+    email: currentState.email,
+    auth: currentState.auth,
+    password: currentState.password,
+    code: currentState.code,
+    message: currentState.message,
   }
-  return {
-    email,
-    auth: null,
-    message: '존재하지 않는 아이디 입니다.',
+
+  if (currentState.auth === 'password') {
+    const password = formData.get('password') as string
+    const { data, response } = await loginPassword(email, password)
+    console.log(data)
+    console.log(response)
+    return defaultRes
   }
-}
-
-export async function loginByPw(
-  currentState: {
-    email: string | null
-    auth: string | null
-    message: string | null
-  },
-  formData: FormData,
-) {
-  const email = currentState.email as string
-  const password = formData.get('password') as string
-  const { data, response } = await checkEmail(password)
-
-  if (data.emailExist && data.passwordExist)
-    return {
-      email,
-      auth: 'password',
-      message: null,
-    }
-
-  if (data.emailExist)
-    return {
-      email,
-      auth: 'email',
-      message: null,
-    }
-
-  if (response.status !== 200) {
-    return {
-      email,
-      auth: null,
-      message: '에러가 발생했습니다.',
-    }
+  if (currentState.auth === 'email') {
+    const code = formData.get('code') as string
+    const { data, response } = await loginEmailToken(email, code)
+    console.log(data)
+    console.log(response)
+    return defaultRes
   }
-  return {
-    email,
-    auth: null,
-    message: '존재하지 않는 아이디 입니다.',
-  }
+  return defaultRes
 }

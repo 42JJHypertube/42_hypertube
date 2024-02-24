@@ -5,3 +5,11 @@ export const enum LoginViewEnum {
 }
 
 export type LoginView = 'sign-in' | 'register' | 'find-pw'
+
+export type LoginForm = {
+  email: string
+  auth: string
+  password: string
+  code: string
+  message: string | null
+}

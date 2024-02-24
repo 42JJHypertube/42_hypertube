@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestHeaders } from 'axios' // axiosError 추가 필요
+import https from 'https'
 import TokenManager from './tokenManger'
 
 export interface Config {
@@ -13,6 +14,10 @@ export interface RequestOptions {
 
 export type RequestMethod = 'DELETE' | 'POST' | 'GET'
 
+const agent = new https.Agent({
+  rejectUnauthorized: false,
+})
+
 class Client {
   private axiosClient: AxiosInstance
 
@@ -24,6 +29,7 @@ class Client {
   createClient(config: Config): AxiosInstance {
     const client = axios.create({
       baseURL: config.baseURL,
+      httpsAgent: agent,
     })
 
     return client

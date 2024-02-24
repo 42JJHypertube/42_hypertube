@@ -1,34 +1,67 @@
 'use client'
 
 import { useState } from 'react'
-import { LoginViewEnum, LoginView } from '@/types/account/type'
-import Login from '../components/login'
-import Register from '../components/register'
-import FindPw from '../components/findPw'
+import { LoginForm, LoginViewEnum } from '@/types/account/type'
+import TypeAuth from '../components/login/typeAuth'
+import TypeEmail from '../components/login/typeEmail'
 
-const viewSelector = ({
-  currentView,
-  setCurrentView,
+function viewSelector({
+  loginForm,
+  setLoginForm,
 }: {
-  currentView: LoginView
-  setCurrentView: React.Dispatch<React.SetStateAction<LoginViewEnum>>
-}) => {
-  switch (currentView) {
-    case LoginViewEnum.SIGN_IN:
-      return <Login setCurrentView={setCurrentView} />
-    case LoginViewEnum.REGISTER:
-      return <Register setCurrentView={setCurrentView} />
-    case LoginViewEnum.FIND_PW:
-      return <FindPw setCurrentView={setCurrentView} />
+  loginForm: LoginForm
+  setLoginForm: React.Dispatch<React.SetStateAction<LoginForm>>
+}) {
+  switch (loginForm.auth) {
+    case 'none':
+      return <TypeEmail loginForm={loginForm} setLoginForm={setLoginForm} />
+    case 'email':
+      return <TypeAuth loginForm={loginForm} setLoginForm={setLoginForm} />
+    case 'password':
+      return <TypeAuth loginForm={loginForm} setLoginForm={setLoginForm} />
     default:
       return null
   }
 }
 
-function LoginTemplate() {
-  const [currentView, setCurrentView] = useState(LoginViewEnum.SIGN_IN)
+type Props = {
+  setCurrentView: React.Dispatch<React.SetStateAction<LoginViewEnum>>
+}
 
-  return <div>{viewSelector({ currentView, setCurrentView })}</div>
+const initialState: LoginForm = {
+  email: '',
+  auth: 'none',
+  password: '',
+  code: '',
+  message: null,
+}
+
+function LoginTemplate({ setCurrentView }: Props) {
+  const [loginForm, setLoginForm] = useState<LoginForm>(initialState)
+
+  return (
+    <>
+      {viewSelector({ loginForm, setLoginForm })}
+      <button
+        type="button"
+        onClick={() => setCurrentView(LoginViewEnum.SIGN_IN)}
+      >
+        go log in
+      </button>
+      <button
+        type="button"
+        onClick={() => setCurrentView(LoginViewEnum.REGISTER)}
+      >
+        go register
+      </button>
+      <button
+        type="button"
+        onClick={() => setCurrentView(LoginViewEnum.FIND_PW)}
+      >
+        find pwd
+      </button>
+    </>
+  )
 }
 
 export default LoginTemplate
