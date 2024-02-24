@@ -63,16 +63,32 @@ export async function checkEmail(email: string) {
     .catch((error) => error)
 }
 
-export async function loginEmailToken(email: string, code: string) {
+export async function loginEmailToken({
+  email,
+  emailToken,
+  password,
+}: {
+  email: string
+  emailToken: string
+  password: string
+}) {
   return HypeClient.auth
-    .loginEmailToken({ email, code })
+    .loginEmailToken({ email, emailToken, password })
     .then((res) => res)
     .catch((error) => error)
 }
 
-export async function loginPassword(email: string, password: string) {
+export async function loginPassword({
+  email,
+  emailToken,
+  password,
+}: {
+  email: string
+  emailToken: string
+  password: string
+}) {
   return HypeClient.auth
-    .loginPassword({ email, password })
+    .loginPassword({ email, emailToken, password })
     .then((res) => res)
     .catch((error) => error)
 }

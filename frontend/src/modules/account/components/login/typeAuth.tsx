@@ -4,8 +4,18 @@ import { LoginForm } from '@/types/account/type'
 import { useEffect } from 'react'
 import { useFormState } from 'react-dom'
 import Input from '@/modules/common/components/input'
-import { loginByAuth } from '../../action'
+import { loginByEmail, loginByPassword } from '../../action'
 
+function getLogin(type: string) {
+  switch (type) {
+    case 'password':
+      return loginByPassword
+    case 'email':
+      return loginByEmail
+    default:
+      return loginByEmail
+  }
+}
 function TypeAuth({
   loginForm,
   setLoginForm,
@@ -13,7 +23,8 @@ function TypeAuth({
   loginForm: LoginForm
   setLoginForm: React.Dispatch<React.SetStateAction<LoginForm>>
 }) {
-  const [form, action] = useFormState(loginByAuth, loginForm)
+  const loginAction = getLogin(loginForm.auth)
+  const [form, action] = useFormState(loginAction, loginForm)
   useEffect(() => {
     setLoginForm(form)
   }, [form])
@@ -29,6 +40,12 @@ function TypeAuth({
         <button type="submit"> Submit </button>
       </form>
       <span>{form.message}</span>
+      <button
+        type="button"
+        onClick={() => setLoginForm({ ...loginForm, auth: 'none' })}
+      >
+        Go Back
+      </button>
     </>
   )
 }

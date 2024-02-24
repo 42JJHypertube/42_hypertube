@@ -15,7 +15,7 @@ const viewSelector = ({
 }) => {
   switch (currentView) {
     case LoginViewEnum.SIGN_IN:
-      return <LoginTemplate setCurrentView={setCurrentView} />
+      return <LoginTemplate />
     case LoginViewEnum.REGISTER:
       return <Register setCurrentView={setCurrentView} />
     case LoginViewEnum.FIND_PW:
@@ -28,7 +28,29 @@ const viewSelector = ({
 function AccountTemplate() {
   const [currentView, setCurrentView] = useState(LoginViewEnum.SIGN_IN)
 
-  return <div>{viewSelector({ currentView, setCurrentView })}</div>
+  return (
+    <>
+      <div>{viewSelector({ currentView, setCurrentView })}</div>
+      <button
+        type="button"
+        onClick={() => setCurrentView(LoginViewEnum.SIGN_IN)}
+      >
+        go log in
+      </button>
+      <button
+        type="button"
+        onClick={() => setCurrentView(LoginViewEnum.REGISTER)}
+      >
+        go register
+      </button>
+      <button
+        type="button"
+        onClick={() => setCurrentView(LoginViewEnum.FIND_PW)}
+      >
+        find pwd
+      </button>
+    </>
+  )
 }
 
 export default AccountTemplate
