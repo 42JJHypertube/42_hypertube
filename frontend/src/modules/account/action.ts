@@ -8,196 +8,130 @@ import {
   loginPassword,
   loginEmailToken,
 } from '@/lib/data'
-import { LoginForm } from '@/types/account/type'
+import { AuthForm, AuthSequence } from '@/types/account/type'
 import { cookies } from 'next/headers'
 
-interface RegisterInfo {
-  email: string
-  nickname: string
-  lastName: string
-  firstName: string
-  password: string
-  password2: string
-  code: string
-}
-
-export type LoginFormInfo = {
-  email: string
-  password: string
-  error_message: string | null
-  token: string | null
-}
-
-export type RegisterFormInfo = {
-  email: string
-  nickname: string
-  lastName: string
-  firstName: string
-  password: string
-  password2: string
-  error_message: string | null
-  code: string | null
-  token: string | null
-}
-
-export async function registUser(
-  currentState: RegisterFormInfo,
-  formData: FormData,
-) {
+export async function registUser(currentState: AuthForm, formData: FormData) {
   const formInfo = {
-    email: formData.get('email'),
-    nickname: formData.get('nickname'),
-    lastName: formData.get('lastname'),
-    firstName: formData.get('firstname'),
-    password: formData.get('password1'),
-    password2: formData.get('password2'),
-    code: formData.get('code'),
-  } as RegisterInfo
-
-  const currentInfo = {
-    nickname: currentState.nickname,
-    email: currentState.email,
-    password: currentState.password,
-    password2: currentState.password2,
-    firstName: currentState.firstName,
-    lastName: currentState.lastName,
+    nickname: formData.get('nickname') as string,
+    lastName: formData.get('lastName') as string,
+    firstName: formData.get('firstName') as string,
+    password: formData.get('password') as string,
+    password2: formData.get('password2') as string,
   }
 
-  if (!currentState.token) {
-    const payload = {
-      email: formInfo.email,
-    }
-
-    const ret = await getAuthCode(payload)
-      .then((res) => res)
-      .catch(() => 'error')
-
-    console.log(ret)
-    switch (ret.response.status) {
-      case 200:
-        return {
-          ...formInfo,
-          error_message: null,
-          code: null,
-          token: 'true',
-        }
-      default:
-        return {
-          ...formInfo,
-          error_message: ret.response.data.message as string,
-          code: null,
-          token: null,
-        }
-    }
-  }
-
-  const ret = await veriftyAuthCode({
+  const { response } = await makeUser({
+    ...formInfo,
     email: currentState.email,
-    code: formData.get('code') as string,
+    token: currentState.emailToken,
+    imageUrl: '',
   })
-    .then((res) => res)
-    .catch((error) => error)
 
-  console.log(ret)
-  switch (ret.response.status) {
-    case 200: {
-      const ret2 = await makeUser({
-        ...currentInfo,
-        token: ret.data,
-        imageUrl: '',
-      })
-      if (ret2.response.status === 200) {
-        return {
-          ...currentInfo,
-          error_message: '',
-          code: 'true',
-          token: 'true',
-        }
-      }
-      break
+  console.log(response)
+
+  if (response?.status === 200) {
+    return {
+      ...currentState,
+      message: '회원가입에 성공했습니다',
     }
-    case 401:
-      return {
-        ...currentInfo,
-        error_message: ret.response.data.message as string,
-        code: null,
-        token: 'true',
-      }
-    default:
-      return {
-        ...currentInfo,
-        error_message: ret.response.data.message as string,
-        code: null,
-        token: null,
-      }
   }
-
   return {
-    ...currentInfo,
-    error_message: ret.response.data.message as string,
-    code: null,
-    token: null,
+    ...currentState,
+    message: '에러가 발생했습니다.',
   }
 }
 
-export async function validEmail(currentState: LoginForm, formData: FormData) {
+export async function validEmail(currentState: AuthForm, formData: FormData) {
   const email = formData.get('email') as string
   const { data, response } = await checkEmail(email)
 
-  const defaultRes: LoginForm = {
-    email,
-    auth: currentState.auth,
-    password: currentState.password,
-    code: currentState.code,
-    message: currentState.message,
-  }
+  let type
+  if (currentState.state.includes('login-')) type = 'login'
+  else type = 'regist'
 
+  const defaultRes: AuthForm = {
+    ...currentState,
+    email,
+  }
+  console.log(email)
+  console.log(data)
   // 이메일이 존재하고 패스워드가 설정되어있는 경우
-  if (data?.emailExist && data?.passwordExist)
-    return {
-      ...defaultRes,
-      auth: 'password',
-      message: null,
-    }
+  if (data?.emailExist && data?.passwordExist) {
+    if (type === 'regist')
+      return {
+        ...defaultRes,
+        message: '이미 등록된 계정입니다.',
+      }
+    if (type === 'login')
+      return {
+        ...defaultRes,
+        state: 'login-password' as AuthSequence,
+        message: null,
+      }
+  }
 
   // 이메일은 존재하지만 패스워드가 설정되어 있지 않는 경우
   if (data?.emailExist) {
-    const ret = await getAuthCode({ email })
+    if (type === 'login') {
+      const ret = await getAuthCode({ email })
 
-    if (ret?.response.status === 200)
+      if (ret?.response.status === 200)
+        return {
+          ...defaultRes,
+          state: 'login-code' as AuthSequence,
+          message: null,
+        }
+
       return {
         ...defaultRes,
-        auth: 'email',
+        message: '에러가 발생했습니다. 다시 시도해주세요',
+      }
+    }
+    if (type === 'regist') {
+      return {
+        ...defaultRes,
+        state: 'regist-auth' as AuthSequence,
         message: null,
       }
-
-    return {
-      ...defaultRes,
-      message: '에러가 발생했습니다. 다시 시도해주세요',
     }
   }
 
   // 성공했지만, 위의 경우에 안걸린 경우 -> 아이디가 존재하지않음
-  if (response?.status === 200)
-    return {
-      ...defaultRes,
-      auth: 'email',
-      message: '존재하지 않는 아이디 입니다.',
+  if (response?.status === 200) {
+    if (type === 'login')
+      return {
+        ...defaultRes,
+        message: '존재하지 않는 아이디 입니다.',
+      }
+    if (type === 'regist') {
+      const ret = await getAuthCode({ email })
+      console.log(ret.data)
+      if (ret?.response.status === 200)
+        return {
+          ...defaultRes,
+          state: 'regist-auth' as AuthSequence,
+          message: null,
+        }
+
+      return {
+        ...defaultRes,
+        message: '인증 코드 발송중 에러가 발생했습니다',
+      }
     }
+  }
 
   // 위의 경우에 전부 걸리지않았다 -> 에러 발생
   return {
     ...defaultRes,
-    auth: 'none',
     message: '에러가 발생했습니다.',
   }
 }
 
 export async function loginByPassword(
-  currentState: LoginForm,
+  currentState: AuthForm,
   formData: FormData,
 ) {
-  const defaultRes: LoginForm = {
+  const defaultRes: AuthForm = {
     ...currentState,
   }
   const email = currentState.email as string
@@ -227,11 +161,8 @@ export async function loginByPassword(
   }
 }
 
-export async function loginByEmail(
-  currentState: LoginForm,
-  formData: FormData,
-) {
-  const defaultRes: LoginForm = {
+export async function loginByEmail(currentState: AuthForm, formData: FormData) {
+  const defaultRes: AuthForm = {
     ...currentState,
   }
   const email = currentState.email as string
@@ -270,5 +201,26 @@ export async function loginByEmail(
   return {
     ...defaultRes,
     message: '유효하지 않은 코드입니다',
+  }
+}
+
+export async function verifyCode(currentState: AuthForm, formData: FormData) {
+  const email = currentState.email as string
+  const code = formData.get('code') as string
+  const { data, response } = await veriftyAuthCode({ email, code })
+
+  console.log(data)
+  if (response.status === 200) {
+    return {
+      ...currentState,
+      state: 'regist-form' as AuthSequence,
+      emailToken: data.emailToken,
+      message: null,
+    }
+  }
+
+  return {
+    ...currentState,
+    message: '코드 인증중 에러가 발생했습니다.',
   }
 }

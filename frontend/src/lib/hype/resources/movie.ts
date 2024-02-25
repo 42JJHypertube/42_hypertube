@@ -1,4 +1,5 @@
 import { ResponsePromise } from '../type/common'
+import { ResGetMovieTopRated } from '../type/movie'
 import BaseResource from './base'
 
 class MovieResource extends BaseResource {

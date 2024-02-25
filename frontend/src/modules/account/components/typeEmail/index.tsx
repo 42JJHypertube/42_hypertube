@@ -1,29 +1,29 @@
 'use client'
 
-import { LoginForm } from '@/types/account/type'
+import { AuthForm } from '@/types/account/type'
 import { useFormState } from 'react-dom'
 import { useEffect } from 'react'
 import Input from '@/modules/common/components/input'
 import { validEmail } from '../../action'
 
 function TypeEmail({
-  loginForm,
-  setLoginForm,
+  form,
+  setForm,
 }: {
-  loginForm: LoginForm
-  setLoginForm: React.Dispatch<React.SetStateAction<LoginForm>>
+  form: AuthForm
+  setForm: React.Dispatch<React.SetStateAction<AuthForm>>
 }) {
-  const [form, action] = useFormState(validEmail, loginForm)
+  const [curForm, action] = useFormState(validEmail, form)
   useEffect(() => {
-    setLoginForm(form)
-  }, [form])
+    setForm(curForm)
+  }, [curForm])
   return (
     <>
       <form action={action}>
         <Input name="email" type="email" required />
         <button type="submit"> Submit </button>
       </form>
-      <span>{form.message}</span>
+      {form.message ? <span>{form.message}</span> : null}
     </>
   )
 }

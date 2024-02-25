@@ -33,7 +33,7 @@ export async function makeUser(payload: {
   imageUrl: string
   token: string
 }) {
-  return HypeClient.user.makeUser(payload)
+  return HypeClient.auth.makeUser(payload)
 }
 
 export async function goLogin(payload: { email: string; password: string }) {
