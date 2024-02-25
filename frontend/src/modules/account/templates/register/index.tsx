@@ -5,6 +5,7 @@ import { AuthForm } from '@/types/account/type'
 import TypeAuth from '../../components/typeAuth'
 import TypeEmail from '../../components/typeEmail'
 import TypeRegistForm from '../../components/typeRegistForm'
+import styles from './index.module.scss'
 
 function viewSelector({
   form,
@@ -43,10 +44,10 @@ function RegisterTemplate() {
   const [form, setForm] = useState<AuthForm>(initialState)
 
   return (
-    <>
+    <div className={styles.RegisterTemplateContainer}>
       <h2>Register</h2>
       {viewSelector({ form, setForm })}
-    </>
+    </div>
   )
 }
 

@@ -5,6 +5,7 @@ import { useFormState } from 'react-dom'
 import { useEffect } from 'react'
 import Input from '@/modules/common/components/input'
 import { validEmail } from '../../action'
+import styles from './index.module.scss'
 
 function TypeEmail({
   form,
@@ -18,13 +19,18 @@ function TypeEmail({
     setForm(curForm)
   }, [curForm])
   return (
-    <>
-      <form action={action}>
+    <div className={styles.TypeEmailContainer}>
+      <form className={styles.TypeEmailForm} action={action}>
         <Input name="email" type="email" required />
-        <button type="submit"> Submit </button>
+        {form.message ? (
+          <span className={styles.span}>{form.message}</span>
+        ) : null}
+        <button className={styles.TypeEmailButton} type="submit">
+          {' '}
+          Submit{' '}
+        </button>
       </form>
-      {form.message ? <span>{form.message}</span> : null}
-    </>
+    </div>
   )
 }
 

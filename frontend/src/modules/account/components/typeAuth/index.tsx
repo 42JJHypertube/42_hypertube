@@ -5,6 +5,7 @@ import { useEffect } from 'react'
 import { useFormState } from 'react-dom'
 import Input from '@/modules/common/components/input'
 import { loginByEmail, loginByPassword, verifyCode } from '../../action'
+import styles from './index.module.scss'
 
 function getLogin(type: string) {
   switch (type) {
@@ -34,24 +35,27 @@ function TypeAuth({
     setForm(curForm)
   }, [curForm])
   return (
-    <>
+    <div className={styles.TypeAuthContainer}>
       <span> {curForm.email} </span>
-      <form action={action}>
+      <form className={styles.TypeAuthForm} action={action}>
         <Input
           name={form.state === 'login-password' ? 'password' : 'code'}
           type={form.state === 'login-password' ? 'password' : 'text'}
           required
         />
-        <button type="submit"> Submit </button>
+        <span> {curForm.message}</span>
+        <button className={styles.TypeAuthButton} type="submit">
+          {' '}
+          Submit{' '}
+        </button>
       </form>
-      <span> {curForm.message}</span>
       <button
         type="button"
         onClick={() => setForm({ ...form, state: 'login-email' })}
       >
         Go Back
       </button>
-    </>
+    </div>
   )
 }
 

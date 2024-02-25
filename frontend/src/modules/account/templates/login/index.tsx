@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { AuthForm } from '@/types/account/type'
 import TypeAuth from '../../components/typeAuth'
 import TypeEmail from '../../components/typeEmail'
+import styles from './index.module.scss'
 
 function viewSelector({
   form,
@@ -41,10 +42,10 @@ function LoginTemplate() {
   const [form, setForm] = useState<AuthForm>(initialState)
 
   return (
-    <>
+    <div className={styles.LoginTemplateContainer}>
       <h2> Login </h2>
       {viewSelector({ form, setForm })}
-    </>
+    </div>
   )
 }
 

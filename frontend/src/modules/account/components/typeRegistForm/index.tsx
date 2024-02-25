@@ -3,7 +3,7 @@ import Input from '@/modules/common/components/input'
 import { AuthForm } from '@/types/account/type'
 import { useEffect } from 'react'
 import { registUser } from '../../action'
-import styles from './register.module.scss'
+import styles from './index.module.scss'
 
 function TypeRegistForm({
   form,
@@ -19,16 +19,18 @@ function TypeRegistForm({
   }, [curForm])
 
   return (
-    <div className={styles.mainContainer}>
-      <h3 className={styles.h1}> Register </h3>
-      <form className={styles.registForm} action={formAction}>
+    <div className={styles.TypeRegistFormContainer}>
+      <form className={styles.TypeRegistForm} action={formAction}>
         <Input name="nickname" required />
         <Input name="firstName" required />
         <Input name="lastName" required />
         <Input name="password" type="password" required />
         <Input name="password2" type="password" required />
-        {curForm.message ? <h2> {form.message} </h2> : null}
-        <button type="submit"> Submit </button>
+        {curForm.message ? <span> {form.message} </span> : null}
+        <button className={styles.TypeRegistButton} type="submit">
+          {' '}
+          Submit{' '}
+        </button>
       </form>
     </div>
   )
