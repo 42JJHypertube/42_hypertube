@@ -67,7 +67,7 @@ public class AuthController {
         return ResponseEntity.ok(new AuthEmailTokenDto(emailToken));
     }
 
-    @PostMapping("/accessToken")
+    @PostMapping("/access-token")
     public JwtTokenDto gerateAccessToken(HttpServletRequest request, HttpServletResponse response) {
         String accessToken = cookieUtil.getCookie(request, "access_token").get().getValue();
         String refreshToken = cookieUtil.getCookie(request, "refresh_token").get().getValue();
