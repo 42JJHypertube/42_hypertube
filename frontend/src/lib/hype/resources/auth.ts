@@ -1,6 +1,6 @@
 import BaseResource from './base'
 
-import { ResSendCode, ResSignIn } from '../type/auth'
+import { ResSendCode, ResSignIn, ResCheckEmail } from '../type/auth'
 import { ResponsePromise } from '../type/common'
 
 class AuthResource extends BaseResource {
@@ -13,7 +13,31 @@ class AuthResource extends BaseResource {
     payload: Record<string, string | null>,
     customHeaders?: Record<string, string | null>,
   ): ResponsePromise<ResSendCode> {
-    const path = '/auth/2fa/signup/send-code'
+    const path = '/auth/2fa/send-code'
+    return this.client.request('POST', path, payload, {}, customHeaders)
+  }
+
+  checkEmail(
+    payload: Record<string, string | null>,
+    customHeaders?: Record<string, string | null>,
+  ): ResponsePromise<ResCheckEmail> {
+    const path = `/auth/email-check?email=${payload.email}`
+    return this.client.request('GET', path, {}, {}, customHeaders)
+  }
+
+  loginEmailToken(
+    payload: Record<string, string | null>,
+    customHeaders?: Record<string, string | null>,
+  ): ResponsePromise<ResCheckEmail> {
+    const path = '/auth/sign-in/email-token'
+    return this.client.request('POST', path, payload, {}, customHeaders)
+  }
+
+  loginPassword(
+    payload: Record<string, string | null>,
+    customHeaders?: Record<string, string | null>,
+  ): ResponsePromise<ResCheckEmail> {
+    const path = '/auth/sign-in/password'
     return this.client.request('POST', path, payload, {}, customHeaders)
   }
 
@@ -26,7 +50,7 @@ class AuthResource extends BaseResource {
     payload: Record<string, string | null>,
     customHeaders?: Record<string, string | null>,
   ) {
-    const path = `/auth/2fa/signup/verify-code?email=${payload.email}&code=${payload.code}`
+    const path = `/auth/2fa/verify-code?email=${payload.email}&code=${payload.code}`
     return this.client.request('GET', path, payload, {}, customHeaders)
   }
 
@@ -36,6 +60,25 @@ class AuthResource extends BaseResource {
   ): ResponsePromise<ResSignIn> {
     const path = '/auth/sign-in'
     return this.client.request('POST', path, payload, {}, customHeaders)
+  }
+
+  makeUser(payload: {
+    nickname: string
+    email: string
+    password: string
+    password2: string
+    firstName: string
+    lastName: string
+    imageUrl: string
+    token: string
+  }) {
+    const path = '/auth/sign-up'
+    return this.client.request('POST', path, payload)
+  }
+
+  loginGoogle() {
+    const path = '/auth/oauth2/login/google'
+    return this.client.request('GET', path)
   }
 }
 

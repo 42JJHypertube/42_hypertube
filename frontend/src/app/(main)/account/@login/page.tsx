@@ -1,5 +1,5 @@
-import LoginTemplate from '@/modules/account/templates/login-template'
+import AccountTemplate from '@/modules/account/templates/account'
 
 export default function Login() {
-  return <LoginTemplate />
+  return <AccountTemplate />
 }

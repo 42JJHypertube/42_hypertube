@@ -1,0 +1,35 @@
+.AccountNavContainer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+}
+
+.AccountNavLine {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  padding: 0.1rem 0;
+
+  .text {
+    font-size: 0.8rem;
+    margin-right: 0.2rem;
+  }
+
+  .button {
+    color: rgb(43, 43, 251);
+    border: none;
+    background-color: transparent;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+}
+
+.googleAuth {
+  border: none;
+  background-color: transparent;
+}
