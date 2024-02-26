@@ -1,182 +1,228 @@
 'use server'
 
-import { getAuthCode, goLogin, veriftyAuthCode, makeUser } from '@/lib/data'
+import {
+  getAuthCode,
+  veriftyAuthCode,
+  makeUser,
+  checkEmail,
+  loginPassword,
+  loginEmailToken,
+} from '@/lib/data'
+import { AuthForm, AuthSequence } from '@/types/account/type'
 import { cookies } from 'next/headers'
 
-interface RegisterInfo {
-  email: string
-  nickname: string
-  lastName: string
-  firstName: string
-  password: string
-  password2: string
-  code: string
-}
-
-interface LoginInfo {
-  email: string
-  password: string
-}
-
-export type LoginFormInfo = {
-  email: string
-  password: string
-  error_message: string | null
-  token: string | null
-}
-
-export type RegisterFormInfo = {
-  email: string
-  nickname: string
-  lastName: string
-  firstName: string
-  password: string
-  password2: string
-  error_message: string | null
-  code: string | null
-  token: string | null
-}
-
-export async function registUser(
-  currentState: RegisterFormInfo,
-  formData: FormData,
-) {
+export async function registUser(currentState: AuthForm, formData: FormData) {
   const formInfo = {
-    email: formData.get('email'),
-    nickname: formData.get('nickname'),
-    lastName: formData.get('lastname'),
-    firstName: formData.get('firstname'),
-    password: formData.get('password1'),
-    password2: formData.get('password2'),
-    code: formData.get('code'),
-  } as RegisterInfo
-
-  const currentInfo = {
-    nickname: currentState.nickname,
-    email: currentState.email,
-    password: currentState.password,
-    password2: currentState.password2,
-    firstName: currentState.firstName,
-    lastName: currentState.lastName,
+    nickname: formData.get('nickname') as string,
+    lastName: formData.get('lastName') as string,
+    firstName: formData.get('firstName') as string,
+    password: formData.get('password') as string,
+    password2: formData.get('password2') as string,
   }
 
-  if (!currentState.token) {
-    const payload = {
-      email: formInfo.email,
-    }
-
-    const ret = await getAuthCode(payload)
-      .then((res) => res)
-      .catch(() => 'error')
-
-    console.log(ret)
-    switch (ret.response.status) {
-      case 200:
-        return {
-          ...formInfo,
-          error_message: null,
-          code: null,
-          token: 'true',
-        }
-      default:
-        return {
-          ...formInfo,
-          error_message: ret.response.data.message as string,
-          code: null,
-          token: null,
-        }
-    }
-  }
-
-  const ret = await veriftyAuthCode({
+  const { response } = await makeUser({
+    ...formInfo,
     email: currentState.email,
-    code: formData.get('code') as string,
+    token: currentState.emailToken,
+    imageUrl: '',
   })
-    .then((res) => res)
-    .catch((error) => error)
 
-  console.log(ret)
-  switch (ret.response.status) {
-    case 200: {
-      const ret2 = await makeUser({
-        ...currentInfo,
-        token: ret.data,
-        imageUrl: '',
-      })
-      if (ret2.response.status === 200) {
-        return {
-          ...currentInfo,
-          error_message: '',
-          code: 'true',
-          token: 'true',
-        }
-      }
-      break
+  console.log(response)
+
+  if (response?.status === 200) {
+    return {
+      ...currentState,
+      message: '회원가입에 성공했습니다',
     }
-    case 401:
-      return {
-        ...currentInfo,
-        error_message: ret.response.data.message as string,
-        code: null,
-        token: 'true',
-      }
-    default:
-      return {
-        ...currentInfo,
-        error_message: ret.response.data.message as string,
-        code: null,
-        token: null,
-      }
   }
-
   return {
-    ...currentInfo,
-    error_message: ret.response.data.message as string,
-    code: null,
-    token: null,
+    ...currentState,
+    message: '에러가 발생했습니다.',
   }
 }
 
-export async function loginUser(
-  currentState: LoginFormInfo,
-  formData: FormData,
-) {
-  // if token is null => check 2fa first;
-  if (!currentState.token) {
-    const info = {
-      email: formData.get('email'),
-      password: formData.get('password'),
-    } as LoginInfo
+export async function validEmail(currentState: AuthForm, formData: FormData) {
+  const email = formData.get('email') as string
+  const { data, response } = await checkEmail(email)
 
-    // const ret = await getAuthCode({email: info.email}).then((res) => res).catch(() => "error")
+  let type
+  if (currentState.state.includes('login-')) type = 'login'
+  else type = 'regist'
 
-    const ret = await goLogin({ email: info.email, password: info.password })
-      .then((res) => res)
-      .catch((error) => error)
+  const defaultRes: AuthForm = {
+    ...currentState,
+    email,
+  }
+  console.log(email)
+  console.log(data)
+  // 이메일이 존재하고 패스워드가 설정되어있는 경우
+  if (data?.emailExist && data?.passwordExist) {
+    if (type === 'regist')
+      return {
+        ...defaultRes,
+        message: '이미 등록된 계정입니다.',
+      }
+    if (type === 'login')
+      return {
+        ...defaultRes,
+        state: 'login-password' as AuthSequence,
+        message: null,
+      }
+  }
 
-    // if login success
-    if (ret.response.status === 200) {
-      cookies().set('access_token', ret.data.accessToken, {
-        httpOnly: true,
-      })
-      cookies().set('refresh_token', ret.data.refreshToken, {
-        httpOnly: true,
-      })
+  // 이메일은 존재하지만 패스워드가 설정되어 있지 않는 경우
+  if (data?.emailExist) {
+    if (type === 'login') {
+      const ret = await getAuthCode({ email })
+
+      if (ret?.response.status === 200)
+        return {
+          ...defaultRes,
+          state: 'login-code' as AuthSequence,
+          message: null,
+        }
+
+      return {
+        ...defaultRes,
+        message: '에러가 발생했습니다. 다시 시도해주세요',
+      }
     }
-
-    return {
-      email: info.email,
-      password: info.password,
-      error_message: null,
-      token: 'hello',
+    if (type === 'regist') {
+      return {
+        ...defaultRes,
+        state: 'regist-auth' as AuthSequence,
+        message: null,
+      }
     }
   }
 
-  // if have token do login logic
+  // 성공했지만, 위의 경우에 안걸린 경우 -> 아이디가 존재하지않음
+  if (response?.status === 200) {
+    if (type === 'login')
+      return {
+        ...defaultRes,
+        message: '존재하지 않는 아이디 입니다.',
+      }
+    if (type === 'regist') {
+      const ret = await getAuthCode({ email })
+      console.log(ret.data)
+      if (ret?.response.status === 200)
+        return {
+          ...defaultRes,
+          state: 'regist-auth' as AuthSequence,
+          message: null,
+        }
+
+      return {
+        ...defaultRes,
+        message: '인증 코드 발송중 에러가 발생했습니다',
+      }
+    }
+  }
+
+  // 위의 경우에 전부 걸리지않았다 -> 에러 발생
   return {
-    email: currentState.email,
-    password: currentState.password,
-    error_message: null,
-    token: null,
+    ...defaultRes,
+    message: '에러가 발생했습니다.',
+  }
+}
+
+export async function loginByPassword(
+  currentState: AuthForm,
+  formData: FormData,
+) {
+  const defaultRes: AuthForm = {
+    ...currentState,
+  }
+  const email = currentState.email as string
+  const password = formData.get('password') as string
+  const emailToken = ''
+  const { data, response } = await loginPassword({
+    email,
+    password,
+    emailToken,
+  })
+
+  // 로그인에 성공햇을 경우 쿠키 세팅
+  if (response.status === 200) {
+    cookies().set('access_token', data?.accessToken, {
+      httpOnly: true,
+    })
+    cookies().set('refresh_token', data?.refreshToken, {
+      httpOnly: true,
+    })
+    return defaultRes
+  }
+
+  // 로그인이 실패했을 때 에러메세지 반환
+  return {
+    ...defaultRes,
+    message: '잘못된 패스워드 입니다 or 에러가 발생했습니다.',
+  }
+}
+
+export async function loginByEmail(currentState: AuthForm, formData: FormData) {
+  const defaultRes: AuthForm = {
+    ...currentState,
+  }
+  const email = currentState.email as string
+  const code = formData.get('code') as string
+
+  // code를 이용해서 email Token 을 받아옴
+  const ret = await veriftyAuthCode({ email, code })
+  if (ret.response?.status === 200) {
+    const { emailToken } = ret.data
+    const password = ''
+    const { data, response } = await loginEmailToken({
+      email,
+      emailToken,
+      password,
+    })
+
+    // 로그인 성공시 쿠키 세팅
+    if (response?.status === 200) {
+      cookies().set('access_token', data?.accessToken, {
+        httpOnly: true,
+        secure: true,
+      })
+      cookies().set('refresh_token', data?.refreshToken, {
+        httpOnly: true,
+        secure: true,
+      })
+      return defaultRes
+    }
+
+    // 실패시 에러메시지 반환
+    return {
+      ...defaultRes,
+      message: '에러가 발생했습니다, 다시 시도해 주세요',
+    }
+  }
+
+  // verifyCode에서 에러 발생시 에러메세지 반환
+  return {
+    ...defaultRes,
+    message: '유효하지 않은 코드입니다',
+  }
+}
+
+export async function verifyCode(currentState: AuthForm, formData: FormData) {
+  const email = currentState.email as string
+  const code = formData.get('code') as string
+  const { data, response } = await veriftyAuthCode({ email, code })
+
+  console.log(data)
+  if (response.status === 200) {
+    return {
+      ...currentState,
+      state: 'regist-form' as AuthSequence,
+      emailToken: data.emailToken,
+      message: null,
+    }
+  }
+
+  return {
+    ...currentState,
+    message: '코드 인증중 에러가 발생했습니다.',
   }
 }
