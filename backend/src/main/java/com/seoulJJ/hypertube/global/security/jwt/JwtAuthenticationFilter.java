@@ -1,6 +1,5 @@
 package com.seoulJJ.hypertube.global.security.jwt;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -29,8 +28,14 @@ public class JwtAuthenticationFilter extends GenericFilterBean{
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
 
+        
         // 1. Request Header에서 JWT 토큰 추출
         String token = resolveToken((HttpServletRequest) request);
+
+        if (((HttpServletRequest) request).getServletPath().equals("/api/auth/access-token")) {
+            chain.doFilter(request, response);
+            return;
+        }
 
         // 2. validateToken으로 토큰 유효성 검사
         if (token != null && jwtTokenProvider.validateToken(token)) {

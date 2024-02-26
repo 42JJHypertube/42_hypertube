@@ -104,7 +104,7 @@ public class AuthService {
 
     @Transactional
     public JwtTokenDto regenerateToken(AuthAccessTokenRequestDto accessTokenRequestDto) {
-
+        
         String accessToken = accessTokenRequestDto.getAccessToken();
         String refreshToken = accessTokenRequestDto.getRefreshToken();
         String foundRefreshToken = refreshTokenService.findByAccesstoken(accessTokenRequestDto.getAccessToken())

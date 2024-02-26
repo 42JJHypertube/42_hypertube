@@ -21,6 +21,7 @@ public class EmailTokenService {
         emailTokenRepository.save(new EmailToken(email, encryptedEmailToken));
     }
 
+    @Transactional
     public void verifyEmailToken(@NonNull String token, @NonNull String email) {
         EmailToken encryptedEmailToken = emailTokenRepository.findByEmail(email).orElseThrow(() -> new AuthVerifyEmailTokenFailedException());
         if (!passwordEncoder.matches(token, encryptedEmailToken.getEmailToken())) {

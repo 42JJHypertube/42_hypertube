@@ -12,6 +12,8 @@ public enum ErrorCode {
     //auth
     BAD_CREDENTIALS(401, "AU100", "BAD CREDENTIALS"),
     EXPIRED_JWT(401, "AU101", "EXPIRED JWT"),
+    NO_COOKIE(404, "AU102", "NO COOKIES"),
+    INVALID_JWT(401, "AU103", "INVALID JWT"),
     
     //user
     USER_NOT_FOUND(404, "UR100", "USER NOT FOUND"),
