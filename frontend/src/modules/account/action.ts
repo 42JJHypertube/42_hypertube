@@ -7,6 +7,7 @@ import {
   checkEmail,
   loginPassword,
   loginEmailToken,
+  checkPermission,
 } from '@/lib/data'
 import { AuthForm, AuthSequence } from '@/types/account/type'
 import { cookies } from 'next/headers'
@@ -75,6 +76,7 @@ export async function validEmail(currentState: AuthForm, formData: FormData) {
     if (type === 'login') {
       const ret = await getAuthCode({ email })
 
+      console.log(ret.data)
       if (ret?.response.status === 200)
         return {
           ...defaultRes,
@@ -225,4 +227,10 @@ export async function verifyCode(currentState: AuthForm, formData: FormData) {
     ...currentState,
     message: '코드 인증중 에러가 발생했습니다.',
   }
+}
+
+export async function checkLogin() {
+  const { data, response } = await checkPermission()
+
+  return { data, response }
 }

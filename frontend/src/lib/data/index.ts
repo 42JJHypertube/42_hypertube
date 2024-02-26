@@ -92,3 +92,10 @@ export async function loginPassword({
     .then((res) => res)
     .catch((error) => error)
 }
+
+export async function checkPermission() {
+  return HypeClient.auth
+    .checkPermission()
+    .then((res) => res)
+    .catch((error) => error)
+}

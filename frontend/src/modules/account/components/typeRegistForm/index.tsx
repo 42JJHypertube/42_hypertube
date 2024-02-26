@@ -20,6 +20,7 @@ function TypeRegistForm({
 
   return (
     <div className={styles.TypeRegistFormContainer}>
+      <h2>Register</h2>
       <form className={styles.TypeRegistForm} action={formAction}>
         <Input name="nickname" required />
         <Input name="firstName" required />

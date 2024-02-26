@@ -5,6 +5,7 @@ import { AuthForm } from '@/types/account/type'
 import TypeAuth from '../../components/typeAuth'
 import TypeEmail from '../../components/typeEmail'
 import styles from './index.module.scss'
+import Back from '../../components/back'
 
 function viewSelector({
   form,
@@ -43,8 +44,11 @@ function LoginTemplate() {
 
   return (
     <div className={styles.LoginTemplateContainer}>
-      <h2> Login </h2>
-      {viewSelector({ form, setForm })}
+      <div>
+        <Back form={form} setForm={setForm}></Back>
+        {viewSelector({ form, setForm })}
+        <Back form={form} setForm={setForm}></Back>
+      </div>
     </div>
   )
 }

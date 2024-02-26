@@ -30,6 +30,7 @@ class Client {
     const client = axios.create({
       baseURL: config.baseURL,
       httpsAgent: agent,
+      withCredentials: true,
     })
 
     return client

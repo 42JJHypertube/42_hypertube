@@ -20,6 +20,7 @@ function TypeEmail({
   }, [curForm])
   return (
     <div className={styles.TypeEmailContainer}>
+      <h2>{form.state.includes('regist') ? 'Register' : 'Log In'}</h2>
       <form className={styles.TypeEmailForm} action={action}>
         <Input name="email" type="email" required />
         {form.message ? (

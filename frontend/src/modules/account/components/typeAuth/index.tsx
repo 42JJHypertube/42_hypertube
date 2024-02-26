@@ -34,8 +34,10 @@ function TypeAuth({
   useEffect(() => {
     setForm(curForm)
   }, [curForm])
+
   return (
     <div className={styles.TypeAuthContainer}>
+      <h2>{form.state.includes('regist') ? 'Register' : 'Log In'}</h2>
       <span> {curForm.email} </span>
       <form className={styles.TypeAuthForm} action={action}>
         <Input
@@ -49,12 +51,6 @@ function TypeAuth({
           Submit{' '}
         </button>
       </form>
-      <button
-        type="button"
-        onClick={() => setForm({ ...form, state: 'login-email' })}
-      >
-        Go Back
-      </button>
     </div>
   )
 }

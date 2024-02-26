@@ -5,7 +5,7 @@ import { LoginViewEnum, LoginView } from '@/types/account/type'
 import LoginTemplate from '../login'
 import FindPw from '../../components/findPw'
 import RegisterTemplate from '../register'
-import AccountNav from '../nav'
+import AccountNav from '../../components/nav'
 
 const viewSelector = ({ currentView }: { currentView: LoginView }) => {
   switch (currentView) {

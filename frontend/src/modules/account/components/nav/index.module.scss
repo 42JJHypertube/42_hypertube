@@ -33,3 +33,23 @@
   border: none;
   background-color: transparent;
 }
+
+.AccountNavOauth {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+
+  .customAuth {
+    display: flex;
+    width: 189px;
+    height: 40px;
+    background-color: rgb(18, 18, 18);
+    color: rgb(208, 206, 206);
+    justify-content: center;
+    align-items: center;
+    font-weight: 600;
+    font-size: 0.8rem;
+    border-radius: 0.2rem;
+    border: 1px solid rgb(156, 156, 156);
+  }
+}
