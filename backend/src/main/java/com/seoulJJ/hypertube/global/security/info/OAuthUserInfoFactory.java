@@ -2,6 +2,7 @@ package com.seoulJJ.hypertube.global.security.info;
 
 import java.util.Map;
 
+import com.seoulJJ.hypertube.global.security.info.impl.FacebookOAuthUserInfo;
 import com.seoulJJ.hypertube.global.security.info.impl.FortyTwoOAuthUserInfo;
 import com.seoulJJ.hypertube.global.security.info.impl.GoogleOAuthUserInfo;
 
@@ -12,6 +13,8 @@ public class OAuthUserInfoFactory {
 				return new FortyTwoOAuthUserInfo(attributes);
 			case GOOGLE:
 				return new GoogleOAuthUserInfo(attributes);
+			case FACEBOOK:
+				return new FacebookOAuthUserInfo(attributes);
 			default:
 				throw new IllegalArgumentException("Invalid Provider Type.");
 		}

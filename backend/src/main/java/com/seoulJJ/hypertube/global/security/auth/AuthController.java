@@ -18,6 +18,7 @@ import com.seoulJJ.hypertube.global.security.auth.RedisEmailToken.EmailTokenServ
 import com.seoulJJ.hypertube.global.security.auth.dto.AuthAccessTokenRequestDto;
 import com.seoulJJ.hypertube.global.security.auth.dto.AuthEmailCheckResponseDto;
 import com.seoulJJ.hypertube.global.security.auth.dto.AuthEmailTokenDto;
+import com.seoulJJ.hypertube.global.security.auth.dto.AuthModifyPasswordRequestDto;
 import com.seoulJJ.hypertube.global.security.auth.dto.AuthSendCodeRequestDto;
 import com.seoulJJ.hypertube.global.security.auth.dto.AuthSignInDto;
 import com.seoulJJ.hypertube.global.security.auth.exception.AuthTokenCookieNotFoundException;
@@ -53,6 +54,16 @@ public class AuthController {
         boolean isPasswordExist = userService.isPasswordExist(email);
         return new AuthEmailCheckResponseDto(isEmailExist, isPasswordExist);
     }
+
+    @PostMapping("modify-password")
+    public ResponseEntity<String> postMethodName(@RequestBody AuthModifyPasswordRequestDto requestDto) {
+        if (!requestDto.getPassword().equals(requestDto.getPassword2()))
+            throw new InvalidParameterException("비밀번호가 일치하지 않습니다.", ErrorCode.VALID_FAILED);
+        // authService.modifyPassword(requestDto.getEmailToken(), requestDto.getPassword());
+
+        return ResponseEntity.ok("비밀번호 변경 성공!");
+    }
+    
 
     @PostMapping("/2fa/send-code")
     public ResponseEntity<String> sendMailCheckCode(@Valid @RequestBody AuthSendCodeRequestDto requestDto) {

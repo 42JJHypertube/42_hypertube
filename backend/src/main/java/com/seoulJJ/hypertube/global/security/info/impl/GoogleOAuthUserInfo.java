@@ -37,7 +37,7 @@ public class GoogleOAuthUserInfo extends OAuthUserInfo {
 	}
 
 	@Override
-	public Long getGoogleId() {
+	public Long getProviderId() {
 		return (Long)attributes.get("sub");
 	}
 }

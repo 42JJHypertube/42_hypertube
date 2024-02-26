@@ -48,10 +48,10 @@ public class AuthService {
     private final UserService userService;
 
     @Autowired
-    private final PasswordEncoder passwordEncoder;
+    private final EmailTokenService emailTokenService;
 
     @Autowired
-    private final EmailTokenService emailTokenService;
+    private final PasswordEncoder passwordEncoder;
 
     public String createCode(@NonNull String email) {
         String code = generateCode();
