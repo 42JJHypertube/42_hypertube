@@ -183,9 +183,11 @@ export async function loginByEmail(currentState: AuthForm, formData: FormData) {
     if (response?.status === 200) {
       cookies().set('access_token', data?.accessToken, {
         httpOnly: true,
+        secure: true,
       })
       cookies().set('refresh_token', data?.refreshToken, {
         httpOnly: true,
+        secure: true,
       })
       return defaultRes
     }

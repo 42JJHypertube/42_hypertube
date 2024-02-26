@@ -75,6 +75,11 @@ class AuthResource extends BaseResource {
     const path = '/auth/sign-up'
     return this.client.request('POST', path, payload)
   }
+
+  loginGoogle() {
+    const path = '/auth/oauth2/login/google'
+    return this.client.request('GET', path)
+  }
 }
 
 export default AuthResource
