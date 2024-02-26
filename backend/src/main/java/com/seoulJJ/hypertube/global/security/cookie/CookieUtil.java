@@ -2,10 +2,13 @@ package com.seoulJJ.hypertube.global.security.cookie;
 
 import java.util.Optional;
 
+import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
+
+import com.seoulJJ.hypertube.global.security.jwt.dto.JwtTokenDto;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,6 +22,12 @@ public class CookieUtil {
 	@Value("${info.web.domain}")
 	private String domain;
 
+	@Value("${spring.jwt.access-token-expiration}")
+    private long accessTokenExpiresIn;
+	
+    @Value("${spring.jwt.refresh-token-expiration}")
+    private long refreshTokenExpiresIn;
+
 	public Optional<Cookie> getCookie(HttpServletRequest request, String name) {
 		Cookie[] cookies = request.getCookies();
 
@@ -30,6 +39,26 @@ public class CookieUtil {
 			}
 		}
 		return Optional.empty();
+	}
+
+	public void addJwtTokenCookie(HttpServletResponse response, JwtTokenDto jwtTokenDto) {
+
+		ResponseCookie accessTokenCookie = ResponseCookie.from("access_token", jwtTokenDto.getAccessToken())
+			.maxAge((int)(refreshTokenExpiresIn / 1000))
+			.domain(domain)
+			.httpOnly(true)
+			.path("/")
+			.secure(true)
+			.build();
+		ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh_token", jwtTokenDto.getRefreshToken())
+			.maxAge((int)(refreshTokenExpiresIn / 1000))
+			.domain(domain)
+			.httpOnly(true)
+			.path("/")
+			.secure(true)
+			.build();
+		response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
+		response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
 	}
 
 	public void addCookie(HttpServletResponse response, String name, String value, int maxAge) {

@@ -25,10 +25,10 @@ import com.seoulJJ.hypertube.global.security.jwt.dto.JwtTokenDto;
 import com.seoulJJ.hypertube.global.utils.SnsMailSender;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestParam;
-
 
 @RestController
 @RequiredArgsConstructor
@@ -52,7 +52,6 @@ public class AuthController {
         boolean isPasswordExist = userService.isPasswordExist(email);
         return new AuthEmailCheckResponseDto(isEmailExist, isPasswordExist);
     }
-    
 
     @PostMapping("/2fa/send-code")
     public ResponseEntity<String> sendMailCheckCode(@Valid @RequestBody AuthSendCodeRequestDto requestDto) {
@@ -69,11 +68,14 @@ public class AuthController {
     }
 
     @PostMapping("/accessToken")
-    public JwtTokenDto gerateAccessToken(HttpServletRequest request) {
+    public JwtTokenDto gerateAccessToken(HttpServletRequest request, HttpServletResponse response) {
         String accessToken = cookieUtil.getCookie(request, "access_token").get().getValue();
         String refreshToken = cookieUtil.getCookie(request, "refresh_token").get().getValue();
         AuthAccessTokenRequestDto dto = new AuthAccessTokenRequestDto(accessToken, refreshToken);
-        return authService.regenerateToken(dto);
+
+        JwtTokenDto jwtToken = authService.regenerateToken(dto);
+        cookieUtil.addJwtTokenCookie(response, jwtToken);
+        return jwtToken;
     }
 
     @PostMapping("/sign-up")
@@ -88,20 +90,23 @@ public class AuthController {
     }
 
     @PostMapping("/sign-in/password")
-    public JwtTokenDto signInWithPassword(@RequestBody AuthSignInDto signInDto) {
+    public JwtTokenDto signInWithPassword(@RequestBody AuthSignInDto signInDto, HttpServletResponse response) {
         String email = signInDto.getEmail();
         String password = signInDto.getPassword();
 
         JwtTokenDto jwtToken = authService.signInWithPassword(email, password);
+        cookieUtil.addJwtTokenCookie(response, jwtToken);
         return jwtToken;
     }
 
     @PostMapping("/sign-in/email-token")
-    public JwtTokenDto signInWithEmailToken(@RequestBody AuthSignInDto signInDto) {
+    public JwtTokenDto signInWithEmailToken(@RequestBody AuthSignInDto signInDto, HttpServletResponse response) {
         String email = signInDto.getEmail();
         String emailToken = signInDto.getEmailToken();
 
-        return authService.signInWithEmailToken(email, emailToken);
+        JwtTokenDto jwtToken = authService.signInWithEmailToken(email, emailToken);
+        cookieUtil.addJwtTokenCookie(response, jwtToken);
+        return jwtToken;
     }
 
     @GetMapping("/user/test")
@@ -113,6 +118,5 @@ public class AuthController {
     public String adminAuthorizationTest() {
         return "Success! You are authorized admin!";
     }
-    
-    
+
 }

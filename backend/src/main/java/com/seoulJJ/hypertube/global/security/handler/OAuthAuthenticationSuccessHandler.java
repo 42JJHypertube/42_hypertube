@@ -21,10 +21,6 @@ import lombok.RequiredArgsConstructor;
 public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     @Value("${info.web.frontUrl}")
     private String targetUrl;
-    @Value("${spring.jwt.access-token-expiration}")
-    private long accessTokenExpiresIn;
-    @Value("${spring.jwt.refresh-token-expiration}")
-    private long refreshTokenExpiresIn;
 
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -49,9 +45,7 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
     protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response,
             Authentication authentication) {
         JwtTokenDto jwtToken = jwtTokenProvider.generateToken(authentication);
-        cookieUtil.addCookie(response, "access_token", jwtToken.getAccessToken(), (int)(accessTokenExpiresIn / 1000));
-        cookieUtil.addCookie(response, "refresh_token", jwtToken.getRefreshToken(), (int)(refreshTokenExpiresIn / 1000));
-
+        cookieUtil.addJwtTokenCookie(response, jwtToken);
         return targetUrl;
     }
 }
