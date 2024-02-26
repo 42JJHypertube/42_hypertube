@@ -20,6 +20,7 @@ import com.seoulJJ.hypertube.global.security.auth.dto.AuthEmailCheckResponseDto;
 import com.seoulJJ.hypertube.global.security.auth.dto.AuthEmailTokenDto;
 import com.seoulJJ.hypertube.global.security.auth.dto.AuthSendCodeRequestDto;
 import com.seoulJJ.hypertube.global.security.auth.dto.AuthSignInDto;
+import com.seoulJJ.hypertube.global.security.auth.exception.AuthTokenCookieNotFoundException;
 import com.seoulJJ.hypertube.global.security.cookie.CookieUtil;
 import com.seoulJJ.hypertube.global.security.jwt.dto.JwtTokenDto;
 import com.seoulJJ.hypertube.global.utils.SnsMailSender;
@@ -69,8 +70,8 @@ public class AuthController {
 
     @PostMapping("/access-token")
     public JwtTokenDto gerateAccessToken(HttpServletRequest request, HttpServletResponse response) {
-        String accessToken = cookieUtil.getCookie(request, "access_token").get().getValue();
-        String refreshToken = cookieUtil.getCookie(request, "refresh_token").get().getValue();
+        String accessToken = cookieUtil.getCookie(request, "access_token").orElseThrow(() -> new AuthTokenCookieNotFoundException()).getValue();
+        String refreshToken = cookieUtil.getCookie(request, "refresh_token").orElseThrow(() -> new AuthTokenCookieNotFoundException()).getValue();
         AuthAccessTokenRequestDto dto = new AuthAccessTokenRequestDto(accessToken, refreshToken);
 
         JwtTokenDto jwtToken = authService.regenerateToken(dto);

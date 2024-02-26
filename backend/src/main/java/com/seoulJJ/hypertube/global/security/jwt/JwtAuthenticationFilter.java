@@ -17,7 +17,6 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 
 @Component
 @AllArgsConstructor
