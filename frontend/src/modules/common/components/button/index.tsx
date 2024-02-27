@@ -1,4 +1,3 @@
-import { useFormStatus } from 'react-dom'
 import styles from './index.module.scss'
 
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement>
@@ -7,9 +6,8 @@ function Button({
   type,
   content,
   positive = true,
-}: ButtonProps & { positive: boolean; content: string }) {
-  const { pending } = useFormStatus()
-
+  pending = false,
+}: ButtonProps & { positive: boolean; content: string; pending: boolean }) {
   return (
     <button
       type={type === 'submit' ? 'submit' : 'button'}

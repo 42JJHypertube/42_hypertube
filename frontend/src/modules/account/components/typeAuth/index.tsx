@@ -4,7 +4,7 @@ import { AuthForm } from '@/types/account/type'
 import { useEffect } from 'react'
 import { useFormState } from 'react-dom'
 import Input from '@/modules/common/components/input'
-import Button from '@/modules/common/components/button'
+import FormButton from '@/modules/common/components/formButton'
 import { loginByEmail, loginByPassword, verifyCode } from '../../action'
 import styles from './index.module.scss'
 
@@ -52,7 +52,7 @@ function TypeAuth({
           required
         />
         <span className={styles.infoMessage}> {curForm.message}</span>
-        <Button type="submit" content="인증 후 계속하기" positive />
+        <FormButton type="submit" content="인증 후 계속하기" positive />
       </form>
     </div>
   )

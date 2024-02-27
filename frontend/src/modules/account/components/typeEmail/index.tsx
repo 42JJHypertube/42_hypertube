@@ -4,7 +4,7 @@ import { AuthForm } from '@/types/account/type'
 import { useFormState } from 'react-dom'
 import { useEffect } from 'react'
 import Input from '@/modules/common/components/input'
-import Button from '@/modules/common/components/button'
+import FormButton from '@/modules/common/components/formButton'
 import { validEmail } from '../../action'
 import styles from './index.module.scss'
 
@@ -26,7 +26,7 @@ function TypeEmail({
         {form.message ? (
           <span className={styles.infoMessage}>{form.message}</span>
         ) : null}
-        <Button
+        <FormButton
           type="submit"
           content={
             form.state === 'login-email'

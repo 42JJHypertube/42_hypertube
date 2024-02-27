@@ -2,7 +2,7 @@ import { useFormState } from 'react-dom'
 import Input from '@/modules/common/components/input'
 import { AuthForm } from '@/types/account/type'
 import { useEffect } from 'react'
-import Button from '@/modules/common/components/button'
+import FormButton from '@/modules/common/components/formButton'
 import { registUser } from '../../action'
 import styles from './index.module.scss'
 
@@ -30,7 +30,7 @@ function TypeRegistForm({
         {curForm.message ? (
           <span className={styles.infoMessage}> {form.message} </span>
         ) : null}
-        <Button type="submit" content="회원가입 신청하기" positive />
+        <FormButton type="submit" content="회원가입 신청하기" positive />
       </form>
     </div>
   )
