@@ -5,6 +5,6 @@ import com.seoulJJ.hypertube.global.exception.custom.AuthenticationException;
 
 public class AuthTokenCookieNotFoundException extends AuthenticationException {
     public AuthTokenCookieNotFoundException() {
-        super("", ErrorCode.NO_COOKIE);
+        super("Can't find accessToken or refreshToken", ErrorCode.NO_COOKIE);
     }
 }

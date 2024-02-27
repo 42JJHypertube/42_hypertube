@@ -1,7 +1,6 @@
 package com.seoulJJ.hypertube.global.security.auth;
 
 import java.util.Random;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
@@ -16,8 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.seoulJJ.hypertube.domain.user.User;
 import com.seoulJJ.hypertube.domain.user.UserService;
+import com.seoulJJ.hypertube.domain.user.exception.UserNotFoundException;
 import com.seoulJJ.hypertube.global.security.UserPrincipal;
-import com.seoulJJ.hypertube.global.security.auth.RedisEmailToken.EmailTokenService;
 import com.seoulJJ.hypertube.global.security.auth.dto.AuthAccessTokenRequestDto;
 import com.seoulJJ.hypertube.global.security.auth.exception.AuthVerifyCodeFailedException;
 import com.seoulJJ.hypertube.global.security.auth.exception.AuthVerifyEmailTokenFailedException;
@@ -46,13 +45,7 @@ public class AuthService {
 
     @Autowired
     private final UserService userService;
-
-    @Autowired
-    private final PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private final EmailTokenService emailTokenService;
-
+    
     public String createCode(@NonNull String email) {
         String code = generateCode();
         redis.setData(email, code, 300000L);
@@ -63,12 +56,6 @@ public class AuthService {
         if (!code.equals(redis.getData(email))) {
             throw new AuthVerifyCodeFailedException();
         }
-    }
-
-    public String generateEmailToken(@NonNull String email) {
-        String emailToken = UUID.randomUUID().toString();
-        emailTokenService.saveTokenInfo(email, emailToken);
-        return emailToken;
     }
 
     @Transactional
@@ -92,7 +79,10 @@ public class AuthService {
     @Transactional
     public JwtTokenDto signInWithEmailToken(String email, String emailToken) {
 
-        emailTokenService.verifyEmailToken(emailToken, email);
+        if (!jwtTokenProvider.validateToken(emailToken)) {
+            throw new AuthVerifyEmailTokenFailedException();
+        }
+        
         User user = userService.findUserByEmail(email);
         UserPrincipal userPrincipal = UserPrincipal.create(user);
         Authentication authentication = new UsernamePasswordAuthenticationToken(userPrincipal, null,

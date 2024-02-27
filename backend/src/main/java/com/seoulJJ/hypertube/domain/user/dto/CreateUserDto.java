@@ -34,7 +34,7 @@ public class CreateUserDto {
     private String imageUrl;
 
     @NotNull(message = "토큰을 입력해주세요.")
-    private String token;
+    private String emailToken;
 
     public String toString() {
         return "CreateUserDto{" +

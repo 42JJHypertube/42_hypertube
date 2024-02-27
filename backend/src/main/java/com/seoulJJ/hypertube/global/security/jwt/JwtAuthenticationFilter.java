@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
 
+import com.seoulJJ.hypertube.global.security.auth.exception.AuthInvalidTokenException;
 import com.seoulJJ.hypertube.global.security.cookie.CookieUtil;
 
 import java.io.IOException;
@@ -20,7 +21,7 @@ import lombok.AllArgsConstructor;
 
 @Component
 @AllArgsConstructor
-public class JwtAuthenticationFilter extends GenericFilterBean{
+public class JwtAuthenticationFilter extends GenericFilterBean {
 
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -28,7 +29,6 @@ public class JwtAuthenticationFilter extends GenericFilterBean{
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
 
-        
         // 1. Request Header에서 JWT 토큰 추출
         String token = resolveToken((HttpServletRequest) request);
 
@@ -38,10 +38,15 @@ public class JwtAuthenticationFilter extends GenericFilterBean{
         }
 
         // 2. validateToken으로 토큰 유효성 검사
-        if (token != null && jwtTokenProvider.validateToken(token)) {
-            // 토큰이 유효할 경우 토큰에서 Authentication 객체를 가지고 와서 SecurityContext에 저장
-            Authentication authentication = jwtTokenProvider.getAuthentication(token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        if (token != null) {
+            if (jwtTokenProvider.validateToken(token)) {
+                // 3-1. 토큰이 유효할 경우 토큰에서 Authentication 객체를 가지고 와서 SecurityContext에 저장
+                Authentication authentication = jwtTokenProvider.getAuthentication(token);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            } else {
+                // 3-2. 토큰이 유효하지 않을 경우
+                throw new AuthInvalidTokenException();
+            }
         }
 
         chain.doFilter(request, response);

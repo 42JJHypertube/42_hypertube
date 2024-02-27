@@ -5,17 +5,17 @@ import java.util.Map;
 import com.seoulJJ.hypertube.domain.user.type.RoleType;
 import com.seoulJJ.hypertube.global.security.info.OAuthUserInfo;
 
-public class FortyTwoOAuthUserInfo extends OAuthUserInfo {
+public class FacebookOAuthUserInfo extends OAuthUserInfo {
 
 	private String defaultImageUrl = "";
 
-	public FortyTwoOAuthUserInfo(Map<String, Object> attributes) {
+	public FacebookOAuthUserInfo(Map<String, Object> attributes) {
 		super(attributes);
 	}
 
 	@Override
 	public String getNickname() {
-		return attributes.get("login").toString();
+		return attributes.get("name").toString();
 	}
 
 	public String getEmail() {
@@ -23,14 +23,7 @@ public class FortyTwoOAuthUserInfo extends OAuthUserInfo {
 	}
 
 	public String getImageUrl() {
-		Map<String, Object> image = (Map<String, Object>)attributes.get("image");
-		if (image == null) {
-			return defaultImageUrl;
-		}
-		if (image.get("link") == null) {
-			return defaultImageUrl;
-		}
-		return image.get("link").toString();
+        return "";
 	}
 
 	@Override
@@ -40,6 +33,6 @@ public class FortyTwoOAuthUserInfo extends OAuthUserInfo {
 
 	@Override
 	public Long getProviderId() {
-		return null;
+		return Long.valueOf(attributes.get("id").toString());
 	}
 }

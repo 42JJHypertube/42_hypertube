@@ -23,5 +23,5 @@ public abstract class OAuthUserInfo {
 
 	public abstract RoleType getRoleType();
 
-	public abstract Long getGoogleId();
+	public abstract Long getProviderId();
 }

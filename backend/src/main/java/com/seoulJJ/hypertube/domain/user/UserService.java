@@ -6,14 +6,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.seoulJJ.hypertube.domain.user.dto.CreateUserDto;
+import com.seoulJJ.hypertube.domain.user.dto.UserDto;
 import com.seoulJJ.hypertube.domain.user.exception.UserNotFoundException;
 import com.seoulJJ.hypertube.domain.user.type.RoleType;
-import com.seoulJJ.hypertube.global.security.auth.dto.AuthEmailCheckResponseDto;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class UserService {
 
     @Autowired
@@ -40,6 +42,13 @@ public class UserService {
         return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException());
     }
 
+    @Transactional
+    public UserDto findUserDetailByEmail(String email) {
+        log.info("email(TTT) : {}", email);
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException());
+        return new UserDto(user.getNickname(), user.getEmail(), user.getFirstName(), user.getLastName(), user.getImageUrl(), user.getRoleType());
+    }
+
     @Transactional(readOnly = true)
     public boolean isEmailExist(String email) {
         User user = userRepository.findByEmail(email).orElse(null);
@@ -62,5 +71,13 @@ public class UserService {
         }
 
         return true;
+    }
+
+    @Transactional
+    public void modifyPassword(String email, String password)
+    {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException());
+        user.updatePassword(passwordEncoder.encode(password));
+        userRepository.save(user);
     }
 }

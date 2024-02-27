@@ -19,11 +19,14 @@ import com.seoulJJ.hypertube.global.security.jwt.JwtAuthenticationFilter;
 import com.seoulJJ.hypertube.global.security.jwt.JwtTokenProvider;
 import com.seoulJJ.hypertube.global.security.service.CustomOAuth2UserService;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@Log4j2
 public class SecurityConfig {
 
 	private final JwtTokenProvider jwtTokenProvider;
@@ -36,6 +39,7 @@ public class SecurityConfig {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
 		http
+				.formLogin(formLogin -> formLogin.disable())
 				.httpBasic((httpBasicConfig) -> httpBasicConfig.disable())
 				.cors((corsConfig) -> corsConfig.configurationSource(corsConfigurationSource()))
 				.csrf((csrfConfig) -> csrfConfig.disable())
@@ -50,10 +54,18 @@ public class SecurityConfig {
 						.requestMatchers("/api/docs", "/api/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html")
 						.permitAll() // swagger
 						.requestMatchers("/", "/index.html").permitAll() // permit access to the root path
-						.requestMatchers("/api/auth/user/test").hasRole("USER")
-						.requestMatchers("/api/auth/admin/test").hasRole("ADMIN")
-						.requestMatchers("/api/**").permitAll() // 전체 api 허용
-						.anyRequest().authenticated());
+						.requestMatchers("/api/auth/**").permitAll() // permit access to the auth path
+						.requestMatchers("/api/users/**").hasRole("USER")
+						.requestMatchers("/api/users/test/role-user").hasRole("USER") // USER 권한 테스트용 허용
+						.requestMatchers("/api/users/test/role-admin").hasRole("ADMIN") // ADMIN 권한 테스트용 허용
+						.anyRequest().authenticated())
+				.exceptionHandling((exceptionHandling) -> exceptionHandling
+						.authenticationEntryPoint((request, response, authException) -> {
+							response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+						})
+						.accessDeniedHandler((request, response, accessDeniedException) -> {
+							response.sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden");
+						}));
 
 		http
 				.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
@@ -67,8 +79,7 @@ public class SecurityConfig {
 						.redirectionEndpoint(endpoint -> endpoint.baseUri("/api/auth/oauth2/code/*"))
 						.userInfoEndpoint((userInfoEndpoint) -> userInfoEndpoint
 								.userService(customOAuth2UserService))
-								.successHandler(oAuthAuthenticationSuccessHandler));
-								// .failureHandler(null));
+						.successHandler(oAuthAuthenticationSuccessHandler));
 
 		return http.build();
 	}
