@@ -127,15 +127,4 @@ public class AuthController {
         cookieUtil.addJwtTokenCookie(response, jwtToken);
         return jwtToken;
     }
-
-    @GetMapping("/user/test")
-    public String userAuthorizationTest() {
-        return "Success! You are authorized user!";
-    }
-
-    @GetMapping("/admin/test")
-    public String adminAuthorizationTest() {
-        return "Success! You are authorized admin!";
-    }
-
 }

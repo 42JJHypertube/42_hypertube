@@ -13,12 +13,15 @@ import com.seoulJJ.hypertube.global.exception.ErrorCode;
 import com.seoulJJ.hypertube.global.exception.custom.AuthenticationException;
 import com.seoulJJ.hypertube.global.security.UserPrincipal;
 
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 public class LoginPrincipalArgumentResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         return parameter.getParameterAnnotation(LoginPrincipal.class) != null &&
-                parameter.getParameterType().equals(UserDetails.class);
+                parameter.getParameterType().equals(UserPrincipal.class);
     }
 
     @Override
@@ -28,6 +31,8 @@ public class LoginPrincipalArgumentResolver implements HandlerMethodArgumentReso
         if (authentication == null) {
             throw new AuthenticationException("유저 인증에 실패했습니다.", ErrorCode.UNAUTHORIZED);
         }
+
+        log.info("authentication(GGG) : {}", authentication.getPrincipal());
         return (UserPrincipal) authentication.getPrincipal();
     }
 }

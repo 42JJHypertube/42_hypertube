@@ -6,6 +6,7 @@ import com.seoulJJ.hypertube.domain.user.dto.UserDto;
 import com.seoulJJ.hypertube.global.security.UserPrincipal;
 import com.seoulJJ.hypertube.global.utils.argumentresolver.LoginPrincipal;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,12 +22,18 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/me")
-    public UserDto getUserDetail(@LoginPrincipal UserPrincipal userPrincipal) {
+    public UserDto getUserDetail(@Parameter(hidden = true) @LoginPrincipal UserPrincipal userPrincipal) {
         return userService.findUserDetailByEmail(userPrincipal.getUsername());
     }
 
-    @GetMapping("/test")
-    public String userTest() {
-        return "Test Success!";
+    @GetMapping("/test/role-user")
+    public String roleUserTest() {
+        return "Success! You are authorized user!";
     }
+
+    @GetMapping("/test/role-admin")
+    public String roleAdminTest() {
+        return "Success! You are authorized admin!";
+    }
+
 }

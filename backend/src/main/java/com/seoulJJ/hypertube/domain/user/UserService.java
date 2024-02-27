@@ -11,9 +11,11 @@ import com.seoulJJ.hypertube.domain.user.exception.UserNotFoundException;
 import com.seoulJJ.hypertube.domain.user.type.RoleType;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class UserService {
 
     @Autowired
@@ -42,8 +44,9 @@ public class UserService {
 
     @Transactional
     public UserDto findUserDetailByEmail(String email) {
+        log.info("email(TTT) : {}", email);
         User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException());
-        return new UserDto(user.getNickname(), user.getEmail(), user.getFirstName(), user.getLastName(), user.getImageUrl());
+        return new UserDto(user.getNickname(), user.getEmail(), user.getFirstName(), user.getLastName(), user.getImageUrl(), user.getRoleType());
     }
 
     @Transactional(readOnly = true)
