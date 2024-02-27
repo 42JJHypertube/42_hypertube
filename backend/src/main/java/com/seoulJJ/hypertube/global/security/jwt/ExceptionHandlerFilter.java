@@ -28,9 +28,6 @@ public class ExceptionHandlerFilter extends GenericFilterBean {
         } catch (ExpiredJwtException e) {
             // 토큰의 유효기간 만료
             setErrorResponse((HttpServletResponse) response, ErrorCode.EXPIRED_JWT);
-        } catch (SignatureException e) {
-            // 토큰의 서명이 일치하지 않음
-            setErrorResponse((HttpServletResponse) response, ErrorCode.INVALID_JWT);
         }
     }
 

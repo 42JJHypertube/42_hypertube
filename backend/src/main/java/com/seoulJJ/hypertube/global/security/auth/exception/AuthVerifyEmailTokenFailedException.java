@@ -5,6 +5,6 @@ import com.seoulJJ.hypertube.global.exception.custom.AuthenticationException;
 
 public class AuthVerifyEmailTokenFailedException extends AuthenticationException{
      public AuthVerifyEmailTokenFailedException() {
-        super("Invalid signup token", ErrorCode.UNAUTHORIZED);
+        super("Invalid email token", ErrorCode.UNAUTHORIZED);
     }
 }

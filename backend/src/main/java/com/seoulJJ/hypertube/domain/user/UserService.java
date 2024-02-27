@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.seoulJJ.hypertube.domain.user.dto.CreateUserDto;
 import com.seoulJJ.hypertube.domain.user.exception.UserNotFoundException;
 import com.seoulJJ.hypertube.domain.user.type.RoleType;
-import com.seoulJJ.hypertube.global.security.auth.dto.AuthEmailCheckResponseDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -62,5 +61,13 @@ public class UserService {
         }
 
         return true;
+    }
+
+    @Transactional
+    public void modifyPassword(String email, String password)
+    {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException());
+        user.updatePassword(passwordEncoder.encode(password));
+        userRepository.save(user);
     }
 }

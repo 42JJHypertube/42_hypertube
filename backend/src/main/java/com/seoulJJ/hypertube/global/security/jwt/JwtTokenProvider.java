@@ -41,17 +41,21 @@ public class JwtTokenProvider {
 
     private final long refreshTokenExpiresIn;
 
+    private final long emailTokenExpiresIn;
+
     private final RefreshTokenService refreshTokenService;
 
     public JwtTokenProvider(@Value("${spring.jwt.secret}") String secretKey,
             @Value("${spring.jwt.access-token-expiration}") long accessTokenExpiresIn,
             @Value("${spring.jwt.refresh-token-expiration}") long refreshTokenExpiresIn,
+            @Value("${spring.jwt.email-token-expiration}") long emailTokenExpiresIn,
             @Autowired RefreshTokenService refreshTokenService) {
         byte[] keyBytes = secretKey.getBytes();
         this.key = Keys.hmacShaKeyFor(keyBytes);
         this.accessTokenExpiresIn = accessTokenExpiresIn;
         this.refreshTokenExpiresIn = refreshTokenExpiresIn;
         this.refreshTokenService = refreshTokenService;
+        this.emailTokenExpiresIn = emailTokenExpiresIn;
     }
 
     public JwtTokenDto generateToken(Authentication authentication) {
@@ -106,6 +110,17 @@ public class JwtTokenProvider {
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
+    public String generateEmailToken(String email) {
+        long now = (new Date()).getTime();
+        Date emailTokenExpiresIn = new Date(now + this.emailTokenExpiresIn);
+        return Jwts.builder()
+                .setSubject(email)
+                .setIssuedAt(new Date())
+                .setExpiration(emailTokenExpiresIn)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
     // 토큰 정보를 검증하는 메서드
     public boolean validateToken(String token) throws ExpiredException{
         try {
@@ -120,6 +135,8 @@ public class JwtTokenProvider {
             log.info("Unsupported JWT Token", e);
         } catch (IllegalArgumentException e) {
             log.info("JWT claims string is empty.", e);
+        } catch (SignatureException e) {
+            log.info("JWT signature does not match locally computed signature.", e);
         }
         return false;
     }
@@ -140,6 +157,13 @@ public class JwtTokenProvider {
         return Long.valueOf(claims.getSubject());
     }
 
+    public String getEmailFromEmailToken(String emailToken) {
+        Claims claims = parseClaims(emailToken);
+        if (claims == null) {
+            return null;
+        }
+        return claims.getSubject();
+    }
     // accessToken
     private Claims parseClaims(String accessToken) {
         try {
