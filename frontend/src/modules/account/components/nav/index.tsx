@@ -9,6 +9,7 @@ function AccountNav({
 }) {
   return (
     <nav className={styles.AccountNavContainer}>
+      <div className={styles.seperator} />
       <div className={styles.AccountNavOauth}>
         <Link
           href="https://localhost/api/auth/oauth2/login/google"

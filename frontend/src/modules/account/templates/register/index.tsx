@@ -6,7 +6,6 @@ import TypeAuth from '../../components/typeAuth'
 import TypeEmail from '../../components/typeEmail'
 import TypeRegistForm from '../../components/typeRegistForm'
 import styles from './index.module.scss'
-import Back from '../../components/back'
 
 function viewSelector({
   form,
@@ -46,9 +45,7 @@ function RegisterTemplate() {
 
   return (
     <div className={styles.RegisterTemplateContainer}>
-      <Back form={form} setForm={setForm}></Back>
       {viewSelector({ form, setForm })}
-      <Back form={form} setForm={setForm}></Back>
     </div>
   )
 }

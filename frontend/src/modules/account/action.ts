@@ -21,6 +21,13 @@ export async function registUser(currentState: AuthForm, formData: FormData) {
     password2: formData.get('password2') as string,
   }
 
+  if (formInfo.password !== formInfo.password2) {
+    return {
+      ...currentState,
+      message: 'Confirm Password 가 일치하지 않습니다.',
+    }
+  }
+
   const { response } = await makeUser({
     ...formInfo,
     email: currentState.email,

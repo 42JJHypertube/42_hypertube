@@ -37,6 +37,7 @@
 .AccountNavOauth {
   display: flex;
   flex-direction: column;
+  margin: 1rem 0;
   gap: 0.2rem;
 
   .customAuth {
@@ -52,4 +53,10 @@
     border-radius: 0.2rem;
     border: 1px solid rgb(156, 156, 156);
   }
+}
+
+.seperator {
+  width: 100%;
+  height: 1px;
+  border-bottom: 1px solid rgb(156, 156, 156)
 }

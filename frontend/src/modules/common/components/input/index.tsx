@@ -16,7 +16,7 @@ function Input({ type, name, required, value, readOnly = false }: InputProps) {
         className={styles.input}
       />
       <label htmlFor={name} className={styles.label}>
-        {name}
+        {name === 'password2' ? 'password confirm' : name}
         {required && <span className={styles.required}>*</span>}
       </label>
     </div>

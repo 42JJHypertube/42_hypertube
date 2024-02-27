@@ -4,6 +4,7 @@ import { AuthForm } from '@/types/account/type'
 import { useFormState } from 'react-dom'
 import { useEffect } from 'react'
 import Input from '@/modules/common/components/input'
+import Button from '@/modules/common/components/button'
 import { validEmail } from '../../action'
 import styles from './index.module.scss'
 
@@ -20,16 +21,20 @@ function TypeEmail({
   }, [curForm])
   return (
     <div className={styles.TypeEmailContainer}>
-      <h2>{form.state.includes('regist') ? 'Register' : 'Log In'}</h2>
       <form className={styles.TypeEmailForm} action={action}>
         <Input name="email" type="email" required />
         {form.message ? (
-          <span className={styles.span}>{form.message}</span>
+          <span className={styles.infoMessage}>{form.message}</span>
         ) : null}
-        <button className={styles.TypeEmailButton} type="submit">
-          {' '}
-          Submit{' '}
-        </button>
+        <Button
+          type="submit"
+          content={
+            form.state === 'login-email'
+              ? '이메일로 계속하기'
+              : '이메일로 가입하기'
+          }
+          positive
+        />
       </form>
     </div>
   )

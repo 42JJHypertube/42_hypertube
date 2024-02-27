@@ -10,18 +10,21 @@
 
 .TypeEmailForm {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 0.5rem;
   text-align: center;
-  width: 12rem;
-  padding: 0 0 2rem 0;
-
-  .span {
-    color: red;
-    font-size: 0.8rem;
-  }
 }
 
 .TypeEmailButton {
   position: absolute;
   right: 0;
   bottom: 0;
+}
+
+.infoMessage {
+  text-align: center;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.65)
 }

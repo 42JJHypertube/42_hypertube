@@ -4,6 +4,7 @@ import { AuthForm } from '@/types/account/type'
 import { useEffect } from 'react'
 import { useFormState } from 'react-dom'
 import Input from '@/modules/common/components/input'
+import Button from '@/modules/common/components/button'
 import { loginByEmail, loginByPassword, verifyCode } from '../../action'
 import styles from './index.module.scss'
 
@@ -37,19 +38,21 @@ function TypeAuth({
 
   return (
     <div className={styles.TypeAuthContainer}>
-      <h2>{form.state.includes('regist') ? 'Register' : 'Log In'}</h2>
-      <span> {curForm.email} </span>
       <form className={styles.TypeAuthForm} action={action}>
+        <Input name="email" type="email" value={form.email} readOnly />
+        {form.state === 'login-password' ? null : (
+          <span className={styles.infoMessage}>
+            {' '}
+            위의 메일로 인증코드가 발송 되었습니다.{' '}
+          </span>
+        )}
         <Input
           name={form.state === 'login-password' ? 'password' : 'code'}
           type={form.state === 'login-password' ? 'password' : 'text'}
           required
         />
-        <span> {curForm.message}</span>
-        <button className={styles.TypeAuthButton} type="submit">
-          {' '}
-          Submit{' '}
-        </button>
+        <span className={styles.infoMessage}> {curForm.message}</span>
+        <Button type="submit" content="인증 후 계속하기" positive />
       </form>
     </div>
   )

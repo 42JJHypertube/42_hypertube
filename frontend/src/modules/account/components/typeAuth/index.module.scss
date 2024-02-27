@@ -1,27 +1,30 @@
 .TypeAuthContainer {
-  position: absolute;
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   width: auto;
-  gap: 0.5rem;
+  height: auto;
 }
 
 .TypeAuthForm {
   position: relative;
+  display: flex;
+  flex-direction: column;
   text-align: center;
-  width: 12rem;
-  padding: 0 0 2rem 0;
-
-  .span {
-    color: red;
-    font-size: 0.8rem;
-  }
+  width: 100%;
+  gap: 0.5rem;
 }
 
 .TypeAuthButton {
   position: absolute;
   right: 0;
   bottom: 0;
+}
+
+.infoMessage {
+  text-align: center;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.65)
 }
