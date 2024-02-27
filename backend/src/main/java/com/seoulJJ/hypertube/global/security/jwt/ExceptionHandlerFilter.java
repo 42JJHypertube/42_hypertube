@@ -9,6 +9,7 @@ import org.springframework.web.filter.GenericFilterBean;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seoulJJ.hypertube.global.exception.ErrorCode;
 import com.seoulJJ.hypertube.global.exception.ErrorResponse;
+import com.seoulJJ.hypertube.global.security.auth.exception.AuthInvalidTokenException;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.security.SignatureException;
@@ -28,6 +29,9 @@ public class ExceptionHandlerFilter extends GenericFilterBean {
         } catch (ExpiredJwtException e) {
             // 토큰의 유효기간 만료
             setErrorResponse((HttpServletResponse) response, ErrorCode.EXPIRED_JWT);
+        } catch (AuthInvalidTokenException e) {
+            // 토큰이 유효하지 않음
+            setErrorResponse((HttpServletResponse) response, ErrorCode.INVALID_JWT);
         }
     }
 

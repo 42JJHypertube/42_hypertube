@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.seoulJJ.hypertube.domain.user.dto.CreateUserDto;
+import com.seoulJJ.hypertube.domain.user.dto.UserDto;
 import com.seoulJJ.hypertube.domain.user.exception.UserNotFoundException;
 import com.seoulJJ.hypertube.domain.user.type.RoleType;
 
@@ -37,6 +38,12 @@ public class UserService {
     @Transactional
     public User findUserByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException());
+    }
+
+    @Transactional
+    public UserDto findUserDetailByEmail(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException());
+        return new UserDto(user.getNickname(), user.getEmail(), user.getFirstName(), user.getLastName(), user.getImageUrl());
     }
 
     @Transactional(readOnly = true)

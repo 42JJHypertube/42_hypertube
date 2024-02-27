@@ -20,10 +20,12 @@ import com.seoulJJ.hypertube.global.security.jwt.JwtTokenProvider;
 import com.seoulJJ.hypertube.global.security.service.CustomOAuth2UserService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@Log4j2
 public class SecurityConfig {
 
 	private final JwtTokenProvider jwtTokenProvider;
@@ -68,7 +70,7 @@ public class SecurityConfig {
 						.userInfoEndpoint((userInfoEndpoint) -> userInfoEndpoint
 								.userService(customOAuth2UserService))
 								.successHandler(oAuthAuthenticationSuccessHandler));
-								// .failureHandler(null));
+						
 
 		return http.build();
 	}
