@@ -1,0 +1,3 @@
+[submodule "initializer"]
+	path = initializer
+	url = git@github.com:42JJHypertube/42hypertube_initializer.git
