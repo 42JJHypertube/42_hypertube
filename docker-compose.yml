@@ -47,4 +47,13 @@ services:
     image: redis:latest
     ports:
       - "6379:6379"
+
+volumes:
+  file-storage:
+    name: file-storage
+    driver: local
+    driver_opts:
+      device: /Users/kimjaehyuk/Desktop/42_hypertube/file_storage
+      o: bind
+      type: none
   
