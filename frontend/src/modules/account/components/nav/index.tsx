@@ -23,12 +23,12 @@ function AccountNav({
         >
           <div className={styles.customAuth}> Continue with 42 </div>
         </Link>
-        {/* <Link
-          href="https://localhost/api/auth/oauth2/login/google"
+        <Link
+          href="https://localhost/api/auth/oauth2/login/facebook"
           prefetch={false}
         >
-          <img src="/authImage/google.svg" alt="google login" />
-        </Link> */}
+          <div className={styles.customAuth}> Continue with FaceBook </div>
+        </Link>
       </div>
       <div className={styles.AccountNavLine}>
         <span className={styles.text}> If you have Account </span>

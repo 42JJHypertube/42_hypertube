@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { LoginViewEnum, LoginView } from '@/types/account/type'
 import LoginTemplate from '../login'
-import FindPw from '../../components/findPw'
+import ResetPwTemplate from '../resetPw'
 import RegisterTemplate from '../register'
 import AccountNav from '../../components/nav'
 import styles from './index.module.scss'
@@ -15,7 +15,7 @@ const viewSelector = ({ currentView }: { currentView: LoginView }) => {
     case LoginViewEnum.REGISTER:
       return <RegisterTemplate />
     case LoginViewEnum.FIND_PW:
-      return <FindPw />
+      return <ResetPwTemplate />
     default:
       return null
   }

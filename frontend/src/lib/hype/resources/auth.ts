@@ -70,7 +70,7 @@ class AuthResource extends BaseResource {
     firstName: string
     lastName: string
     imageUrl: string
-    token: string
+    emailToken: string
   }) {
     const path = '/auth/sign-up'
     return this.client.request('POST', path, payload)
@@ -79,6 +79,20 @@ class AuthResource extends BaseResource {
   checkPermission() {
     const path = '/auth/admin/test'
     return this.client.request('GET', path)
+  }
+
+  modifyPassword(payload: {
+    password: string
+    password2: string
+    emailToken: string
+  }) {
+    const path = '/auth/modify-password'
+    return this.client.request('POST', path, payload)
+  }
+
+  getAccessToken() {
+    const path = '/auth/access-token'
+    return this.client.request('POST', path, {})
   }
 }
 

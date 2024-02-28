@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { AuthForm } from '@/types/account/type'
+import { AuthForm, AuthSequence } from '@/types/account/type'
 import TypeAuth from '../../components/typeAuth'
 import TypeEmail from '../../components/typeEmail'
 import styles from './index.module.scss'
@@ -25,7 +25,7 @@ function viewSelector({
 }
 
 const initialState: AuthForm = {
-  state: 'login-email',
+  state: 'login-email' as AuthSequence,
   nickname: '',
   email: '',
   password: '',

@@ -13,6 +13,9 @@ export type AuthSequence =
   | 'regist-email'
   | 'regist-auth'
   | 'regist-form'
+  | 'resetPw-email'
+  | 'resetPw-auth'
+  | 'resetPw-setPw'
 
 export type AuthForm = {
   state: AuthSequence

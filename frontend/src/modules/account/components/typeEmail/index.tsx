@@ -29,9 +29,9 @@ function TypeEmail({
         <FormButton
           type="submit"
           content={
-            form.state === 'login-email'
-              ? '이메일로 계속하기'
-              : '이메일로 가입하기'
+            form.state === 'regist-email'
+              ? '이메일로 가입하기'
+              : '이메일로 계속하기'
           }
           positive
         />

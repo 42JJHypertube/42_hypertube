@@ -3,7 +3,14 @@ import styles from './input.module.scss'
 
 type InputProps = React.InputHTMLAttributes<HTMLInputElement>
 
-function Input({ type, name, required, value, readOnly = false }: InputProps) {
+function Input({
+  type,
+  name,
+  required,
+  value,
+  readOnly = false,
+  onChange = undefined,
+}: InputProps) {
   return (
     <div className={styles.inputContainer}>
       <input
@@ -14,6 +21,7 @@ function Input({ type, name, required, value, readOnly = false }: InputProps) {
         value={value}
         readOnly={readOnly}
         className={styles.input}
+        onChange={onChange}
       />
       <label htmlFor={name} className={styles.label}>
         {name === 'password2' ? 'password confirm' : name}

@@ -31,7 +31,7 @@ export async function makeUser(payload: {
   firstName: string
   lastName: string
   imageUrl: string
-  token: string
+  emailToken: string
 }) {
   return HypeClient.auth.makeUser(payload)
 }
@@ -98,4 +98,60 @@ export async function checkPermission() {
     .checkPermission()
     .then((res) => res)
     .catch((error) => error)
+}
+
+export async function modifyPassword(payload: {
+  password: string
+  password2: string
+  emailToken: string
+}) {
+  return HypeClient.auth
+    .modifyPassword(payload)
+    .then((res) => res)
+    .catch((error) => error)
+}
+
+export async function getToken() {
+  return HypeClient.auth
+    .getAccessToken()
+    .then((res) => res)
+    .catch((error) => Promise.reject({ ...error, data: false }))
+}
+
+export async function getProfile(): Promise<{ data: any; response: any }> {
+  try {
+    const { data, response } = await HypeClient.user.getProfile()
+    return { data, response }
+  } catch (error: any) {
+    if (error?.status === 401) {
+      return tryGetReAuth(error, getProfile)
+    }
+    return Promise.reject({ ...error })
+  }
+}
+
+async function tryGetReAuth(
+  error: any, nextFunction: () => Promise<{data: any, response: any}>
+): Promise<{ data: any; response: any }> {
+  try {
+    const { data, response } = await getToken()
+    if (response.status === 200) {
+      return tryNextFunction(nextFunction)
+    }
+  } catch {
+    return Promise.reject({ ...error })
+  }
+  return Promise.reject({ ...error })
+}
+
+async function tryNextFunction(nextFunction: () => Promise<{data: any, response: any}>): Promise<{
+  data: any
+  response: any
+}> {
+  try {
+    const { data, response } = await getProfile()
+    return Promise.reject({ data, response })
+  } catch {
+    return Promise.reject({ data: undefined, response: undefined })
+  }
 }

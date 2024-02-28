@@ -16,6 +16,8 @@ function getLogin(type: string) {
       return loginByEmail
     case 'regist-auth':
       return verifyCode
+    case 'resetPw-auth':
+      return verifyCode
     default:
       return loginByEmail
   }
