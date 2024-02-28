@@ -7,6 +7,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seoulJJ.hypertube.domain.user.User;
 import com.seoulJJ.hypertube.domain.user.UserRepository;
 import com.seoulJJ.hypertube.global.security.UserPrincipal;
@@ -26,7 +27,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
-
+        
         ProviderType providerType = ProviderType.keyOf(userRequest.getClientRegistration().getRegistrationId());
         OAuthUserInfo oAuthUserInfo = OAuthUserInfoFactory.getOAuth2UserInfo(providerType, oAuth2User.getAttributes());
 

@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum ProviderType {
-	FORTYTWO("42"), GOOGLE("GOOGLE");
+	FORTYTWO("42"), GOOGLE("GOOGLE"), FACEBOOK("FACEBOOK");
 
 	private String key;
 
