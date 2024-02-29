@@ -340,13 +340,10 @@ export async function resetPassword(
 }
 
 export async function checkLogin() {
-  const { data, response } = await getProfile()
-
-  if (data && response.status === 200) return true
-
-  if (response.status !== 200) {
-    console.log('토큰 재발급 로직')
+  try {
+    const { data, response } = await getProfile()
+    return true
+  } catch {
+    return false
   }
-
-  return false
 }

@@ -1,5 +1,6 @@
 'use server'
 
+import { cookies } from 'next/headers'
 import HypeClient from '../config'
 
 /**
@@ -50,8 +51,7 @@ export async function getMovie(page: number) {
   return HypeClient.movie
     .getMovieTopRated(page)
     .then((res) => {
-      console.log(res.response)
-      return { data: res.data, response: { status: 200 } }
+      return { data: res.data, response: res.response }
     })
     .catch((error) => error)
 }
@@ -111,47 +111,76 @@ export async function modifyPassword(payload: {
     .catch((error) => error)
 }
 
-export async function getToken() {
+export async function getToken(customHeaders: any = {}) {
   return HypeClient.auth
-    .getAccessToken()
+    .getAccessToken(customHeaders)
     .then((res) => res)
-    .catch((error) => Promise.reject({ ...error, data: false }))
+    .catch((error) => error)
 }
 
-export async function getProfile(): Promise<{ data: any; response: any }> {
+export async function getProfile(customHeaders: any = {}): Promise<{ data: any; response: any }> {
+  // customHeader가 존재하지않을시 Cookie에서 가져와서 생성
+  if (Object.keys(customHeaders).length === 0){
+    const refresh_token = (cookies().get('refresh_token')?.value)
+    const access_token = (cookies().get('access_token')?.value)
+    const cookie = `access_token=${access_token}; refresh_token=${refresh_token}`
+    const newHeaders = {'Cookie': cookie}
+    customHeaders = newHeaders
+  }
+
   try {
-    const { data, response } = await HypeClient.user.getProfile()
+    console.log("go getProfile")
+    const { data, response } = await HypeClient.user.getProfile(customHeaders)
     return { data, response }
   } catch (error: any) {
-    if (error?.status === 401) {
-      return tryGetReAuth(error, getProfile)
+    if (error.response.status === 401) {
+      console.log('Get Profile error')
+      const { data, response } = await tryGetReAuth(error, customHeaders, getProfile)
+      return { data, response }
     }
-    return Promise.reject({ ...error })
+    return Promise.reject({ data: undefined, ...error })
   }
 }
 
 async function tryGetReAuth(
-  error: any, nextFunction: () => Promise<{data: any, response: any}>
+  error: any,
+  customHeaders: any,
+  nextFunction: (customHeaders: any) => Promise<{ data: any; response: any }>,
 ): Promise<{ data: any; response: any }> {
   try {
-    const { data, response } = await getToken()
+    console.log(customHeaders)
+    const { data, response } = await getToken(customHeaders)
     if (response.status === 200) {
-      return tryNextFunction(nextFunction)
+      console.log("setCookie")
+      // cookies().set('access_token', data?.accessToken, {
+      //   httpOnly: true,
+      // })
+      // cookies().set('refresh_token', data?.refreshToken, {
+      //   httpOnly: true
+      // })
+      const newHeaders = {...customHeaders, Cookie: `access_token=${data.access_token}; refresh_token=${data.refresh_token}`}
+      return tryNextFunction(nextFunction, newHeaders)
     }
-  } catch {
-    return Promise.reject({ ...error })
+  } catch (error: any) {
+    console.log('tryGetReAuth Failure')
+    return Promise.reject({ data: undefined, ...error })
   }
-  return Promise.reject({ ...error })
+  return Promise.reject({ data: undefined, ...error })
 }
 
-async function tryNextFunction(nextFunction: () => Promise<{data: any, response: any}>): Promise<{
+async function tryNextFunction(
+  customHeaders: any,
+  nextFunction: (customHeaders: any) => Promise<{ data: any; response: any }>,
+): Promise<{
   data: any
   response: any
 }> {
   try {
-    const { data, response } = await getProfile()
-    return Promise.reject({ data, response })
-  } catch {
-    return Promise.reject({ data: undefined, response: undefined })
+    const { data, response } = await getProfile(customHeaders)
+    return { data, response }
+  } catch (error: any) {
+    console.log("tryNextFunction Fail")
+    console.log(error)
+    return Promise.reject({ data: undefined, ...error })
   }
 }

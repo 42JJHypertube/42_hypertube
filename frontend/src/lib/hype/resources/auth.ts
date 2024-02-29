@@ -2,6 +2,7 @@ import BaseResource from './base'
 
 import { ResSendCode, ResSignIn, ResCheckEmail } from '../type/auth'
 import { ResponsePromise } from '../type/common'
+import { cookies } from 'next/headers'
 
 class AuthResource extends BaseResource {
   /**
@@ -90,9 +91,9 @@ class AuthResource extends BaseResource {
     return this.client.request('POST', path, payload)
   }
 
-  getAccessToken() {
+  getAccessToken(customHeaders: any) {
     const path = '/auth/access-token'
-    return this.client.request('POST', path, {})
+    return this.client.request('POST', path, {}, {}, customHeaders)
   }
 }
 

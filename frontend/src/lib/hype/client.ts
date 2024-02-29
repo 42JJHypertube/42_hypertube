@@ -1,6 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestHeaders } from 'axios' // axiosError 추가 필요
 import https from 'https'
-import TokenManager from './tokenManger'
 
 export interface Config {
   baseURL: string // 기본 baseURL 설정
@@ -53,17 +52,12 @@ class Client {
   ): AxiosRequestHeaders {
     let defaultHeaders: Record<string, unknown> = {
       Accept: '*/*',
-      'Content-Type': 'application/json',
+      withCredentials: true,
+      'Content-Type': 'application/json' as string,
     }
 
     /* JWT token 이 존재할 경우 베어럴로 추가해준다 */
     /* JWT token 이 존재하지않고 , 2FA 토큰이 존재하면 베어럴로 추가 */
-    if (TokenManager.getAccessToken()) {
-      defaultHeaders = {
-        ...defaultHeaders,
-        Authorization: `Bearer ${TokenManager.getAccessToken()}`,
-      }
-    }
 
     return { ...defaultHeaders, ...customHeaders } as AxiosRequestHeaders
   }
