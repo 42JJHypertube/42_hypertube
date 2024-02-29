@@ -12,8 +12,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -35,9 +37,9 @@ public class UserController {
     }
 
     @PostMapping("/me/profile-image")
-    public String updateProfileImage(@Parameter(hidden = true) @LoginPrincipal UserPrincipal userPrincipal, MultipartFile file) {
+    public ResponseEntity<String> updateProfileImage(@Parameter(hidden = true) @LoginPrincipal UserPrincipal userPrincipal, MultipartFile file) {
         userService.updateUserProfileImage(userPrincipal.getUsername(), file);
-        return "good";
+        return ResponseEntity.status(201).body("Success");
     }
     
 
