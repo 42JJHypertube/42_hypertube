@@ -80,7 +80,7 @@ gradle-app.setting
 hypertube_docs/
 file_storage/
 file_storage/*
-!docker-compose.yml
+docker-compose.yml
 !.gitignore/
 *.properties
 .front_env

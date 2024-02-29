@@ -7,7 +7,7 @@ import com.seoulJJ.hypertube.global.security.info.OAuthUserInfo;
 
 public class FortyTwoOAuthUserInfo extends OAuthUserInfo {
 
-	private String defaultImageUrl = "";
+	private String defaultImageUrl = null;
 
 	public FortyTwoOAuthUserInfo(Map<String, Object> attributes) {
 		super(attributes);
