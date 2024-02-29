@@ -4,18 +4,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.seoulJJ.hypertube.domain.user.dto.CreateUserDto;
 import com.seoulJJ.hypertube.domain.user.dto.UserDto;
 import com.seoulJJ.hypertube.domain.user.exception.UserNotFoundException;
 import com.seoulJJ.hypertube.domain.user.type.RoleType;
+import com.seoulJJ.hypertube.global.utils.FileManager.ImageFileManager;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 
 @Service
 @RequiredArgsConstructor
-@Log4j2
 public class UserService {
 
     @Autowired
@@ -23,6 +23,9 @@ public class UserService {
 
     @Autowired
     private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private final ImageFileManager imageFileManager;
 
     @Transactional
     public User createUser(CreateUserDto createUserDto) {
@@ -32,19 +35,24 @@ public class UserService {
                 passwordEncoder.encode(createUserDto.getPassword()),
                 createUserDto.getFirstName(),
                 createUserDto.getLastName(),
-                createUserDto.getImageUrl(),
+                null,
                 RoleType.USER);
         return userRepository.save(user);
     }
 
     @Transactional
+    public void updateUserProfileImage(String email, MultipartFile file) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException());
+        imageFileManager.updateUserProfileImage(file, user.getEmail());
+    }
+
+    @Transactional(readOnly = true)
     public User findUserByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException());
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public UserDto findUserDetailByEmail(String email) {
-        log.info("email(TTT) : {}", email);
         User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException());
         return new UserDto(user.getNickname(), user.getEmail(), user.getFirstName(), user.getLastName(), user.getImageUrl(), user.getRoleType());
     }

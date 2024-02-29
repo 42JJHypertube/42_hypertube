@@ -7,7 +7,6 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seoulJJ.hypertube.domain.user.User;
 import com.seoulJJ.hypertube.domain.user.UserRepository;
 import com.seoulJJ.hypertube.global.security.UserPrincipal;
