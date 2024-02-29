@@ -59,6 +59,12 @@ public class User extends BaseTimeEntity implements Serializable {
     {
         this.password = encryptedPassword;
     }
+
+    public void updateImageUrl(String imageUrl)
+    {
+        this.imageUrl = imageUrl;
+    }
+    
     public String toString() {
         return "User{" +
                 "id=" + id +
