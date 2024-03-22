@@ -291,6 +291,10 @@ export async function verifyCode(currentState: AuthForm, formData: FormData) {
           emailToken: data.emailToken,
           message: null,
         }
+      default:
+        return {
+          ...currentState,
+        }
     }
   }
 
@@ -306,7 +310,7 @@ export async function resetPassword(
 ) {
   const password = formData.get('password') as string
   const password2 = formData.get('password2') as string
-  const emailToken = currentState.emailToken
+  const { emailToken } = currentState
 
   console.log('reset PW')
   const defaultRes = {
@@ -340,10 +344,12 @@ export async function resetPassword(
 }
 
 export async function checkLogin() {
-  try {
-    const { data, response } = await getProfile()
-    return true
-  } catch {
-    return false
-  }
+  const data = await getProfile()
+
+  console.log(data)
+  // if (response.status === 200) {
+  //   return true
+  // }
+
+  return false
 }

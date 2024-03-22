@@ -1,8 +1,8 @@
 import BaseResource from './base'
-import { cookies } from 'next/headers'
+import { CustomHeaders } from '../type/common'
 
 class UserResource extends BaseResource {
-  getProfile(customHeaders: any) {
+  getProfile(customHeaders: CustomHeaders) {
     const path = '/users/me'
     return this.client.request('GET', path, {}, {}, customHeaders)
   }

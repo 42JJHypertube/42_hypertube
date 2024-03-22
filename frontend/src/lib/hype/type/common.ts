@@ -15,3 +15,5 @@ export type Response<T> = T & {
 }
 
 export type ResponsePromise<T> = Promise<Response<T>>
+
+export type CustomHeaders = Record<string, string>
