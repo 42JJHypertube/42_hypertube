@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, AxiosRequestHeaders } from 'axios' // axiosError 추가 필요
 import https from 'https'
 import { cookies } from 'next/headers'
-// import { getToken } from '../data'
+import { getToken } from '../data'
 
 export interface Config {
   baseURL: string // 기본 baseURL 설정
@@ -42,23 +42,13 @@ class Client {
         // 여기서 error를 검사하여 특정 행동을 실행할 수 있습니다.
         const refreshToken = cookies().get('refresh_token')?.value
         const accessToken = cookies().get('access_token')?.value
-
-        if (error.response.status === 401 && refreshToken && accessToken) {
+        
+        if (error.response.data.message === 'EXPIRED JWT' && refreshToken && accessToken ) {
           console.error('401: 다시 로그인을 시도하도록 한다')
           try {
-            // const cookie = `access_token=${accessToken};refresh_token=${refreshToken}`
-            // // const { data, response } = await getToken({ Cookie: cookie })
-            // if (response.status === 200) {
-            //   cookies().set('access_token', data?.accessToken, {
-            //     httpOnly: true,
-            //     secure: true,
-            //   })
-            //   cookies().set('refresh_token', data?.refreshToken, {
-            //     httpOnly: true,
-            //     secure: true,
-            //   })
-            // }
-            // return { data, response }
+            const cookie = `access_token=${accessToken};refresh_token=${refreshToken}`
+            const { data, response } = await getToken({ Cookie: cookie })
+            return { data, ...response }
           } catch (e) {
             console.log('재발급 에러')
             return Promise.reject(e)
