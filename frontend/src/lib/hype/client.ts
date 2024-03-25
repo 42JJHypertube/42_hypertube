@@ -1,23 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestHeaders } from 'axios' // axiosError 추가 필요
-import https from 'https'
-import { cookies } from 'next/headers'
-import { getToken } from '../data'
-
-export interface Config {
-  baseURL: string // 기본 baseURL 설정
-  maxRetries: number // 몇번 반복할지 설정
-}
-
-export interface RequestOptions {
-  timeout?: number // 해당 시간이후에는 연결이 실패한 것으로 판정
-  numberOfRetries?: number // 몇회까지 반복할지 설정
-}
-
-export type RequestMethod = 'DELETE' | 'POST' | 'GET'
-
-const agent = new https.Agent({
-  rejectUnauthorized: false,
-})
+import { Config, RequestOptions, RequestMethod } from './type/client'
 
 class Client {
   private axiosClient: AxiosInstance
@@ -30,34 +12,8 @@ class Client {
   createClient(config: Config): AxiosInstance {
     const client = axios.create({
       baseURL: config.baseURL,
-      httpsAgent: agent,
       withCredentials: true,
     })
-
-    client.interceptors.response.use(
-      (response) => {
-        return response
-      },
-      async (error) => {
-        // 여기서 error를 검사하여 특정 행동을 실행할 수 있습니다.
-        const refreshToken = cookies().get('refresh_token')?.value
-        const accessToken = cookies().get('access_token')?.value
-        
-        if (error.response.data.message === 'EXPIRED JWT' && refreshToken && accessToken ) {
-          console.error('401: 다시 로그인을 시도하도록 한다')
-          try {
-            const cookie = `access_token=${accessToken};refresh_token=${refreshToken}`
-            const { data, response } = await getToken({ Cookie: cookie })
-            return { data, ...response }
-          } catch (e) {
-            console.log('재발급 에러')
-            return Promise.reject(e)
-          }
-        }
-        // 에러를 반환하여 다음에 대응할 수 있도록 합니다.
-        return Promise.reject(error)
-      },
-    )
 
     return client
   }

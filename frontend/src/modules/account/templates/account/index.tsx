@@ -36,7 +36,6 @@ const headerSelector = ({ currentView }: { currentView: LoginView }) => {
 
 function AccountTemplate() {
   const [currentView, setCurrentView] = useState(LoginViewEnum.SIGN_IN)
-
   return (
     <div className={styles.container}>
       <header className={styles.header}>

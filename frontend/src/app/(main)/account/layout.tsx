@@ -8,6 +8,7 @@ export default async function AccountPageLayout({
   login: React.ReactNode
 }) {
   const isLogined = await checkLogin()
+  // const isLogined = false
 
   return <div>{isLogined ? userInfo : login}</div>
 }

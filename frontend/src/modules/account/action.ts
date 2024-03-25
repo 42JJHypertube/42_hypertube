@@ -345,18 +345,9 @@ export async function resetPassword(
 
 export async function checkLogin() {
   const { data, response } = await getProfile()
-  console.log(data)
-  console.log(response)
+  // console.log(data)
+  // console.log(response)
   if (response.status === 200) {
-    if (data?.accessToken && data?.refreshToken) {
-      console.log("set new token")
-      cookies().set('access_token', data.accessToken, {
-        httpOnly: true,
-      })
-      cookies().set('refresh_token', data.refreshToken, {
-        httpOnly: true,
-      })
-    }
     return true
   }
 
