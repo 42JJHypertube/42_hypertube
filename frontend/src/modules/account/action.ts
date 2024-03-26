@@ -344,10 +344,8 @@ export async function resetPassword(
 }
 
 export async function checkLogin() {
-  const { data, response } = await getProfile()
-  // console.log(data)
-  // console.log(response)
-  if (response.status === 200) {
+  const { response } = await getProfile()
+  if (response?.status === 200) {
     return true
   }
 

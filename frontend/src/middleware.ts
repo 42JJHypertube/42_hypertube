@@ -10,9 +10,10 @@ async function getToken(cookies: TypeCookie[]) {
   const cookieHeader = cookies
     .map((cookie) => `${cookie.name}=${cookie.value}`)
     .join('; ')
-  const url = 'https:localhost/api/auth/access-token'
+  const url = `https://10.12.8.2/api/auth/access-token`
   const options = {
     method: 'POST',
+    cache: 'no-store' as RequestCache,
     headers: {
       'Content-Type': 'application/json',
       Cookie: cookieHeader,
@@ -28,28 +29,66 @@ async function getToken(cookies: TypeCookie[]) {
   }
 }
 
-export async function middleware(request: NextRequest) {
-  // Assume a "Cookie:nextjs=fast" header to be present on the incoming request
-  // Getting cookies from the request using the `RequestCookies` API
+async function getProfile(cookies: TypeCookie[]) {
+  const cookieHeader = cookies
+    .map((cookie) => `${cookie.name}=${cookie.value}`)
+    .join('; ')
+  const url = `https://10.12.8.2/api/users/me`
+  const options = {
+    method: 'GET',
+    cache: 'no-store' as RequestCache,
+    headers: {
+      'Content-Type': 'application/json',
+      Cookie: cookieHeader,
+    },
+    // body: JSON.stringify(data),
+  }
 
-  const response = NextResponse.next()
+  try {
+    const response = await fetch(url, options)
+    return await response.json()
+  } catch (error) {
+    return error
+  }
+}
+
+async function refreshToken(request: NextRequest, allCookies: TypeCookie[]) {
+  try {
+    const res = await getToken(allCookies)
+    if (res.accessToken && res.refreshToken) {
+      const response = NextResponse.redirect(request.nextUrl.href)
+      const cookieOptions = {
+        secure: true, // HTTPS 연결에서만 쿠키 전송
+        httpOnly: true, // JavaScript에서 쿠키 접근 불가
+      }
+      response.cookies.set('refresh_token', res.refreshToken, cookieOptions)
+      response.cookies.set('access_token', res.accessToken, cookieOptions)
+      return response
+    }
+    return NextResponse.next()
+  } catch (error) {
+    const response = NextResponse.redirect(request.nextUrl.href)
+    response.cookies.delete('refresh_token')
+    response.cookies.delete('access_token')
+    return response
+  }
+}
+
+export async function middleware(request: NextRequest) {
   if (
     request.cookies.has('refresh_token') &&
     request.cookies.has('access_token')
   ) {
     const allCookies = request.cookies.getAll()
-    const res = await getToken(allCookies)
-    console.log('res:', res)
-    if (res.access_token) {
-      response.cookies.set('refresh_token', res.data.refreshToken)
-      response.cookies.set('access_token', res.data.accessToken)
-      response.cookies.set('new_token_set', 'true')
-    }
-  } // => true
+    const ping = await getProfile(allCookies)
+    if (ping?.status === 401) {
+      return refreshToken(request, allCookies)
+    } // => true
+  }
 
-  return response
+  return NextResponse.next()
 }
 
 export const config = {
-  matcher: '/account/:path',
+  matcher: '/account/:path*',
 }
