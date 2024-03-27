@@ -10,7 +10,7 @@ async function getToken(cookies: TypeCookie[]) {
   const cookieHeader = cookies
     .map((cookie) => `${cookie.name}=${cookie.value}`)
     .join('; ')
-  const url = `https://10.12.8.2/api/auth/access-token`
+  const url = `https://localhost/api/auth/access-token`
   const options = {
     method: 'POST',
     cache: 'no-store' as RequestCache,
@@ -33,7 +33,7 @@ async function getProfile(cookies: TypeCookie[]) {
   const cookieHeader = cookies
     .map((cookie) => `${cookie.name}=${cookie.value}`)
     .join('; ')
-  const url = `https://10.12.8.2/api/users/me`
+  const url = `https://localhost/api/users/me`
   const options = {
     method: 'GET',
     cache: 'no-store' as RequestCache,

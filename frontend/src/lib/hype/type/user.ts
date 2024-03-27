@@ -1,4 +1,10 @@
 export type ResGetProfile = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  response: any
+  data: {
+    nickname: string
+    email: string
+    firstName: string
+    lastName: string
+    imageUrl: string
+    roleType: string
+  }
 }

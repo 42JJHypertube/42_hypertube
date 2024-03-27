@@ -129,12 +129,23 @@ export async function getProfile(customHeaders: CustomHeaders = {}) {
     return HypeClient.user
       .getProfile(newHeaders)
       .then((res) => res)
-      .catch((error) => error)
+      .catch((error) => {
+        console.log(error)
+        return null
+      })
   }
 
   console.log('go getProfile')
   return HypeClient.user
     .getProfile(customHeaders)
     .then((res) => res)
-    .catch((error) => error)
+    .catch((error) => {
+      console.log(error)
+      return null
+    })
+}
+
+export async function logOut() {
+  cookies().delete('access_token')
+  cookies().delete('refresh_token')
 }
