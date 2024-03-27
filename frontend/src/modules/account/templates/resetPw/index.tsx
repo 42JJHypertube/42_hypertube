@@ -4,8 +4,8 @@ import { useState } from 'react'
 import { AuthForm, AuthSequence } from '@/types/account/type'
 import TypeAuth from '../../components/typeAuth'
 import TypeEmail from '../../components/typeEmail'
-import TypeRegistForm from '../../components/typeRegistForm'
 import styles from './index.module.scss'
+import ResetPw from '../../components/resetPw'
 
 function viewSelector({
   form,
@@ -15,19 +15,19 @@ function viewSelector({
   setForm: React.Dispatch<React.SetStateAction<AuthForm>>
 }) {
   switch (form.state) {
-    case 'regist-email':
+    case 'resetPw-email':
       return <TypeEmail form={form} setForm={setForm} />
-    case 'regist-auth':
+    case 'resetPw-auth':
       return <TypeAuth form={form} setForm={setForm} />
-    case 'regist-form':
-      return <TypeRegistForm form={form} setForm={setForm} />
+    case 'resetPw-setPw':
+      return <ResetPw form={form} setForm={setForm} />
     default:
       return null
   }
 }
 
 const initialState: AuthForm = {
-  state: 'regist-email' as AuthSequence,
+  state: 'resetPw-email' as AuthSequence,
   nickname: '',
   email: '',
   password: '',
@@ -40,14 +40,14 @@ const initialState: AuthForm = {
   message: null,
 }
 
-function RegisterTemplate() {
+function ResetPwTemplate() {
   const [form, setForm] = useState<AuthForm>(initialState)
 
   return (
-    <div className={styles.RegisterTemplateContainer}>
+    <div className={styles.resetPwTemplateContainer}>
       {viewSelector({ form, setForm })}
     </div>
   )
 }
 
-export default RegisterTemplate
+export default ResetPwTemplate

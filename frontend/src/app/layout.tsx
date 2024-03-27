@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
+
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {

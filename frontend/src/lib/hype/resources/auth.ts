@@ -1,7 +1,6 @@
 import BaseResource from './base'
-
 import { ResSendCode, ResSignIn, ResCheckEmail } from '../type/auth'
-import { ResponsePromise } from '../type/common'
+import { ResponsePromise, CustomHeaders } from '../type/common'
 
 class AuthResource extends BaseResource {
   /**
@@ -70,15 +69,29 @@ class AuthResource extends BaseResource {
     firstName: string
     lastName: string
     imageUrl: string
-    token: string
+    emailToken: string
   }) {
     const path = '/auth/sign-up'
     return this.client.request('POST', path, payload)
   }
 
-  loginGoogle() {
-    const path = '/auth/oauth2/login/google'
+  checkPermission() {
+    const path = '/auth/admin/test'
     return this.client.request('GET', path)
+  }
+
+  modifyPassword(payload: {
+    password: string
+    password2: string
+    emailToken: string
+  }) {
+    const path = '/auth/modify-password'
+    return this.client.request('POST', path, payload)
+  }
+
+  getAccessToken(customHeaders: CustomHeaders) {
+    const path = '/auth/access-token'
+    return this.client.request('POST', path, {}, {}, customHeaders)
   }
 }
 

@@ -7,6 +7,8 @@ import {
   checkEmail,
   loginPassword,
   loginEmailToken,
+  modifyPassword,
+  getProfile,
 } from '@/lib/data'
 import { AuthForm, AuthSequence } from '@/types/account/type'
 import { cookies } from 'next/headers'
@@ -20,10 +22,17 @@ export async function registUser(currentState: AuthForm, formData: FormData) {
     password2: formData.get('password2') as string,
   }
 
+  if (formInfo.password !== formInfo.password2) {
+    return {
+      ...currentState,
+      message: 'Confirm Password 가 일치하지 않습니다.',
+    }
+  }
+
   const { response } = await makeUser({
     ...formInfo,
     email: currentState.email,
-    token: currentState.emailToken,
+    emailToken: currentState.emailToken,
     imageUrl: '',
   })
 
@@ -47,7 +56,8 @@ export async function validEmail(currentState: AuthForm, formData: FormData) {
 
   let type
   if (currentState.state.includes('login-')) type = 'login'
-  else type = 'regist'
+  else if (currentState.state.includes('regist-')) type = 'regist'
+  else type = 'resetPw'
 
   const defaultRes: AuthForm = {
     ...currentState,
@@ -57,66 +67,116 @@ export async function validEmail(currentState: AuthForm, formData: FormData) {
   console.log(data)
   // 이메일이 존재하고 패스워드가 설정되어있는 경우
   if (data?.emailExist && data?.passwordExist) {
-    if (type === 'regist')
-      return {
-        ...defaultRes,
-        message: '이미 등록된 계정입니다.',
+    switch (type) {
+      case 'regist':
+        return {
+          ...defaultRes,
+          message: '이미 등록된 계정입니다.',
+        }
+      case 'login':
+        return {
+          ...defaultRes,
+          state: 'login-password' as AuthSequence,
+          message: null,
+        }
+      case 'resetPw': {
+        const ret = await getAuthCode({ email })
+        console.log(ret.data)
+        return {
+          ...defaultRes,
+          state: 'resetPw-auth' as AuthSequence,
+          message: null,
+        }
       }
-    if (type === 'login')
-      return {
-        ...defaultRes,
-        state: 'login-password' as AuthSequence,
-        message: null,
-      }
+      default:
+        return {
+          ...defaultRes,
+          message: 'state Error',
+        }
+    }
   }
 
   // 이메일은 존재하지만 패스워드가 설정되어 있지 않는 경우
   if (data?.emailExist) {
-    if (type === 'login') {
-      const ret = await getAuthCode({ email })
+    switch (type) {
+      case 'login': {
+        const ret = await getAuthCode({ email })
 
-      if (ret?.response.status === 200)
+        console.log(ret.data)
+        if (ret?.response.status === 200)
+          return {
+            ...defaultRes,
+            state: 'login-code' as AuthSequence,
+            message: null,
+          }
+
         return {
           ...defaultRes,
-          state: 'login-code' as AuthSequence,
-          message: null,
+          message: '에러가 발생했습니다. 다시 시도해주세요',
         }
-
-      return {
-        ...defaultRes,
-        message: '에러가 발생했습니다. 다시 시도해주세요',
       }
-    }
-    if (type === 'regist') {
-      return {
-        ...defaultRes,
-        state: 'regist-auth' as AuthSequence,
-        message: null,
-      }
-    }
-  }
-
-  // 성공했지만, 위의 경우에 안걸린 경우 -> 아이디가 존재하지않음
-  if (response?.status === 200) {
-    if (type === 'login')
-      return {
-        ...defaultRes,
-        message: '존재하지 않는 아이디 입니다.',
-      }
-    if (type === 'regist') {
-      const ret = await getAuthCode({ email })
-      console.log(ret.data)
-      if (ret?.response.status === 200)
+      case 'regist':
         return {
           ...defaultRes,
           state: 'regist-auth' as AuthSequence,
           message: null,
         }
+      case 'resetPw': {
+        const ret = await getAuthCode({ email })
+        console.log(ret.data)
 
-      return {
-        ...defaultRes,
-        message: '인증 코드 발송중 에러가 발생했습니다',
+        if (ret?.response.status === 200)
+          return {
+            ...defaultRes,
+            state: 'resetPw-auth' as AuthSequence,
+            message: null,
+          }
+        return {
+          ...defaultRes,
+          message: '에러가 발생했습니다. 다시 시도해주세요',
+        }
       }
+      default:
+        return {
+          ...defaultRes,
+          message: 'state Error',
+        }
+    }
+  }
+
+  // 성공했지만, 위의 경우에 안걸린 경우 -> 아이디가 존재하지않음
+  if (response?.status === 200) {
+    switch (type) {
+      case 'login':
+        return {
+          ...defaultRes,
+          message: '존재하지 않는 아이디 입니다.',
+        }
+      case 'regist': {
+        const ret = await getAuthCode({ email })
+        console.log(ret.data)
+        if (ret?.response.status === 200)
+          return {
+            ...defaultRes,
+            state: 'regist-auth' as AuthSequence,
+            message: null,
+          }
+
+        return {
+          ...defaultRes,
+          message: '인증 코드 발송중 에러가 발생했습니다',
+        }
+      }
+      case 'resetPw':
+        return {
+          ...defaultRes,
+          message: '존재하지 않는 아이디 입니다.',
+        }
+      default:
+        return {
+          ...defaultRes,
+          message: 'State Error',
+        }
     }
   }
 
@@ -211,13 +271,30 @@ export async function verifyCode(currentState: AuthForm, formData: FormData) {
   const code = formData.get('code') as string
   const { data, response } = await veriftyAuthCode({ email, code })
 
-  console.log(data)
+  let type
+  if (currentState.state.includes('regist')) type = 'regist'
+  else if (currentState.state.includes('resetPw')) type = 'resetPw'
+
   if (response.status === 200) {
-    return {
-      ...currentState,
-      state: 'regist-form' as AuthSequence,
-      emailToken: data.emailToken,
-      message: null,
+    switch (type) {
+      case 'regist':
+        return {
+          ...currentState,
+          state: 'regist-form' as AuthSequence,
+          emailToken: data.emailToken,
+          message: null,
+        }
+      case 'resetPw':
+        return {
+          ...currentState,
+          state: 'resetPw-setPw' as AuthSequence,
+          emailToken: data.emailToken,
+          message: null,
+        }
+      default:
+        return {
+          ...currentState,
+        }
     }
   }
 
@@ -225,4 +302,52 @@ export async function verifyCode(currentState: AuthForm, formData: FormData) {
     ...currentState,
     message: '코드 인증중 에러가 발생했습니다.',
   }
+}
+
+export async function resetPassword(
+  currentState: AuthForm,
+  formData: FormData,
+) {
+  const password = formData.get('password') as string
+  const password2 = formData.get('password2') as string
+  const { emailToken } = currentState
+
+  console.log('reset PW')
+  const defaultRes = {
+    ...currentState,
+  }
+  if (password !== password2) {
+    return {
+      ...defaultRes,
+      message: '비밀번호 확인이 일치하지 않습니다',
+    }
+  }
+  const { data, response } = await modifyPassword({
+    password,
+    password2,
+    emailToken,
+  })
+
+  console.log(data)
+  console.log(response)
+  if (response.status === 200) {
+    return {
+      ...defaultRes,
+      message: '설정이 완료되었습니다',
+    }
+  }
+
+  return {
+    ...defaultRes,
+    message: '에러가 발생했습니다.',
+  }
+}
+
+export async function checkLogin() {
+  const { response } = await getProfile()
+  if (response?.status === 200) {
+    return true
+  }
+
+  return false
 }

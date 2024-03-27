@@ -3,9 +3,10 @@
 import { useState } from 'react'
 import { LoginViewEnum, LoginView } from '@/types/account/type'
 import LoginTemplate from '../login'
-import FindPw from '../../components/findPw'
+import ResetPwTemplate from '../resetPw'
 import RegisterTemplate from '../register'
-import AccountNav from '../nav'
+import AccountNav from '../../components/nav'
+import styles from './index.module.scss'
 
 const viewSelector = ({ currentView }: { currentView: LoginView }) => {
   switch (currentView) {
@@ -14,7 +15,20 @@ const viewSelector = ({ currentView }: { currentView: LoginView }) => {
     case LoginViewEnum.REGISTER:
       return <RegisterTemplate />
     case LoginViewEnum.FIND_PW:
-      return <FindPw />
+      return <ResetPwTemplate />
+    default:
+      return null
+  }
+}
+
+const headerSelector = ({ currentView }: { currentView: LoginView }) => {
+  switch (currentView) {
+    case LoginViewEnum.SIGN_IN:
+      return 'Log in'
+    case LoginViewEnum.REGISTER:
+      return 'Register'
+    case LoginViewEnum.FIND_PW:
+      return 'Find password'
     default:
       return null
   }
@@ -22,9 +36,11 @@ const viewSelector = ({ currentView }: { currentView: LoginView }) => {
 
 function AccountTemplate() {
   const [currentView, setCurrentView] = useState(LoginViewEnum.SIGN_IN)
-
   return (
-    <div>
+    <div className={styles.container}>
+      <header className={styles.header}>
+        {headerSelector({ currentView })}
+      </header>
       {viewSelector({ currentView })}
       <AccountNav setCurrentView={setCurrentView} />
     </div>

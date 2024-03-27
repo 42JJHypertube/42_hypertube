@@ -2,6 +2,7 @@ import { useFormState } from 'react-dom'
 import Input from '@/modules/common/components/input'
 import { AuthForm } from '@/types/account/type'
 import { useEffect } from 'react'
+import FormButton from '@/modules/common/components/formButton'
 import { registUser } from '../../action'
 import styles from './index.module.scss'
 
@@ -26,11 +27,10 @@ function TypeRegistForm({
         <Input name="lastName" required />
         <Input name="password" type="password" required />
         <Input name="password2" type="password" required />
-        {curForm.message ? <span> {form.message} </span> : null}
-        <button className={styles.TypeRegistButton} type="submit">
-          {' '}
-          Submit{' '}
-        </button>
+        {curForm.message ? (
+          <span className={styles.infoMessage}> {form.message} </span>
+        ) : null}
+        <FormButton type="submit" content="회원가입 신청하기" positive />
       </form>
     </div>
   )

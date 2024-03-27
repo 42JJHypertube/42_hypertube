@@ -1,4 +1,5 @@
-import Client, { Config } from './client'
+import { Config } from './type/client'
+import Client from './client'
 import AuthResource from './resources/auth'
 import MovieResource from './resources/movie'
 import UserResource from './resources/user'

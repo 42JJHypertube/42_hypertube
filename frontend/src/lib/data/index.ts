@@ -1,6 +1,8 @@
 'use server'
 
+import { cookies } from 'next/headers'
 import HypeClient from '../config'
+import { CustomHeaders } from '../hype/type/common'
 
 /**
  *
@@ -31,7 +33,7 @@ export async function makeUser(payload: {
   firstName: string
   lastName: string
   imageUrl: string
-  token: string
+  emailToken: string
 }) {
   return HypeClient.auth.makeUser(payload)
 }
@@ -50,8 +52,7 @@ export async function getMovie(page: number) {
   return HypeClient.movie
     .getMovieTopRated(page)
     .then((res) => {
-      console.log(res.response)
-      return { data: res.data, response: { status: 200 } }
+      return { data: res.data, response: res.response }
     })
     .catch((error) => error)
 }
@@ -89,6 +90,51 @@ export async function loginPassword({
 }) {
   return HypeClient.auth
     .loginPassword({ email, emailToken, password })
+    .then((res) => res)
+    .catch((error) => error)
+}
+
+export async function checkPermission() {
+  return HypeClient.auth
+    .checkPermission()
+    .then((res) => res)
+    .catch((error) => error)
+}
+
+export async function modifyPassword(payload: {
+  password: string
+  password2: string
+  emailToken: string
+}) {
+  return HypeClient.auth
+    .modifyPassword(payload)
+    .then((res) => res)
+    .catch((error) => error)
+}
+
+export async function getToken(customHeaders: CustomHeaders = {}) {
+  return HypeClient.auth
+    .getAccessToken(customHeaders)
+    .then((res) => res)
+    .catch((error) => error)
+}
+
+export async function getProfile(customHeaders: CustomHeaders = {}) {
+  // customHeader가 존재하지않을시 Cookie에서 가져와서 생성
+  if (Object.keys(customHeaders).length === 0) {
+    const refreshToken = cookies().get('refresh_token')?.value
+    const accessToken = cookies().get('access_token')?.value
+    const cookie = `access_token=${accessToken}; refresh_token=${refreshToken}`
+    const newHeaders = { Cookie: cookie }
+    return HypeClient.user
+      .getProfile(newHeaders)
+      .then((res) => res)
+      .catch((error) => error)
+  }
+
+  console.log('go getProfile')
+  return HypeClient.user
+    .getProfile(customHeaders)
     .then((res) => res)
     .catch((error) => error)
 }
