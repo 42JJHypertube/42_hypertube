@@ -3,6 +3,24 @@
 import { cookies } from 'next/headers'
 import HypeClient from '../config'
 import { CustomHeaders } from '../hype/type/common'
+import { revalidateTag } from 'next/cache'
+
+const getCustomHeaders = (tags: string[] = []) => {
+  const headers = {
+    next: {
+      tags,
+    },
+  } as Record<string, any>
+
+  const accessToken = cookies().get('access_token')?.value
+  const refreshToken = cookies().get('refresh_token')?.value
+
+  if (accessToken && refreshToken) {
+    headers.cookie = `access_token=${accessToken}; refresh_token=${refreshToken}`
+  }
+
+  return headers
+}
 
 /**
  *
@@ -115,27 +133,13 @@ export async function modifyPassword(payload: {
 export async function getToken(customHeaders: CustomHeaders = {}) {
   return HypeClient.auth
     .getAccessToken(customHeaders)
-    .then((res) => res)
+    .then((res) => {revalidateTag("auth"); return res})
     .catch((error) => error)
 }
 
-export async function getProfile(customHeaders: CustomHeaders = {}) {
-  // customHeader가 존재하지않을시 Cookie에서 가져와서 생성
-  if (Object.keys(customHeaders).length === 0) {
-    const refreshToken = cookies().get('refresh_token')?.value
-    const accessToken = cookies().get('access_token')?.value
-    const cookie = `access_token=${accessToken}; refresh_token=${refreshToken}`
-    const newHeaders = { Cookie: cookie }
-    return HypeClient.user
-      .getProfile(newHeaders)
-      .then((res) => res)
-      .catch((error) => {
-        console.log(error)
-        return null
-      })
-  }
-
-  console.log('go getProfile')
+export async function getProfile() {
+  const customHeaders = getCustomHeaders(["auth"])
+  
   return HypeClient.user
     .getProfile(customHeaders)
     .then((res) => res)

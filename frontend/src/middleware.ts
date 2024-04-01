@@ -1,3 +1,4 @@
+import { revalidateTag } from 'next/cache'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
@@ -23,6 +24,7 @@ async function getToken(cookies: TypeCookie[]) {
 
   try {
     const response = await fetch(url, options)
+    revalidateTag("auth")
     return await response.json()
   } catch (error) {
     return error
