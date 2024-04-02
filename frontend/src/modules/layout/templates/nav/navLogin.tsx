@@ -8,7 +8,7 @@ async function NavLogin() {
 
   return (
     <div>
-      {res ? (
+      {res.response.status === 200 ? (
         <div className={styles.container}>
           <ProfileImage imageUrl={res.data.imageUrl} />
           <NavLogOut />

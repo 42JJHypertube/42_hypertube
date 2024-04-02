@@ -1,4 +1,3 @@
-import { revalidateTag } from 'next/cache'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
@@ -24,7 +23,6 @@ async function getToken(cookies: TypeCookie[]) {
 
   try {
     const response = await fetch(url, options)
-    revalidateTag("auth")
     return await response.json()
   } catch (error) {
     return error
@@ -67,9 +65,14 @@ async function refreshToken(request: NextRequest, allCookies: TypeCookie[]) {
       response.cookies.set('access_token', res.accessToken, cookieOptions)
       return response
     }
-    return NextResponse.next()
+    const url = request.nextUrl.clone()
+    url.pathname = '/account'
+    const response = NextResponse.redirect(url)
+    response.cookies.delete('refresh_token')
+    response.cookies.delete('access_token')
+    return response
   } catch (error) {
-    const response = NextResponse.redirect(request.nextUrl.href)
+    const response = NextResponse.redirect('/account')
     response.cookies.delete('refresh_token')
     response.cookies.delete('access_token')
     return response
@@ -81,16 +84,34 @@ export async function middleware(request: NextRequest) {
     request.cookies.has('refresh_token') &&
     request.cookies.has('access_token')
   ) {
+    console.log('start middleware')
     const allCookies = request.cookies.getAll()
     const ping = await getProfile(allCookies)
     if (ping?.status === 401) {
       return refreshToken(request, allCookies)
-    } // => true
+    }
+    if (!ping?.email) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/account'
+      const response = NextResponse.redirect(url)
+      response.cookies.delete('refresh_token')
+      response.cookies.delete('access_token')
+      return NextResponse.redirect(url)
+    }
   }
 
   return NextResponse.next()
 }
 
 export const config = {
-  matcher: '/account/:path*',
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+  ],
 }

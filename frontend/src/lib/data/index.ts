@@ -4,6 +4,12 @@ import { cookies } from 'next/headers'
 import HypeClient from '../config'
 import { CustomHeaders } from '../hype/type/common'
 import { revalidateTag } from 'next/cache'
+import { redirect } from 'next/navigation'
+
+export async function actionWrapper(action: any) {
+  const res = await action({})
+  return { data: res.data, response: { status: res.response.status } }
+}
 
 const getCustomHeaders = (tags: string[] = []) => {
   const headers = {
@@ -133,20 +139,20 @@ export async function modifyPassword(payload: {
 export async function getToken(customHeaders: CustomHeaders = {}) {
   return HypeClient.auth
     .getAccessToken(customHeaders)
-    .then((res) => {revalidateTag("auth"); return res})
+    .then((res) => {
+      revalidateTag('auth')
+      return res
+    })
     .catch((error) => error)
 }
 
 export async function getProfile() {
-  const customHeaders = getCustomHeaders(["auth"])
-  
+  const customHeaders = getCustomHeaders(['auth'])
+
   return HypeClient.user
     .getProfile(customHeaders)
     .then((res) => res)
-    .catch((error) => {
-      console.log(error)
-      return null
-    })
+    .catch((error) => error)
 }
 
 export async function logOut() {
