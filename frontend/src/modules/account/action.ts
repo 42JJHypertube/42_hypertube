@@ -10,6 +10,7 @@ import {
   modifyPassword,
   getProfile,
 } from '@/lib/data'
+import { getCookieOption } from '@/lib/utill/cookieOption'
 import { AuthForm, AuthSequence } from '@/types/account/type'
 import { cookies } from 'next/headers'
 
@@ -205,12 +206,9 @@ export async function loginByPassword(
 
   // 로그인에 성공햇을 경우 쿠키 세팅
   if (response.status === 200) {
-    cookies().set('access_token', data?.accessToken, {
-      httpOnly: true,
-    })
-    cookies().set('refresh_token', data?.refreshToken, {
-      httpOnly: true,
-    })
+    const cookieOptions = getCookieOption()
+    cookies().set('access_token', data?.accessToken, cookieOptions)
+    cookies().set('refresh_token', data?.refreshToken, cookieOptions)
     return defaultRes
   }
 
@@ -241,14 +239,10 @@ export async function loginByEmail(currentState: AuthForm, formData: FormData) {
 
     // 로그인 성공시 쿠키 세팅
     if (response?.status === 200) {
-      cookies().set('access_token', data?.accessToken, {
-        httpOnly: true,
-        secure: true,
-      })
-      cookies().set('refresh_token', data?.refreshToken, {
-        httpOnly: true,
-        secure: true,
-      })
+      const cookieOptions = getCookieOption()
+      cookies().set('access_token', data?.accessToken, cookieOptions)
+      cookies().set('refresh_token', data?.refreshToken, cookieOptions)
+
       return defaultRes
     }
 

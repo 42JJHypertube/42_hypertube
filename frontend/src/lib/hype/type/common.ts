@@ -16,4 +16,5 @@ export type Response<T> = T & {
 
 export type ResponsePromise<T> = Promise<Response<T>>
 
-export type CustomHeaders = Record<string, string>
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type CustomHeaders = Record<string, any>

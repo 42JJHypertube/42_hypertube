@@ -1,5 +1,4 @@
-import { actionWrapper, getProfile } from '@/lib/data'
-import { checkLogin } from '@/modules/account/action'
+import { getProfile } from '@/lib/data'
 
 export default async function AccountPageLayout({
   userInfo,
@@ -8,7 +7,7 @@ export default async function AccountPageLayout({
   userInfo: React.ReactNode
   login: React.ReactNode
 }) {
-  const res = await actionWrapper(getProfile)
+  const res = await getProfile()
 
   return <div>{res.response.status === 200 ? userInfo : login}</div>
 }
