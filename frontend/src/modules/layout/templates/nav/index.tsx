@@ -1,11 +1,8 @@
 import Link from 'next/link'
 import NavLogin from './navLogin'
 import styles from './nav.module.scss'
-import { getProfile } from '@/lib/data'
 
 export default async function Nav() {
-  const res = await getProfile()
-
   return (
     <div className={styles.stickyContainer}>
       <header>
@@ -18,7 +15,7 @@ export default async function Nav() {
           <Link className={styles.link} href="/account">
             Account
           </Link>
-          <NavLogin isLogined={res.response.status === 200 ? true : false} />
+          <NavLogin />
         </nav>
       </header>
     </div>

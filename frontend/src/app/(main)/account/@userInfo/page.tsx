@@ -1,36 +1,27 @@
-'use client'
-
-import { actionWrapper, getProfile } from '@/lib/data'
+import { getProfile } from '@/lib/data'
 import ProfileImage from '@/modules/common/components/profileImage'
 import styles from './useInfo.module.scss'
-import { useState } from 'react'
+import { notFound } from 'next/navigation'
+import ChangePassword from '@/modules/account/components/changePassword'
+import ChangeImage from '@/modules/account/components/changeImage'
+import ChangeNickname from '@/modules/account/components/changeNickname'
 
-export default function UserInfo() {
-  const [count, setCount] = useState(1)
-  // const res = await getProfile()
-  const res = null
+export default async function UserInfo() {
+  const { data, response } = await getProfile()
 
-  if (res) {
-    const { data } = res
-    // const { nickname, email, firstName, lastName, imageUrl, roleType } = data
-    const { imageUrl } = data
-    return (
-      <div className={styles.container}>
-        <ProfileImage imageUrl={imageUrl} />
-      </div>
-    )
-  }
+  if (response.status !== 200) notFound()
+
+  const { nickname, email, firstName, lastName, imageUrl } = data
 
   return (
-    <>
-      <div className={styles.container}>
-        <ProfileImage imageUrl="./next.svg" />
-      </div>
-      <button type="submit" onClick={() => actionWrapper(getProfile)}>
-        Test
-      </button>
-      <button onClick={() => setCount(count + 1)}> increasing </button>
-      {count}
-    </>
+    <div className={styles.container}>
+      <p>Email: {email}</p>
+      <p>
+        Name: {firstName} {lastName}{' '}
+      </p>
+      <ChangeImage imageUrl={imageUrl} />
+      <ChangeNickname nickname={nickname} />
+      <ChangePassword />
+    </div>
   )
 }

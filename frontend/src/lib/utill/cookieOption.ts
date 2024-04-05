@@ -1,8 +1,7 @@
 export function getCookieOption() {
+  const duration: number = Number(process.env.JWT_ACCESS_DURATION)
   const currentDate = new Date()
-  const expireDate = new Date(
-    currentDate.getTime() + `${process.env.JWT_ACCESS_DURATION}`,
-  ) // 10000초 후
+  const expireDate = new Date(currentDate.getTime() + duration) // 10000초 후
   const cookieOptions = {
     expires: expireDate,
     secure: true, // HTTPS 연결에서만 쿠키 전송

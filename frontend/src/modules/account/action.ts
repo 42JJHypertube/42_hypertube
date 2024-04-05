@@ -306,9 +306,10 @@ export async function resetPassword(
   const password2 = formData.get('password2') as string
   const { emailToken } = currentState
 
-  console.log('reset PW')
   const defaultRes = {
     ...currentState,
+    password,
+    password2,
   }
   if (password !== password2) {
     return {

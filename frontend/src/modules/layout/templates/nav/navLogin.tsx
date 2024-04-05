@@ -6,12 +6,10 @@ import NavLogOut from './navLogOut'
 import styles from './navLogin.module.scss'
 import { useEffect, useState } from 'react'
 
-function NavLogin({ isLogined }: { isLogined: boolean }) {
+function NavLogin() {
   const [imageUrl, setImageUrl] = useState(null)
 
   useEffect(() => {
-    console.log(isLogined)
-    console.log(imageUrl)
     const fetchData = async () => {
       try {
         const res = await actionWrapper(getProfile)
@@ -22,11 +20,8 @@ function NavLogin({ isLogined }: { isLogined: boolean }) {
         setImageUrl(null)
       }
     }
-    if (isLogined)
-      fetchData()
-    else
-      setImageUrl(null)
-  }, [isLogined])
+    fetchData()
+  })
 
   return (
     <div>

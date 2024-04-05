@@ -48,9 +48,9 @@ async function getProfile(cookies: TypeCookie[]) {
   try {
     const response = await fetch(url, options)
     const data = await response.json()
-    return {data: data, response:{status: response.status}}
+    return { data: data, response: { status: response.status } }
   } catch (error) {
-    return {data: "error", response: {status: 500}}
+    return { data: 'error', response: { status: 500 } }
   }
 }
 
@@ -61,6 +61,7 @@ async function refreshToken(request: NextRequest, allCookies: TypeCookie[]) {
       const response = NextResponse.redirect(request.nextUrl.href)
       const cookieOptions = getCookieOption()
 
+      console.log('set cookie in middleware')
       response.cookies.set('refresh_token', res.refreshToken, cookieOptions)
       response.cookies.set('access_token', res.accessToken, cookieOptions)
       return response
@@ -97,7 +98,7 @@ export async function middleware(request: NextRequest) {
       const response = NextResponse.redirect(url)
       response.cookies.delete('refresh_token')
       response.cookies.delete('access_token')
-      return NextResponse.redirect(url)
+      return NextResponse.next()
     }
   }
 

@@ -46,7 +46,7 @@ export async function actionWrapper(action: any) {
         } as Record<string, any>
         newHeader.cookie = `access_token=${newToken.data.accessToken}; refresh_token=${newToken.data.refreshToken}`
         const res = await action(newHeader)
-        revalidateTag("auth")
+        revalidateTag('auth')
         return { data: res.data, response: { status: res.response.status } }
       }
 

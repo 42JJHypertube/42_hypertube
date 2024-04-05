@@ -7,7 +7,6 @@ import ResetPwTemplate from '../resetPw'
 import RegisterTemplate from '../register'
 import AccountNav from '../../components/nav'
 import styles from './index.module.scss'
-import TestButton from '@/modules/test'
 
 const viewSelector = ({ currentView }: { currentView: LoginView }) => {
   switch (currentView) {
@@ -41,7 +40,6 @@ function AccountTemplate() {
     <div className={styles.container}>
       <header className={styles.header}>
         {headerSelector({ currentView })}
-        <TestButton />
       </header>
       {viewSelector({ currentView })}
       <AccountNav setCurrentView={setCurrentView} />
