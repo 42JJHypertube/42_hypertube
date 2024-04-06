@@ -30,7 +30,6 @@ export default function ChangePassword(userInfo: any) {
         <div>
           <Input name="password" type="password" />
           <Input name="password2" type="password" />
-          <span> {curForm.message ? curForm.message : null}</span>
           <FormButton
             type="submit"
             content={
@@ -38,6 +37,7 @@ export default function ChangePassword(userInfo: any) {
             }
             positive
           />
+          <span> {curForm.message ? curForm.message : null}</span>
         </div>
       </ChangeInfo>
     </form>

@@ -3,7 +3,7 @@
 import MovieCard from '@/modules/main/components/movieCard'
 import { useEffect, useRef, useState } from 'react'
 import UseIntersectionObserve from '@/lib/hooks/useIntersectionObserve'
-import { getMovie } from '@/lib/data'
+import { actionWrapper, getMovie } from '@/lib/data'
 import styles from './main.module.scss'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -19,15 +19,10 @@ export default function MovieSection(initData: any) {
   async function loadMovies() {
     setIsfetching(true)
     const next = pages + 1
-    const ret = await getMovie(next)
-      .then((res) => res)
-      .catch((error) => {
-        console.log(error)
-      })
-
+    const ret = await actionWrapper({action: getMovie, param: next})
     if (ret?.response.status === 200) {
       setData([...data, ...ret.data.results])
-      setPages(pages + 1)
+      setPages(next)
     }
   }
 
@@ -39,11 +34,9 @@ export default function MovieSection(initData: any) {
   }, [inView, isFetching])
 
   const onIntersect = (
-    entries: IntersectionObserverEntry[],
-    observer: IntersectionObserver,
+    entries: IntersectionObserverEntry[]
   ) => {
     entries.forEach((entry) => {
-      console.log(observer)
       if (entry.isIntersecting) {
         setInview(true)
       } else setInview(false)

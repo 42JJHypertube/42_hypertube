@@ -11,7 +11,7 @@ async function getToken(cookies: TypeCookie[]) {
   const cookieHeader = cookies
     .map((cookie) => `${cookie.name}=${cookie.value}`)
     .join('; ')
-  const url = `https://localhost/api/auth/access-token`
+  const url = `http://${process.env.BACKEND}:8080/api/auth/access-token`
   const options = {
     method: 'POST',
     cache: 'no-store' as RequestCache,
@@ -34,7 +34,7 @@ async function getProfile(cookies: TypeCookie[]) {
   const cookieHeader = cookies
     .map((cookie) => `${cookie.name}=${cookie.value}`)
     .join('; ')
-  const url = `https://localhost/api/users/me`
+  const url = `http://${process.env.BACKEND}:8080/api/users/me`
   const options = {
     method: 'GET',
     cache: 'no-store' as RequestCache,
@@ -61,7 +61,6 @@ async function refreshToken(request: NextRequest, allCookies: TypeCookie[]) {
       const response = NextResponse.redirect(request.nextUrl.href)
       const cookieOptions = getCookieOption()
 
-      console.log('set cookie in middleware')
       response.cookies.set('refresh_token', res.refreshToken, cookieOptions)
       response.cookies.set('access_token', res.accessToken, cookieOptions)
       return response
@@ -107,7 +106,7 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // '/account/:path*',
+    '/account/:path*',
     /*
      * Match all request paths except for the ones starting with:
      * - api (API routes)
@@ -115,6 +114,6 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      */
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    // '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],
 }

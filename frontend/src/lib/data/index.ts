@@ -13,7 +13,8 @@ import { getCookieOption } from '../utill/cookieOption'
  * @returns {data, response: {status}} 형태로반환
  * 인증에 실패시 token을 재발급 받는 logic을 실행하고, 이도 실패시 /account 로 redirect한다
  */
-export async function actionWrapper(action: any) {
+export async function actionWrapper({action, param} : {action: any, param?: any}) {
+  // middleWare를 제거하면 아래 주석에 대해서 고려해볼만 한듯..
   // access_token 과 refresh_token이 존재하면 실행
   if (cookies().has('access_token') && cookies().has('refresh_token')) {
     const tags = ['auth']
@@ -53,23 +54,23 @@ export async function actionWrapper(action: any) {
       // 실패시 쿠키를 모두 지워주고 account 로 redirect
       cookies().delete('access_token')
       cookies().delete('refresh_token')
-      // redirect('/account')
+      revalidateTag("auth")
+      redirect('/account')
     }
 
     if (ping.response.status !== 200) {
       cookies().delete('access_token')
       cookies().delete('refresh_token')
-      // redirect('/account')
+      revalidateTag("auth")
+      redirect('/account')
     }
 
-    const res = await action()
+    const res = await action(param)
     return { data: res.data, response: { status: res.response.status } }
   }
 
-  // 토큰이 존재하지않을시 /account로 login하도록 redirect
-  cookies().delete('access_token')
-  cookies().delete('refresh_token')
-  // redirect('/account')
+  const res = await action(param)
+  return { data: res.data, response: { status: res.response.status}}
 }
 
 const getCustomHeaders = (tags: string[] = []) => {
@@ -134,11 +135,10 @@ export async function goLogin(payload: { email: string; password: string }) {
 }
 
 export async function getMovie(page: number) {
+
   return HypeClient.movie
     .getMovieTopRated(page)
-    .then((res) => {
-      return { data: res.data, response: res.response }
-    })
+    .then((res) => res)
     .catch((error) => error)
 }
 
