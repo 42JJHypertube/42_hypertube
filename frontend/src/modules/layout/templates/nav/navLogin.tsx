@@ -12,7 +12,7 @@ function NavLogin() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await actionWrapper({action: getProfile})
+        const res = await actionWrapper({ action: getProfile })
         if (res?.response.status === 200) {
           setImageUrl(res.data.imageUrl)
         } else setImageUrl(null)
@@ -21,7 +21,7 @@ function NavLogin() {
       }
     }
     fetchData()
-  }, )
+  })
 
   return (
     <div>

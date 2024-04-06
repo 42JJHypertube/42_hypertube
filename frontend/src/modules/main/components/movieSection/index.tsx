@@ -19,7 +19,7 @@ export default function MovieSection(initData: any) {
   async function loadMovies() {
     setIsfetching(true)
     const next = pages + 1
-    const ret = await actionWrapper({action: getMovie, param: next})
+    const ret = await actionWrapper({ action: getMovie, param: next })
     if (ret?.response.status === 200) {
       setData([...data, ...ret.data.results])
       setPages(next)
@@ -33,9 +33,7 @@ export default function MovieSection(initData: any) {
     }
   }, [inView, isFetching])
 
-  const onIntersect = (
-    entries: IntersectionObserverEntry[]
-  ) => {
+  const onIntersect = (entries: IntersectionObserverEntry[]) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
         setInview(true)

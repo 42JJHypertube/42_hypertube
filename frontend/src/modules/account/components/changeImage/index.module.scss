@@ -1,40 +1,40 @@
 .dropBox {
-    display: flex;
-    flex-direction: column;
-    width: 3rem;
-    height: 4rem;
+  display: flex;
+  flex-direction: column;
+  width: 3rem;
+  height: 4rem;
 }
 
 .dropImage {
-    width: 4rem;
-    height: 3rem;
+  width: 4rem;
+  height: 3rem;
 }
 
 .inputContainer {
-    display: none;
+  display: none;
 }
 
 .uploadButton {
-    width: auto;
-    height: auto;
-    text-align: center;
-    font-size: medium;
-    background: rgb(23, 158, 23);
-    padding: 0.2rem 0.5rem;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    
-    &:hover {
-        background: lighten(rgb(23, 158, 23), 10%)
-    }
+  width: auto;
+  height: auto;
+  text-align: center;
+  font-size: medium;
+  background: rgb(23, 158, 23);
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+
+  &:hover {
+    background: lighten(rgb(23, 158, 23), 10%);
+  }
 }
 
 .imageBox {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
 }
