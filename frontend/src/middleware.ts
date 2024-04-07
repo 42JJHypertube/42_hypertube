@@ -11,7 +11,7 @@ async function getToken(cookies: TypeCookie[]) {
   const cookieHeader = cookies
     .map((cookie) => `${cookie.name}=${cookie.value}`)
     .join('; ')
-  const url = `http://${process.env.BACKEND}:8080/api/auth/access-token`
+  const url = `https://localhost/api/auth/access-token`
   const options = {
     method: 'POST',
     cache: 'no-store' as RequestCache,
@@ -34,7 +34,7 @@ async function getProfile(cookies: TypeCookie[]) {
   const cookieHeader = cookies
     .map((cookie) => `${cookie.name}=${cookie.value}`)
     .join('; ')
-  const url = `http://${process.env.BACKEND}:8080/api/users/me`
+  const url = `https://localhost/api/users/me`
   const options = {
     method: 'GET',
     cache: 'no-store' as RequestCache,
@@ -50,7 +50,7 @@ async function getProfile(cookies: TypeCookie[]) {
     const data = await response.json()
     return { data: data, response: { status: response.status } }
   } catch (error) {
-    return { data: 'error', response: { status: 500 } }
+    return { data: error, response: { status: 500 } }
   }
 }
 
@@ -82,6 +82,7 @@ async function refreshToken(request: NextRequest, allCookies: TypeCookie[]) {
 }
 
 export async function middleware(request: NextRequest) {
+  console.log('run middleware')
   if (
     request.cookies.has('refresh_token') &&
     request.cookies.has('access_token')

@@ -7,6 +7,11 @@ class UserResource extends BaseResource {
     const path = '/users/me'
     return this.client.request('GET', path, {}, {}, customHeaders)
   }
+
+  changeProfile(customHeaders: CustomHeaders, payload: FormData) {
+    const path = '/users/me/profile-image'
+    return this.client.request('POST', path, payload, {}, customHeaders)
+  }
 }
 
 export default UserResource

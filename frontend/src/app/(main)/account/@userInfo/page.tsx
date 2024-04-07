@@ -21,7 +21,7 @@ export default async function UserInfo() {
       </p>
       <ChangeImage imageUrl={imageUrl} />
       <ChangeNickname nickname={nickname} />
-      <ChangePassword />
+      <ChangePassword email={email} />
     </div>
   )
 }

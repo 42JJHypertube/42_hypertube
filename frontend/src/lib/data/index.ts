@@ -233,3 +233,12 @@ export async function logOut() {
   cookies().delete('refresh_token')
   revalidateTag('auth')
 }
+
+export async function changeProfile(image: FormData) {
+  const customHeaders = getCustomHeaders(['user'])
+
+  return HypeClient.user
+    .changeProfile(customHeaders, image)
+    .then((res) => res)
+    .catch((error) => error)
+}

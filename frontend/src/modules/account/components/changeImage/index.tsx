@@ -7,9 +7,18 @@ import Input from '@/modules/common/components/input'
 import styles from './index.module.scss'
 import FormButton from '@/modules/common/components/formButton'
 import { useState } from 'react'
+import { setProfile } from '../../action'
+
+type ImageForm = {
+  message: string | null
+}
+
+const initialForm: ImageForm = {
+  message: null,
+}
 
 export default function ChangeImage({ imageUrl }: { imageUrl: string }) {
-  const [curForm, action] = useFormState(() => ({}), {})
+  const [curForm, action] = useFormState(setProfile, initialForm)
   const [uploadImage, setUploadImage] = useState<any>(null)
   const [preview, setPreview] = useState<any>(null)
 
@@ -32,14 +41,18 @@ export default function ChangeImage({ imageUrl }: { imageUrl: string }) {
           <div className={styles.image}>
             <ProfileImage imageUrl={preview ? preview : imageUrl} />
           </div>
-          <label className={styles.uploadButton} htmlFor="userProfile">
+          <label className={styles.uploadButton} htmlFor="profileImage">
             Choose File
           </label>
           <div className={styles.inputContainer}>
-            <Input name="userProfile" type="file" onChange={handleFileChange} />
+            <Input
+              name="profileImage"
+              type="file"
+              onChange={handleFileChange}
+            />
           </div>
-          {/* <span> { curForm.message ? curForm.message  : null }</span> */}
-          {/* <FormButton type="submit" content={curForm.state === "resetPw-auth" ? "인증하기" : "비밀번호 변경" } positive />`` */}
+          <span> {curForm.message ? curForm.message : null}</span>
+          <FormButton type="submit" content="프로필 변경하기" positive />
         </div>
       </ChangeInfo>
     </form>

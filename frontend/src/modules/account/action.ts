@@ -9,6 +9,7 @@ import {
   loginEmailToken,
   modifyPassword,
   getProfile,
+  changeProfile,
 } from '@/lib/data'
 import { getCookieOption } from '@/lib/utill/cookieOption'
 import { AuthForm, AuthSequence } from '@/types/account/type'
@@ -344,4 +345,87 @@ export async function checkLogin() {
   if (res && res.response.status === 200) return res.data
 
   return false
+}
+
+export async function setProfile(
+  currentState: { message: string | null },
+  formData: FormData,
+) {
+  const profileImage = formData.get('profileImage') as Blob
+  const payload = new FormData()
+  payload.append('profileImage', profileImage)
+  const res = await changeProfile(payload)
+
+  if (res.response !== 200)
+    return {
+      message: '제출에 실패했습니다.',
+    }
+
+  return {
+    message: '제출에 성공했습니다',
+  }
+}
+
+export async function setPassword(
+  currentState: {
+    password: string
+    password2: string
+    code: null | string
+    emailToken: null | string
+    message: null | string
+    email: string
+    getCode: boolean
+  },
+  formData: FormData,
+) {
+  const defaultres = {
+    ...currentState,
+  }
+  const code = formData.get('code') as string
+  const emailToken = currentState.emailToken
+  const email = currentState.email
+
+  if (!code && !emailToken) {
+    const res = await getAuthCode({ email })
+    console.log(res.data)
+    if (res.response.status === 200) {
+      return {
+        ...defaultres,
+        getCode: true
+      }
+    }
+    return {
+      ...defaultres,
+      getCode: false
+    }
+  }
+
+  if (code) {
+    const res = await veriftyAuthCode({ email, code })
+    if (res.response.status === 200)
+      return {
+        ...defaultres,
+        code: null,
+        message: null,
+        emailToken: res.data.emailToken,
+      }
+    return {
+      ...defaultres,
+      code: null,
+      message: '잘못된 코드입니다',
+    }
+  }
+
+  if (emailToken) {
+    const password = formData.get('password')
+    const password2 = formData.get('password2')
+
+    if (password !== password2)
+      return {
+        ...defaultres,
+        message: "비밀번호 확인이 일치하지 않습니다."
+      }
+  }
+
+  return defaultres
 }
