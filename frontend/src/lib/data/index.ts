@@ -234,7 +234,7 @@ export async function logOut() {
   revalidateTag('auth')
 }
 
-export async function changeProfile(image: FormData) {
+export async function changeProfile(image: Blob) {
   const customHeaders = getCustomHeaders(['user'])
 
   return HypeClient.user

@@ -57,7 +57,7 @@ class Client {
   async request(
     method: RequestMethod,
     path: string,
-    payload: any,
+    payload: any = {},
     options: RequestOptions = {},
     customHeaders: Record<string, unknown> = {},
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -68,7 +68,7 @@ class Client {
       url: string
       json: boolean
       headers: AxiosRequestHeaders
-      data?: Record<string, unknown>
+      data?: any
     } = {
       method,
       withCredentials: true,
@@ -80,6 +80,7 @@ class Client {
     if (['POST', 'DELETE'].includes(method)) {
       reqOpts.data = payload
     }
+
     const { data, ...response } = await this.axiosClient(reqOpts)
     return { data, response }
   }
