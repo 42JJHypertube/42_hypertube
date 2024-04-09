@@ -3,11 +3,25 @@
 import MovieCard from '@/modules/main/components/movieCard'
 import { useEffect, useRef, useState } from 'react'
 import UseIntersectionObserve from '@/lib/hooks/useIntersectionObserve'
-import { actionWrapper, getMovie } from '@/lib/data'
+import { actionWrapper } from '@/lib/data'
 import styles from './main.module.scss'
 
+type LoadParams = {
+  pages?: number;
+} & Record<string, any>;
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default function MovieSection({initData, total_pages} : {initData: any, total_pages: number}) {
+export default function MovieSection({
+  initData,
+  total_pages,
+  loadFunction,
+  loadParams
+}: {
+  initData: any
+  total_pages: number,
+  loadFunction: any,
+  loadParams: LoadParams,
+}) {
   const last = useRef(null)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [data, setData] = useState<Record<string, any>[]>(initData)
@@ -19,8 +33,12 @@ export default function MovieSection({initData, total_pages} : {initData: any, t
   async function loadMovies() {
     setIsfetching(true)
     const next = pages + 1
+    const newParam = {
+      ...loadParams,
+      pages: next
+    }
     if (next <= lastPage) {
-      const ret = await actionWrapper({ action: getMovie, param: next })
+      const ret = await actionWrapper({ action: loadFunction, param: newParam })
       if (ret?.response.status === 200) {
         setData([...data, ...ret.data.results])
         setPages(next)

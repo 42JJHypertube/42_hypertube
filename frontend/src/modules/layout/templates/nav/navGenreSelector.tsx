@@ -1,36 +1,23 @@
-"use client"
+'use client'
 
-import useToggleState from "@/lib/hooks/useToggleState"
-import { useState } from "react"
-import { MovieGenres } from "@/types/account/type"
+import useToggleState from '@/lib/hooks/useToggleState'
+import { useState } from 'react'
+import { MovieGenres } from '@/types/account/type'
+import { useRouter } from 'next/navigation'
 
-export default function NavGenreSelector() {
-    const {state, toggle} = useToggleState()
-    const [genre, setGenre] = useState<string | null>(null)
-    const [genreParam, setGenreParam] = useState<number | null> (null)
-    
-    return (
-        <div>
-            <div>
-              <button onClick={() => toggle()}> {genre ? genre : "Genre"} </button>
-              <input type="text" placeholder="Search Movie"/>
-              <button onClick={() => console.log("move page")}> Serach</button>
-            </div>
-            { state ?
-              MovieGenres.map((genreItem) => (
-                <div key={genreItem.id}>
-                <input
-                  type="checkbox"
-                  name={genreItem.name}
-                  id={genreItem.name}
-                  onChange={() => {setGenre(genreItem.name); setGenreParam(genreItem.id)}}
-                />
-                <label htmlFor={genreItem.name}>{genreItem.name}</label>
-                </div> 
-              ))
-               :
-                null
-            }
-        </div>    
-    )
+export default function NavSearchBar() {
+  const router = useRouter()
+  const [genre, setGenre] = useState<string | null>(null)
+  const [query, setQuery] = useState('')
+
+  return (
+    <div>
+      <input
+        type="text"
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Search Movie"
+      />
+      <button onClick={() => router.push(`/search/${query}`)}> Serach</button>
+    </div>
+  )
 }

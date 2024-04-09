@@ -49,7 +49,11 @@ export default function ChangePassword({ email }: { email: string }) {
                   <FormButton type="submit" content="코드 인증" positive />
                 </div>
               ) : (
-                <FormButton type="submit" content="인증코드 받아오기" positive />
+                <FormButton
+                  type="submit"
+                  content="인증코드 받아오기"
+                  positive
+                />
               )}
             </div>
           )}

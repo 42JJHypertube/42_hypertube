@@ -1,9 +1,5 @@
-"use client"
+'use client'
 
-export function NavsearchBar() { 
-    return (
-        <div>
-            SearchBar
-        </div>
-    )
+export function NavsearchBar() {
+  return <div>SearchBar</div>
 }

@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import NavLogin from './navLogin'
 import styles from './nav.module.scss'
-import NavGenreSelector from './navGenreSelector'
+import NavSearchBar from './navGenreSelector'
 
 export default async function Nav() {
   return (
@@ -12,7 +12,7 @@ export default async function Nav() {
             Main
           </Link>
           <div className="menubar">menuBar</div>
-          <NavGenreSelector/>
+          <NavSearchBar />
           <Link className={styles.link} href="/account">
             Account
           </Link>

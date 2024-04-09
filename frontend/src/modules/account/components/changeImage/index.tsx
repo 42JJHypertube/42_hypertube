@@ -17,7 +17,7 @@ type ImageForm = {
 
 const initialForm: ImageForm = {
   message: null,
-  profileImage : null,
+  profileImage: null,
 }
 
 export default function ChangeImage({ imageUrl }: { imageUrl: string }) {
@@ -27,8 +27,8 @@ export default function ChangeImage({ imageUrl }: { imageUrl: string }) {
   const handleFileChange = async (e: any) => {
     const file = e.target.files[0] // 첫 번째 파일만 선택
     if (file) {
-      const blob = await fileToBlob(file) as Blob
-      const imageUrl = URL.createObjectURL(blob);
+      const blob = (await fileToBlob(file)) as Blob
+      const imageUrl = URL.createObjectURL(blob)
       setPreview(imageUrl)
     }
   }

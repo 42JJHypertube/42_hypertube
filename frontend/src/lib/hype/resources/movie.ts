@@ -12,9 +12,9 @@ class MovieResource extends BaseResource {
 
     return this.client.request('GET', path, {}, {}, customHeaders)
   }
-  
-  serachMovie(page:number, genre: number, keywords: string) {
-    const path =`/discover/movie?with_genre=${genre}&page=${page}&with_keywords=${keywords}`
+
+  serachMovie(page: number, genre: number[], keywords: string) {
+    const path = `/search/movie?query=${keywords}&page=${page}`
     const customHeaders = {
       accept: 'application/json',
       Authorization: `Bearer ${process.env.TMDB_API_KEY}`,

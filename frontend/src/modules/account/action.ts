@@ -348,23 +348,23 @@ export async function checkLogin() {
 }
 
 export async function setProfile(
-  currentState: { message: string | null, profileImage: Blob | null },
+  currentState: { message: string | null; profileImage: Blob | null },
   formData: FormData,
 ) {
-  const profileImage = formData.get("profileImage") as Blob
+  const profileImage = formData.get('profileImage') as Blob
   console.log(profileImage)
   if (profileImage) {
     const res = await changeProfile(profileImage)
     console.log(res)
-  if (res.response !== 200)
-    return {
-      profileImage: currentState.profileImage,
-      message: '제출에 실패했습니다.',
-  }
+    if (res.response !== 200)
+      return {
+        profileImage: currentState.profileImage,
+        message: '제출에 실패했습니다.',
+      }
     return {
       profileImage: null,
       message: '제출에 성공했습니다',
-    }  
+    }
   }
 
   return {
@@ -398,12 +398,12 @@ export async function setPassword(
     if (res.response.status === 200) {
       return {
         ...defaultres,
-        getCode: true
+        getCode: true,
       }
     }
     return {
       ...defaultres,
-      getCode: false
+      getCode: false,
     }
   }
 
@@ -430,7 +430,7 @@ export async function setPassword(
     if (password !== password2)
       return {
         ...defaultres,
-        message: "비밀번호 확인이 일치하지 않습니다."
+        message: '비밀번호 확인이 일치하지 않습니다.',
       }
   }
 
