@@ -9,7 +9,7 @@ import { getCookieOption } from '../utill/cookieOption'
 /**
  * Client에서 사용하는 ServerAction에만 Wrapping 한다.
  *
- * @param action 실행할 ServerAction 
+ * @param action 실행할 ServerAction
  * @returns {data, response: {status}} 형태로반환
  * 인증에 실패시 token을 재발급 받는 logic을 실행하고, 이도 실패시 /account 로 redirect한다
  */
@@ -140,7 +140,7 @@ export async function goLogin(payload: { email: string; password: string }) {
     })
 }
 
-export async function getMovie({pages} : {pages : number}) {
+export async function getMovie({ pages }: { pages: number }) {
   return HypeClient.movie
     .getMovieTopRated(pages)
     .then((res) => res)
@@ -243,14 +243,24 @@ export async function changeProfile(image: Blob) {
     .catch((error) => error)
 }
 
-export async function serachMovie({query, pages, genre} : {
-  query: string,
-  pages: number,
+export async function serachMovie({
+  query,
+  pages,
+  genre,
+}: {
+  query: string
+  pages: number
   genre: number[]
-  }
-) {
+}) {
   return HypeClient.movie
     .serachMovie(pages, genre, query)
+    .then((res) => res)
+    .catch((error) => error)
+}
+
+export async function getMovieDetail({ movie_id }: { movie_id: number }) {
+  return HypeClient.movie
+    .getMovieDetail({ movie_id })
     .then((res) => res)
     .catch((error) => error)
 }

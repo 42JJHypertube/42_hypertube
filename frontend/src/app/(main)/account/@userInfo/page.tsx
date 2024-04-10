@@ -17,7 +17,7 @@ export default async function UserInfo() {
     <div className={styles.container}>
       <p>Email: {email}</p>
       <p>
-        Name: {firstName} {lastName}{' '}
+        Name: {firstName} {lastName}
       </p>
       <ChangeImage imageUrl={imageUrl} />
       <ChangeNickname nickname={nickname} />

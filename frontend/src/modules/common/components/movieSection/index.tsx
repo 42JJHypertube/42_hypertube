@@ -1,26 +1,26 @@
 'use client'
 
-import MovieCard from '@/modules/main/components/movieCard'
+import MovieCard from '../movieCard'
 import { useEffect, useRef, useState } from 'react'
 import UseIntersectionObserve from '@/lib/hooks/useIntersectionObserve'
 import { actionWrapper } from '@/lib/data'
 import styles from './main.module.scss'
 
 type LoadParams = {
-  pages?: number;
-} & Record<string, any>;
+  pages?: number
+} & Record<string, any>
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function MovieSection({
   initData,
   total_pages,
   loadFunction,
-  loadParams
+  loadParams,
 }: {
   initData: any
-  total_pages: number,
-  loadFunction: any,
-  loadParams: LoadParams,
+  total_pages: number
+  loadFunction: any
+  loadParams: LoadParams
 }) {
   const last = useRef(null)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -35,7 +35,7 @@ export default function MovieSection({
     const next = pages + 1
     const newParam = {
       ...loadParams,
-      pages: next
+      pages: next,
     }
     if (next <= lastPage) {
       const ret = await actionWrapper({ action: loadFunction, param: newParam })
@@ -74,6 +74,7 @@ export default function MovieSection({
             <MovieCard
               key={info.id as number}
               title={info.title as string}
+              movie_id={info.id as number}
               imgUrl={`https://image.tmdb.org/t/p/w500${info.poster_path}`}
             />
           ))}

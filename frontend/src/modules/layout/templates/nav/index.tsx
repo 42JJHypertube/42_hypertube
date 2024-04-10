@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import NavLogin from './navLogin'
 import styles from './nav.module.scss'
-import NavSearchBar from './navGenreSelector'
+import NavSearchBar from './navSearchBar'
 
 export default async function Nav() {
   return (
