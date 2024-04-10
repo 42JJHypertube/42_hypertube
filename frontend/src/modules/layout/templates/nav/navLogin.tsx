@@ -27,7 +27,9 @@ function NavLogin() {
     <div>
       {imageUrl ? (
         <div className={styles.container}>
-          <ProfileImage imageUrl={imageUrl} />
+          <div className={styles.profileContainer}>
+            <ProfileImage imageUrl={imageUrl} />
+          </div>
           <NavLogOut />
         </div>
       ) : null}
