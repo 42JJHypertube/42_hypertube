@@ -1,0 +1,15 @@
+.movieCard {
+  position: relative;
+  width: 100%;
+  height: 90%;
+  cursor: pointer;
+}
+
+.movieContainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}

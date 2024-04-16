@@ -1,4 +1,4 @@
-import { checkLogin } from '@/modules/account/action'
+import { getProfile } from '@/lib/data'
 
 export default async function AccountPageLayout({
   userInfo,
@@ -7,19 +7,7 @@ export default async function AccountPageLayout({
   userInfo: React.ReactNode
   login: React.ReactNode
 }) {
-  const isLogined = await checkLogin()
-  // const isLogined = false
+  const res = await getProfile()
 
-  return <div>{isLogined ? userInfo : login}</div>
+  return <div>{res.response.status === 200 ? userInfo : login}</div>
 }
-
-// export default async function AccountPageLayout({
-//   children
-// }: {
-//   children: ReactNode
-// }) {
-//   // const isLogined = await checkLogin()
-//   // const isLogined = false
-
-//   return <div>{children}</div>
-// }

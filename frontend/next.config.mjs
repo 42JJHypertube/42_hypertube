@@ -7,10 +7,11 @@ const nextConfig = {
   },
   env: {
     BACKEND: 'backend',
+    JWT_ACCESS_DURATION: '216000000',
     TMDB_API_KEY: process.env.TMDB_API_KEY,
   },
   images: {
-    domains: ['image.tmdb.org'],
+    domains: ['image.tmdb.org', 'lh3.googleusercontent.com'],
   },
 }
 

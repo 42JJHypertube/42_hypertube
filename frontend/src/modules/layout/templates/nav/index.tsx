@@ -1,18 +1,22 @@
 import Link from 'next/link'
+import NavLogin from './navLogin'
 import styles from './nav.module.scss'
+import NavSearchBar from './navSearchBar'
 
-export default function Nav() {
+export default async function Nav() {
   return (
     <div className={styles.stickyContainer}>
       <header>
         <nav className={styles.navContainer}>
-          <div>main logo</div>
+          <Link className={styles.link} href="/">
+            Main
+          </Link>
           <div className="menubar">menuBar</div>
-          <div className="searchBar">serachBar</div>
+          <NavSearchBar />
           <Link className={styles.link} href="/account">
             Account
           </Link>
-          <div className="Language">Language</div>
+          <NavLogin />
         </nav>
       </header>
     </div>

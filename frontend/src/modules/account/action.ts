@@ -9,7 +9,9 @@ import {
   loginEmailToken,
   modifyPassword,
   getProfile,
+  changeProfile,
 } from '@/lib/data'
+import { getCookieOption } from '@/lib/utill/cookieOption'
 import { AuthForm, AuthSequence } from '@/types/account/type'
 import { cookies } from 'next/headers'
 
@@ -205,12 +207,9 @@ export async function loginByPassword(
 
   // 로그인에 성공햇을 경우 쿠키 세팅
   if (response.status === 200) {
-    cookies().set('access_token', data?.accessToken, {
-      httpOnly: true,
-    })
-    cookies().set('refresh_token', data?.refreshToken, {
-      httpOnly: true,
-    })
+    const cookieOptions = getCookieOption()
+    cookies().set('access_token', data?.accessToken, cookieOptions)
+    cookies().set('refresh_token', data?.refreshToken, cookieOptions)
     return defaultRes
   }
 
@@ -241,14 +240,10 @@ export async function loginByEmail(currentState: AuthForm, formData: FormData) {
 
     // 로그인 성공시 쿠키 세팅
     if (response?.status === 200) {
-      cookies().set('access_token', data?.accessToken, {
-        httpOnly: true,
-        secure: true,
-      })
-      cookies().set('refresh_token', data?.refreshToken, {
-        httpOnly: true,
-        secure: true,
-      })
+      const cookieOptions = getCookieOption()
+      cookies().set('access_token', data?.accessToken, cookieOptions)
+      cookies().set('refresh_token', data?.refreshToken, cookieOptions)
+
       return defaultRes
     }
 
@@ -312,9 +307,10 @@ export async function resetPassword(
   const password2 = formData.get('password2') as string
   const { emailToken } = currentState
 
-  console.log('reset PW')
   const defaultRes = {
     ...currentState,
+    password,
+    password2,
   }
   if (password !== password2) {
     return {
@@ -344,10 +340,99 @@ export async function resetPassword(
 }
 
 export async function checkLogin() {
-  const { response } = await getProfile()
-  if (response?.status === 200) {
-    return true
-  }
+  const res = await getProfile()
+
+  if (res && res.response.status === 200) return res.data
 
   return false
+}
+
+export async function setProfile(
+  currentState: { message: string | null; profileImage: Blob | null },
+  formData: FormData,
+) {
+  const profileImage = formData.get('profileImage') as Blob
+  console.log(profileImage)
+  if (profileImage) {
+    const res = await changeProfile(profileImage)
+    console.log(res)
+    if (res.response !== 200)
+      return {
+        profileImage: currentState.profileImage,
+        message: '제출에 실패했습니다.',
+      }
+    return {
+      profileImage: null,
+      message: '제출에 성공했습니다',
+    }
+  }
+
+  return {
+    profileImage: currentState.profileImage,
+    message: '알맞은 이미지를 넣어주세요',
+  }
+}
+
+export async function setPassword(
+  currentState: {
+    password: string
+    password2: string
+    code: null | string
+    emailToken: null | string
+    message: null | string
+    email: string
+    getCode: boolean
+  },
+  formData: FormData,
+) {
+  const defaultres = {
+    ...currentState,
+  }
+  const code = formData.get('code') as string
+  const emailToken = currentState.emailToken
+  const email = currentState.email
+
+  if (!code && !emailToken) {
+    const res = await getAuthCode({ email })
+    console.log(res.data)
+    if (res.response.status === 200) {
+      return {
+        ...defaultres,
+        getCode: true,
+      }
+    }
+    return {
+      ...defaultres,
+      getCode: false,
+    }
+  }
+
+  if (code) {
+    const res = await veriftyAuthCode({ email, code })
+    if (res.response.status === 200)
+      return {
+        ...defaultres,
+        code: null,
+        message: null,
+        emailToken: res.data.emailToken,
+      }
+    return {
+      ...defaultres,
+      code: null,
+      message: '잘못된 코드입니다',
+    }
+  }
+
+  if (emailToken) {
+    const password = formData.get('password')
+    const password2 = formData.get('password2')
+
+    if (password !== password2)
+      return {
+        ...defaultres,
+        message: '비밀번호 확인이 일치하지 않습니다.',
+      }
+  }
+
+  return defaultres
 }

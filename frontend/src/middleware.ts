@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { getCookieOption } from './lib/utill/cookieOption'
 
 type TypeCookie = {
   name: string
@@ -10,7 +11,7 @@ async function getToken(cookies: TypeCookie[]) {
   const cookieHeader = cookies
     .map((cookie) => `${cookie.name}=${cookie.value}`)
     .join('; ')
-  const url = `https://10.12.8.2/api/auth/access-token`
+  const url = `https://localhost/api/auth/access-token`
   const options = {
     method: 'POST',
     cache: 'no-store' as RequestCache,
@@ -33,7 +34,7 @@ async function getProfile(cookies: TypeCookie[]) {
   const cookieHeader = cookies
     .map((cookie) => `${cookie.name}=${cookie.value}`)
     .join('; ')
-  const url = `https://10.12.8.2/api/users/me`
+  const url = `https://localhost/api/users/me`
   const options = {
     method: 'GET',
     cache: 'no-store' as RequestCache,
@@ -46,9 +47,10 @@ async function getProfile(cookies: TypeCookie[]) {
 
   try {
     const response = await fetch(url, options)
-    return await response.json()
+    const data = await response.json()
+    return { data: data, response: { status: response.status } }
   } catch (error) {
-    return error
+    return { data: error, response: { status: 500 } }
   }
 }
 
@@ -57,17 +59,22 @@ async function refreshToken(request: NextRequest, allCookies: TypeCookie[]) {
     const res = await getToken(allCookies)
     if (res.accessToken && res.refreshToken) {
       const response = NextResponse.redirect(request.nextUrl.href)
-      const cookieOptions = {
-        secure: true, // HTTPS 연결에서만 쿠키 전송
-        httpOnly: true, // JavaScript에서 쿠키 접근 불가
-      }
+      const cookieOptions = getCookieOption()
+
       response.cookies.set('refresh_token', res.refreshToken, cookieOptions)
       response.cookies.set('access_token', res.accessToken, cookieOptions)
       return response
     }
-    return NextResponse.next()
+    const url = request.nextUrl.clone()
+    url.pathname = '/account'
+    const response = NextResponse.redirect(url)
+    response.cookies.delete('refresh_token')
+    response.cookies.delete('access_token')
+    return response
   } catch (error) {
-    const response = NextResponse.redirect(request.nextUrl.href)
+    const url = request.nextUrl.clone()
+    url.pathname = '/account'
+    const response = NextResponse.redirect(url)
     response.cookies.delete('refresh_token')
     response.cookies.delete('access_token')
     return response
@@ -75,20 +82,39 @@ async function refreshToken(request: NextRequest, allCookies: TypeCookie[]) {
 }
 
 export async function middleware(request: NextRequest) {
+  console.log('run middleware')
   if (
     request.cookies.has('refresh_token') &&
     request.cookies.has('access_token')
   ) {
     const allCookies = request.cookies.getAll()
     const ping = await getProfile(allCookies)
-    if (ping?.status === 401) {
+    if (ping?.response.status === 401) {
       return refreshToken(request, allCookies)
-    } // => true
+    }
+    if (ping?.response.status !== 200) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/account'
+      const response = NextResponse.redirect(url)
+      response.cookies.delete('refresh_token')
+      response.cookies.delete('access_token')
+      return NextResponse.next()
+    }
   }
 
   return NextResponse.next()
 }
 
 export const config = {
-  matcher: '/account/:path*',
+  matcher: [
+    '/account/:path*',
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    // '/((?!api|_next/static|_next/image|favicon.ico).*)',
+  ],
 }
