@@ -21,12 +21,10 @@ import com.seoulJJ.hypertube.global.security.service.CustomOAuth2UserService;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-@Log4j2
 public class SecurityConfig {
 
 	private final JwtTokenProvider jwtTokenProvider;

@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -34,11 +35,12 @@ public class UserController {
     }
 
     @PostMapping("/me/profile-image")
-    public ResponseEntity<String> updateProfileImage(@Parameter(hidden = true) @LoginPrincipal UserPrincipal userPrincipal, MultipartFile file) {
+    public ResponseEntity<String> updateProfileImage(
+            @Parameter(hidden = true) @LoginPrincipal UserPrincipal userPrincipal,
+            @RequestPart MultipartFile file) {
         userService.updateUserProfileImage(userPrincipal.getUsername(), file);
         return ResponseEntity.status(201).body("Success");
     }
-    
 
     @GetMapping("/test/role-user")
     public String roleUserTest() {
