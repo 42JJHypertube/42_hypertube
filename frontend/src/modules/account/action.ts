@@ -12,7 +12,7 @@ import {
   changeProfile,
 } from '@/lib/data'
 import { getCookieOption } from '@/lib/utill/cookieOption'
-import { AuthForm, AuthSequence } from '@/types/account/type'
+import { AuthForm, AuthSequence, LoginForm } from '@/types/account/type'
 import { cookies } from 'next/headers'
 
 export async function registUser(currentState: AuthForm, formData: FormData) {
@@ -435,4 +435,62 @@ export async function setPassword(
   }
 
   return defaultres
+}
+
+export async function login(currentState: LoginForm, formData: FormData) {
+  const email = formData.get('email') as string
+
+  // 로그인 방식 판별 
+  if (currentState.loginType === null) {
+    const {data, response} = await checkEmail(email)
+    if (response.status === 200) {
+      if (data.passwordExist)
+        return {
+          ...currentState,
+          email,
+          loginType: 'password'
+        }
+      if (data.emailExist)
+        return {
+          ...currentState,
+          email,
+          loginType: 'email'
+        }
+    }
+  }
+
+  // email auth 로그인
+  if (currentState.loginType === 'email') {
+    const emailToken = formData.get('emailToken') as string
+    const {data, response} = await loginEmailToken({email, emailToken, password: ""})
+    if (response?.status === 200) {
+      const cookieOptions = getCookieOption()
+      cookies().set('access_token', data?.accessToken, cookieOptions)
+      cookies().set('refresh_token', data?.refreshToken, cookieOptions)
+
+      return {
+        ...currentState
+      }
+    }
+  }
+
+  // password 로그인
+  if (currentState.loginType === 'password') {
+    const password = formData.get('password') as string 
+    const {data, response} = await loginPassword({email, emailToken: "", password})
+    if (response?.status === 200) {
+      const cookieOptions = getCookieOption()
+      cookies().set('access_token', data?.accessToken, cookieOptions)
+      cookies().set('refresh_token', data?.refreshToken, cookieOptions)
+
+      return {
+        ...currentState
+      }
+    }
+  }
+
+  return {
+    ...currentState,
+    message: "존재 하지 않는 메일입니다."
+  }
 }
