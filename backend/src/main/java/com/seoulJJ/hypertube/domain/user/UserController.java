@@ -9,17 +9,15 @@ import com.seoulJJ.hypertube.global.utils.argumentresolver.LoginPrincipal;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.apache.catalina.connector.Response;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
-@Log4j2
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/users")
@@ -37,11 +35,12 @@ public class UserController {
     }
 
     @PostMapping("/me/profile-image")
-    public ResponseEntity<String> updateProfileImage(@Parameter(hidden = true) @LoginPrincipal UserPrincipal userPrincipal, MultipartFile file) {
+    public ResponseEntity<String> updateProfileImage(
+            @Parameter(hidden = true) @LoginPrincipal UserPrincipal userPrincipal,
+            @RequestPart MultipartFile file) {
         userService.updateUserProfileImage(userPrincipal.getUsername(), file);
         return ResponseEntity.status(201).body("Success");
     }
-    
 
     @GetMapping("/test/role-user")
     public String roleUserTest() {

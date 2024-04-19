@@ -2,7 +2,6 @@ package com.seoulJJ.hypertube.global.security.cookie;
 
 import java.util.Optional;
 
-import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -42,7 +41,6 @@ public class CookieUtil {
 	}
 
 	public void addJwtTokenCookie(HttpServletResponse response, JwtTokenDto jwtTokenDto) {
-
 		ResponseCookie accessTokenCookie = ResponseCookie.from("access_token", jwtTokenDto.getAccessToken())
 			.maxAge((int)(refreshTokenExpiresIn / 1000))
 			.domain(domain)

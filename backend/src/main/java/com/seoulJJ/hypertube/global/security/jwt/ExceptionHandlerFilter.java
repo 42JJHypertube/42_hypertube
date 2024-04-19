@@ -12,7 +12,6 @@ import com.seoulJJ.hypertube.global.exception.ErrorResponse;
 import com.seoulJJ.hypertube.global.security.auth.exception.AuthInvalidTokenException;
 
 import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
