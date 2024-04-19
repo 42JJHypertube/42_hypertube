@@ -13,9 +13,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 
-@Log4j2
 @Component
 @RequiredArgsConstructor
 public class CookieUtil {
@@ -43,7 +41,6 @@ public class CookieUtil {
 	}
 
 	public void addJwtTokenCookie(HttpServletResponse response, JwtTokenDto jwtTokenDto) {
-		log.info("DOMAIN : " + domain);
 		ResponseCookie accessTokenCookie = ResponseCookie.from("access_token", jwtTokenDto.getAccessToken())
 			.maxAge((int)(refreshTokenExpiresIn / 1000))
 			.domain(domain)
@@ -63,7 +60,6 @@ public class CookieUtil {
 	}
 
 	public void addCookie(HttpServletResponse response, String name, String value, int maxAge) {
-
 		ResponseCookie cookie = ResponseCookie.from(name, value)
 			.maxAge(maxAge)
 			.domain(domain)
