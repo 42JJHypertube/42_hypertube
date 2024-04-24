@@ -13,6 +13,7 @@ import {
 } from '@/lib/data'
 import { getCookieOption } from '@/lib/utill/cookieOption'
 import { AuthForm, AuthSequence, LoginForm } from '@/types/account/type'
+import { AuthForm, AuthSequence, LoginForm } from '@/types/account/type'
 import { cookies } from 'next/headers'
 
 export async function registUser(currentState: AuthForm, formData: FormData) {

@@ -1,6 +1,7 @@
 'use client'
 
 import { AuthForm, LoginForm } from '@/types/account/type'
+import { AuthForm, LoginForm } from '@/types/account/type'
 import styles from './index.module.scss'
 import Input from '@/modules/common/components/input'
 import { useFormState } from 'react-dom'
