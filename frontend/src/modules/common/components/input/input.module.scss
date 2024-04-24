@@ -12,7 +12,14 @@
   height: 2.3rem;
   width: 100%;
   font-size: 0.7rem;
+  background-color: black;
+  color: rgb(162, 162, 162);
+  border: 1px solid gray;
+  box-shadow: blue;
+  border-radius: 0.3rem;
+  color: white;
 }
+
 
 .label {
   color: rgb(162, 162, 162);
@@ -25,4 +32,15 @@
   padding-left: 0.1rem;
   font-size: 0.5rem;
   color: red;
+}
+
+.readOnly {
+  color: gray;
+  cursor: not-allowed;
+
+  &:focus {
+    box-shadow: none;
+    outline: none;
+  }
+
 }

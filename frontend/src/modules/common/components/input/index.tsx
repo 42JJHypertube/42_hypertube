@@ -20,8 +20,9 @@ function Input({
         required={required}
         value={value}
         readOnly={readOnly}
-        className={styles.input}
+        className={readOnly ? `${styles.input} ${styles.readOnly}` : styles.input }
         onChange={onChange}
+        tabIndex={readOnly ? -1 : 0}
       />
       <label htmlFor={name} className={styles.label}>
         {name === 'password2' ? 'password confirm' : name}
