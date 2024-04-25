@@ -1,12 +1,13 @@
 'use client'
 
 import { AuthForm, LoginForm } from '@/types/account/type'
-import { AuthForm, LoginForm } from '@/types/account/type'
 import styles from './index.module.scss'
 import Input from '@/modules/common/components/input'
 import { useFormState } from 'react-dom'
 import FormButton from '@/modules/common/components/formButton'
 import { login, loginWithEmail } from '../../action2'
+import { LoginViewEnum } from '@/types/account/type'
+import AccountNav from '../../components/nav'
 
 const loginInitial: LoginForm = {
   email: null,
@@ -24,18 +25,12 @@ const authInitial: AuthForm = {
   codeSended: false,
 }
 
-function LoginTemplate() {
+function LoginTemplate({setCurrentView} = {setCurrentView : Dispatch<SetStateAction<LoginViewEnum>>}) {
   const [authForm, authAction] = useFormState(loginWithEmail, authInitial)
   const [loginForm, loginAction] = useFormState(login, loginInitial)
 
   return (
-
-    <div className={styles.accountContainer}>
-      <div className={styles.information}>
-        <div className={styles.bigInfo}>Hyper Tube에 오신걸 환영합니다</div>
-        <div className={styles.smallInfo}>모든 영화인들을 위한 HyperTube 회원 커뮤니티에 오신 것을 환영합니다. 로그인을 완료하고 모험을 시작하세요.</div>
-      </div>
-      <div className={styles.rightSide}>
+      <div className={styles.loginContainer}>
       {
       loginForm.loginType !== 'email' ?
       <form className={styles.inputContainer} action={loginAction}>
@@ -70,8 +65,8 @@ function LoginTemplate() {
           />
         </form>
       ) : null}
-      <div className={styles.redirect}> 아직 멤버가 아니신가요? <a className={styles.aTag}>회원가입</a></div>    
-    </div>
+      <div className={styles.redirect}> 아직 멤버가 아니신가요? <a className={styles.aTag} onClick={() => setCurrentView(LoginViewEnum.REGISTER)}>회원가입</a></div>
+      <AccountNav/>
     </div>
   )
 }

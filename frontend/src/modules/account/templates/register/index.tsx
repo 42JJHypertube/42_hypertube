@@ -1,51 +1,32 @@
 'use client'
 
-import { useState } from 'react'
-import { AuthForm, AuthSequence } from '@/types/account/type'
-import TypeAuth from '../../components/typeAuth'
-import TypeEmail from '../../components/typeEmail'
-import TypeRegistForm from '../../components/typeRegistForm'
+import Input from '@/modules/common/components/input'
 import styles from './index.module.scss'
+import FormButton from '@/modules/common/components/formButton'
+import { useFormState } from 'react-dom'
+import { LoginViewEnum } from '@/types/account/type'
 
-function viewSelector({
-  form,
-  setForm,
-}: {
-  form: AuthForm
-  setForm: React.Dispatch<React.SetStateAction<AuthForm>>
-}) {
-  switch (form.state) {
-    case 'regist-email':
-      return <TypeEmail form={form} setForm={setForm} />
-    case 'regist-auth':
-      return <TypeAuth form={form} setForm={setForm} />
-    case 'regist-form':
-      return <TypeRegistForm form={form} setForm={setForm} />
-    default:
-      return null
-  }
-}
+function RegisterTemplate({setCurrentView} : {setCurrentView: Dispatch<SetStateAction<LoginViewEnum>>}) {
 
-const initialState: AuthForm = {
-  state: 'regist-email' as AuthSequence,
-  nickname: '',
-  email: '',
-  password: '',
-  password2: '',
-  firstName: '',
-  lastName: '',
-  imageUrl: '',
-  emailToken: '',
-  code: '',
-  message: null,
-}
-
-function RegisterTemplate() {
-  const [form, setForm] = useState<AuthForm>(initialState)
-
+  const [authForm, authAction] = useFormState(() => ({}), {})
+  const [loginForm, loginAction] = useFormState(()=> ({loginType: 'email'}), {loginType: 'email'})
+  
   return (
-    <div className={styles.RegisterTemplateContainer}>
-      {viewSelector({ form, setForm })}
+      <div className={styles.registContainer}>
+      <form className={styles.inputContainer} action={loginAction}>
+        <Input
+          name="email"
+          type="email"
+          readOnly={loginForm.loginType ? true : false}
+          required
+        />
+        {loginForm.loginType === 'password' ? (
+          <Input name="password" type="password" />
+        ) : null}
+        <span className={styles.infoMessage}> {null} </span>
+        <FormButton type="submit" content="계속하기" positive />
+      </form>
+      <div className={styles.redirect}> 이미 계정이 있으신가요? <a className={styles.aTag} onClick={() => setCurrentView(LoginViewEnum.SIGN_IN)}>로그인</a></div>    
     </div>
   )
 }
