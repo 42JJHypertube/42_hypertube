@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import React, { Dispatch, SetStateAction } from 'react';
 import { LoginViewEnum, LoginView } from '@/types/account/type'
 import LoginTemplate from '../login'
 import ResetPwTemplate from '../resetPw'
@@ -48,7 +49,7 @@ const infoSelector = (currentView: LoginView) => {
 }
 
 function AccountTemplate() {
-  const [currentView, setCurrentView] = useState<LoginView>(LoginViewEnum.SIGN_IN)
+  const [currentView, setCurrentView] = useState<LoginViewEnum>(LoginViewEnum.SIGN_IN)
   const [info, setInfo] = useState(infoSelector(currentView))
   const [isAnimating, setIsAnimating] = useState(true);
 

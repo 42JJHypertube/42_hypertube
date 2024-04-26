@@ -1,8 +1,8 @@
 'use server'
 
-import { checkEmail, getAuthCode, loginEmailToken, loginPassword, veriftyAuthCode } from '@/lib/data'
+import { checkEmail, getAuthCode, loginEmailToken, loginPassword, makeUser, veriftyAuthCode } from '@/lib/data'
 import { getCookieOption } from '@/lib/utill/cookieOption'
-import { AuthForm, LoginForm } from '@/types/account/type'
+import { AuthForm, LoginForm, RegistForm } from '@/types/account/type'
 import { cookies } from 'next/headers'
 
 // login 시 계정의 인증방식이 password인지 email인지 구별해주는 함수.
@@ -100,19 +100,110 @@ export async function loginWithEmail (currentState: AuthForm, formData: FormData
   }
 }
 
-async function requestAuthCode (currentState: AuthForm, formData: FormData) {
+export async function requestAuthCode (currentState: AuthForm, formData: FormData) {
   const email = formData.get('email') as string
   const { data, response } = await getAuthCode({ email })
   if (response.status === 200){
     console.log(data)
     return {
       ...currentState,
+      email,
       codeSended: true
     } as AuthForm
   }
 
   return {
     ...currentState,
+    email,
     message: "오류가 발생했습니다. 다시 시도해주세요"
   } as AuthForm
+}
+
+export async function requestRegistAuthCode (currentState: AuthForm, formData: FormData) {
+  const email = formData.get('email') as string
+
+  if (currentState.codeSended) {
+    const code = formData.get('code') as string
+    const res = await veriftyAuthCode({email, code})
+    if (res.response.status === 200)
+      return {
+        ...currentState,
+        email,
+        emailToken: res.data.emailToken
+      }
+    
+    return {
+      ...currentState,
+      message: "코드인증 중 에러가 발생했습니다."
+    }
+  }
+
+  const { data, response } = await checkEmail(email)
+  if (response.status !== 200){
+    return {
+      ...currentState,
+      message: "에러가 발생했습니다."
+    }
+  }
+  if (data.emailExist) {
+      return {
+        ...currentState,
+        message: "이미 존재하는 계정입니다!"
+      }
+  }
+
+  const res = await getAuthCode({ email })
+  if (res.response.status === 200){
+    console.log(res.data)
+    return {
+      ...currentState,
+      email,
+      codeSended: true,
+      message: null
+    } as AuthForm
+  }
+
+  return {
+    ...currentState,
+    email,
+    message: "오류가 발생했습니다. 다시 시도해주세요"
+  } as AuthForm
+}
+
+export async function registUser(currentState: RegistForm, formData: FormData) {
+  const formInfo = {
+    nickname: formData.get('nickname') as string,
+    lastName: formData.get('lastName') as string,
+    firstName: formData.get('firstName') as string,
+    password: formData.get('password') as string,
+    password2: formData.get('password2') as string,
+  }
+
+  if (formInfo.password !== formInfo.password2) {
+    return {
+      ...currentState,
+      message: 'Confirm Password 가 일치하지 않습니다.',
+    }
+  }
+  const email = formData.get('email') as string
+  const emailToken = formData.get('emailToken') as string
+  console.log(formData.get('emailToken') as string)
+  const { response } = await makeUser({
+    ...formInfo,
+    email,
+    emailToken,
+    imageUrl: '',
+  })
+
+  if (response?.status === 200) {
+    return {
+      ...currentState,
+      success: true,
+      message: '회원가입에 성공했습니다',
+    }
+  }
+  return {
+    ...currentState,
+    message: '에러가 발생했습니다.',
+  }
 }

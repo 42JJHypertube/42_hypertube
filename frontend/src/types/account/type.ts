@@ -31,4 +31,6 @@ export type RegistForm = {
   lastName: string
   imageUrl: string
   emailToken: string
+  message: string | null
+  success: boolean;
 }
