@@ -87,9 +87,9 @@ body {
 
 body {
   background-image: url('/loginBackground.jpg');
-  background-size: cover;  /* 화면에 맞게 이미지 크기 조정 */
-  background-repeat: no-repeat;  /* 이미지 반복 방지 */
-  background-position: center;  /* 중앙에 배치 */
+  background-size: cover; /* 화면에 맞게 이미지 크기 조정 */
+  background-repeat: no-repeat; /* 이미지 반복 방지 */
+  background-position: center; /* 중앙에 배치 */
   background-attachment: fixed;
   /* color: rgb(var(--foreground-rgb));
   background: linear-gradient(
