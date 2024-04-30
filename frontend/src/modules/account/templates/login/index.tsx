@@ -9,6 +9,7 @@ import FormButton from '@/modules/common/components/formButton'
 import { login, loginWithEmail } from '../../action2'
 import { LoginViewEnum } from '@/types/account/type'
 import AccountNav from '../../components/nav'
+import InnerInputButton from '@/modules/common/components/innerInputButton'
 
 const loginInitial: LoginForm = {
   email: null,
@@ -26,7 +27,7 @@ const authInitial: AuthForm = {
 
 function LoginTemplate({
   setCurrentView,
-  setEmail
+  setEmail,
 }: {
   setCurrentView: Dispatch<SetStateAction<LoginViewEnum>>
   setEmail: Dispatch<React.SetStateAction<string | undefined>>
@@ -35,13 +36,13 @@ function LoginTemplate({
   const [loginForm, loginAction] = useFormState(login, loginInitial)
 
   useEffect(() => {
-    if (loginForm.noAccount){
+    if (loginForm.noAccount) {
       setCurrentView(LoginViewEnum.REGISTER)
       loginForm.email && setEmail(loginForm.email)
     }
   }, [loginForm])
-
-  return (
+    
+    return (
     <div className={styles.loginContainer}>
       {loginForm.loginType !== 'email' ? (
         <form className={styles.inputContainer} action={loginAction}>
@@ -49,6 +50,16 @@ function LoginTemplate({
             name="email"
             type="email"
             readOnly={loginForm.loginType ? true : false}
+            innerButton={
+              loginForm.loginType ? (
+                <InnerInputButton
+                  title="수정"
+                  onClick={() => {
+                    loginForm.loginType = null
+                  }}
+                />
+              ) : null
+            }
             required
           />
           {loginForm.loginType === 'password' ? (
@@ -60,8 +71,21 @@ function LoginTemplate({
       ) : null}
       {loginForm.loginType === 'email' ? (
         <form className={styles.inputContainer} action={authAction}>
-          <Input name="email" type="text" value={loginForm.email!} readOnly />
-          <Input name="code" type="text" required />
+          <Input
+            name="email"
+            type="text"
+            value={loginForm.email!}
+            readOnly
+            innerButton={<InnerInputButton title="수정" onClick={() => {loginForm.loginType = null}} />}
+          />
+          <Input
+            name="code"
+            type="text"
+            required
+            innerButton={
+              <InnerInputButton title="코드 재 전송" onClick={() => {}} />
+            }
+          />
           <FormButton type="submit" content={'계속하기'} positive />
         </form>
       ) : null}
@@ -70,7 +94,9 @@ function LoginTemplate({
         아직 멤버가 아니신가요?{' '}
         <a
           className={styles.aTag}
-          onClick={() => {setCurrentView(LoginViewEnum.REGISTER)}}
+          onClick={() => {
+            setCurrentView(LoginViewEnum.REGISTER)
+          }}
         >
           회원가입
         </a>

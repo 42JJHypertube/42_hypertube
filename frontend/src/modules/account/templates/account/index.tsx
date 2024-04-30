@@ -15,12 +15,25 @@ interface ViewProps {
   setEmail: Dispatch<React.SetStateAction<string | undefined>>
 }
 
-const viewSelector = ({ email, currentView, setCurrentView, setEmail }: ViewProps) => {
+const viewSelector = ({
+  email,
+  currentView,
+  setCurrentView,
+  setEmail,
+}: ViewProps) => {
   switch (currentView) {
     case LoginViewEnum.SIGN_IN:
-      return <LoginTemplate setCurrentView={setCurrentView} setEmail={setEmail}/>
+      return (
+        <LoginTemplate setCurrentView={setCurrentView} setEmail={setEmail} />
+      )
     case LoginViewEnum.REGISTER:
-      return <RegisterTemplate setCurrentView={setCurrentView} email={email} setEmail={setEmail}/>
+      return (
+        <RegisterTemplate
+          setCurrentView={setCurrentView}
+          email={email}
+          setEmail={setEmail}
+        />
+      )
     case LoginViewEnum.FIND_PW:
       return <ResetPwTemplate />
     default:
@@ -63,7 +76,6 @@ function AccountTemplate() {
   //광클했을 때 애니메이션이 적용되지않는 문제가있음..
   useEffect(() => {
     setInfo(infoSelector(currentView))
-    // setIsAnimating(true)
     const timer = setTimeout(() => {
       setIsAnimating(false)
     }, 2000) // 애니메이션 시간 (2초) 후에 다시 초기화

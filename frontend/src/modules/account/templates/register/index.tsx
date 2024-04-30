@@ -5,8 +5,13 @@ import styles from './index.module.scss'
 import FormButton from '@/modules/common/components/formButton'
 import { useFormState } from 'react-dom'
 import { LoginViewEnum, AuthForm, RegistForm } from '@/types/account/type'
-import { registUser, requestAuthCode, requestRegistAuthCode } from '../../action2'
+import {
+  registUser,
+  requestAuthCode,
+  requestRegistAuthCode,
+} from '../../action2'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import InnerInputButton from '@/modules/common/components/innerInputButton'
 
 const authInitial: AuthForm = {
   email: null,
@@ -22,11 +27,10 @@ const registInitial: RegistForm = {
   success: false,
 }
 
-
 function RegisterTemplate({
   setCurrentView,
   setEmail,
-  email
+  email,
 }: {
   setCurrentView: Dispatch<SetStateAction<LoginViewEnum>>
   setEmail: Dispatch<React.SetStateAction<string | undefined>>
@@ -37,26 +41,29 @@ function RegisterTemplate({
     authInitial,
   )
   const [registForm, registAction] = useFormState(registUser, registInitial)
-  const [inputEmail, setInputEmail] = useState<string>(email ? email : "")
+  const [inputEmail, setInputEmail] = useState<string>(email ? email : '')
   const [codeSended, setCodeSended] = useState(false)
 
   async function getAuthCode(email: string) {
+    console.log('getAuthCode')
     const res = await requestAuthCode(email)
-    if (res.success){
+    if (res.success) {
       setCodeSended(true)
-      authForm.codeSended = true;
-    }
-    else
-      setCodeSended(false)
+      authForm.codeSended = true
+    } else setCodeSended(false)
   }
 
+  // unmount할 때 authForm.codeSeneded를 초기화 하지않으면, 다시 화면을 전환했을 때 이전의 진행상황이 그대로 남아있음. 왤까?
   useEffect(() => {
-    if (email && email !== "" && !codeSended) {
+    console.log(codeSended)
+    console.log(authForm.codeSended)
+    if (email && email !== '' && !codeSended) {
       getAuthCode(email)
     }
 
     return () => {
       setEmail(undefined)
+      authForm.codeSended = false
     }
   }, [])
 
@@ -83,15 +90,37 @@ function RegisterTemplate({
               <Input
                 name="email"
                 type="email"
-                onChange = {(e) => {setInputEmail(e.target.value)}}
-                value = {email ? email :  inputEmail}
+                onChange={(e) => {
+                  setInputEmail(e.target.value)
+                }}
+                value={email ? email : inputEmail}
                 readOnly={email || authForm.codeSended ? true : false}
+                innerButton={
+                  email || authForm.codeSended ? (
+                    <InnerInputButton
+                      title="수정"
+                      onClick={() => {
+                        console.log('register')
+                      }}
+                    />
+                  ) : null
+                }
                 required
               />
               {authForm.codeSended || codeSended ? (
                 <>
                   <div> 위의 메일로 인증코드가 전송되었습니다 ! </div>
-                  <Input name="code" type="text" required />
+                  <Input
+                    name="code"
+                    type="text"
+                    required
+                    innerButton={
+                      <InnerInputButton
+                        title="코드 재 전송"
+                        onClick={() => {}}
+                      />
+                    }
+                  />
                 </>
               ) : null}
               <span className={styles.infoMessage}> {authForm.message} </span>

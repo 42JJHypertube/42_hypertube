@@ -1,7 +1,9 @@
 import React from 'react'
 import styles from './input.module.scss'
 
-type InputProps = React.InputHTMLAttributes<HTMLInputElement>
+type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
+  innerButton?: React.ReactNode
+}
 
 function Input({
   type,
@@ -10,6 +12,7 @@ function Input({
   value,
   readOnly = false,
   onChange = undefined,
+  innerButton,
 }: InputProps) {
   return (
     <div className={styles.inputContainer}>
@@ -30,6 +33,7 @@ function Input({
         {name === 'password2' ? 'password confirm' : name}
         {required && <span className={styles.required}>*</span>}
       </label>
+      {innerButton ? innerButton : null}
     </div>
   )
 }

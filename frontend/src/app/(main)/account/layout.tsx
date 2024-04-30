@@ -10,5 +10,9 @@ export default async function AccountPageLayout({
 }) {
   const res = await getProfile()
 
-  return <div className={styles.container}>{res.response.status === 200 ? userInfo : login}</div>
+  return (
+    <div className={styles.container}>
+      {res.response.status === 200 ? userInfo : login}
+    </div>
+  )
 }

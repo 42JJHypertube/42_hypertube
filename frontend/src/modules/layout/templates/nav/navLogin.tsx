@@ -33,9 +33,11 @@ function NavLogin() {
           </div>
           <NavLogOut />
         </div>
-      ) : <Link className={styles.link} href="/account">
-      LogIn
-    </Link>}
+      ) : (
+        <Link className={styles.link} href="/account">
+          LogIn
+        </Link>
+      )}
     </div>
   )
 }

@@ -27,7 +27,7 @@ async function checkLoginType({ email }: { email: string }) {
       }
     if (!data.emailExist && !data.password)
       return {
-        loginType: 'regist'
+        loginType: 'regist',
       }
   }
   return {
@@ -63,16 +63,17 @@ export async function login(currentState: LoginForm, formData: FormData) {
         email,
         loginType: 'password',
       }
-    
-      if (res.loginType ==='regist')
-        return {
-          ...currentState,
-          email,
-          noAccount: true,
-        }
+
+    if (res.loginType === 'regist')
+      return {
+        ...currentState,
+        email,
+        noAccount: true,
+      }
+
     return {
       ...currentState,
-      message: '존재하지않는 메일입니다.',
+      message: '에러가 발생했습니다. 다시 시도해주세요',
     }
   }
 
@@ -105,7 +106,7 @@ export async function loginWithEmail(
 ) {
   const email = formData.get('email') as string
   const code = formData.get('code') as string
-  
+
   const res = await veriftyAuthCode({ email, code })
   if (res.response.status === 200) {
     const emailToken = res.data.emailToken
@@ -133,19 +134,17 @@ export async function loginWithEmail(
   }
 }
 
-export async function requestAuthCode(
- email: string
-) {
+export async function requestAuthCode(email: string) {
   const { data, response } = await getAuthCode({ email })
   if (response.status === 200) {
     console.log(data)
     return {
-      success: true
+      success: true,
     }
   }
 
   return {
-    success: false
+    success: false,
   }
 }
 
