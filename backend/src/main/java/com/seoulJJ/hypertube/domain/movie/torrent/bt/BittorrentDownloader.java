@@ -1,4 +1,4 @@
-package com.seoulJJ.hypertube.global.utils.torrent.bt;
+package com.seoulJJ.hypertube.domain.movie.torrent.bt;
 
 import bt.runtime.BtClient;
 import bt.runtime.Config;
@@ -11,7 +11,7 @@ import bt.data.Storage;
 import bt.data.file.FileSystemStorage;
 import bt.dht.DHTConfig;
 
-import static com.seoulJJ.hypertube.global.utils.torrent.bt.DHTModuleBuilder.buildDHTModule;
+import static com.seoulJJ.hypertube.domain.movie.torrent.bt.DHTModuleBuilder.buildDHTModule;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;

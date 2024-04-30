@@ -1,4 +1,4 @@
-package com.seoulJJ.hypertube.global.utils.torrent.bt.visearch.model;
+package com.seoulJJ.hypertube.domain.movie.torrent.bt.visearch.model;
 
 import bt.dht.DHTConfig;
 import bt.dht.DHTModule;

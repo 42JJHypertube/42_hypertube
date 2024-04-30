@@ -1,4 +1,4 @@
-package com.seoulJJ.hypertube.global.utils.torrent.bt.visearch.service;
+package com.seoulJJ.hypertube.domain.movie.torrent.bt.visearch.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

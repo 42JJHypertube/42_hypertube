@@ -1,4 +1,4 @@
-package com.seoulJJ.hypertube.global.utils.torrent.bt.visearch.config;
+package com.seoulJJ.hypertube.domain.movie.torrent.bt.visearch.config;
 
 import java.util.concurrent.TimeoutException;
 import java.util.function.Supplier;

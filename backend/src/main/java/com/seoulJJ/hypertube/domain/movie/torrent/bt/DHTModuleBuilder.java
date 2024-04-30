@@ -1,4 +1,4 @@
-package com.seoulJJ.hypertube.global.utils.torrent.bt;
+package com.seoulJJ.hypertube.domain.movie.torrent.bt;
 
 import bt.dht.DHTConfig;
 import bt.dht.DHTModule;

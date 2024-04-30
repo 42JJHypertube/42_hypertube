@@ -1,4 +1,4 @@
-package com.seoulJJ.hypertube.global.utils.torrent.bt.visearch.service;
+package com.seoulJJ.hypertube.domain.movie.torrent.bt.visearch.service;
 
 import bt.Bt;
 import bt.BtClientBuilder;
@@ -17,9 +17,9 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import static com.seoulJJ.hypertube.global.utils.torrent.bt.visearch.config.ConfigConstantsAndMethods.MAGNET_LINK_INITIALIAZED;
-import static com.seoulJJ.hypertube.global.utils.torrent.bt.visearch.config.ConfigConstantsAndMethods.MAGNET_LINK_PROCESS_SUCCEEDED;
-import static com.seoulJJ.hypertube.global.utils.torrent.bt.visearch.model.DHTModuleBuilder.buildDHTModule;
+import static com.seoulJJ.hypertube.domain.movie.torrent.bt.visearch.config.ConfigConstantsAndMethods.MAGNET_LINK_INITIALIAZED;
+import static com.seoulJJ.hypertube.domain.movie.torrent.bt.visearch.config.ConfigConstantsAndMethods.MAGNET_LINK_PROCESS_SUCCEEDED;
+import static com.seoulJJ.hypertube.domain.movie.torrent.bt.visearch.model.DHTModuleBuilder.buildDHTModule;
 
 import java.io.File;
 import java.nio.file.Path;
