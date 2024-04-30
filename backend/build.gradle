@@ -77,12 +77,8 @@ dependencies {
 	implementation 'com.github.atomashpolskiy:bt-upnp:1.10'
 	implementation 'com.github.atomashpolskiy:bt-http-tracker-client:1.10'
 
-	// JLibtorrent
-	// fileTree(dir: 'libs/jlibtorrent', include: ['*.jar']).each { File file ->
-    //     implementation files(file)
-    // }
-	// implementation files('/Users/kimjaehyuk/Desktop/42_hypertube/backend/libs/jlibtorrent/jlibtorrent-macosx-arm64-1.2.19.0.jar');
-	implementation files('/Users/kimjaehyuk/Desktop/42_hypertube/backend/libs/jlibtorrent/jlibtorrent-1.2.19.0.jar');
+	// jlibtorrent
+	implementation files('libs/jlibtorrent/jlibtorrent-1.2.19.0.jar');
 }
 
 tasks.named('bootBuildImage') {
