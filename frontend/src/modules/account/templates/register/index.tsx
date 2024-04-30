@@ -5,8 +5,8 @@ import styles from './index.module.scss'
 import FormButton from '@/modules/common/components/formButton'
 import { useFormState } from 'react-dom'
 import { LoginViewEnum, AuthForm, RegistForm } from '@/types/account/type'
-import { registUser, requestRegistAuthCode } from '../../action2'
-import { Dispatch, SetStateAction } from 'react'
+import { registUser, requestAuthCode, requestRegistAuthCode } from '../../action2'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 
 const authInitial: AuthForm = {
   email: null,
@@ -22,16 +22,43 @@ const registInitial: RegistForm = {
   success: false,
 }
 
+
 function RegisterTemplate({
   setCurrentView,
+  setEmail,
+  email
 }: {
   setCurrentView: Dispatch<SetStateAction<LoginViewEnum>>
+  setEmail: Dispatch<React.SetStateAction<string | undefined>>
+  email?: string
 }) {
   const [authForm, authAction] = useFormState(
     requestRegistAuthCode,
     authInitial,
   )
   const [registForm, registAction] = useFormState(registUser, registInitial)
+  const [inputEmail, setInputEmail] = useState<string>(email ? email : "")
+  const [codeSended, setCodeSended] = useState(false)
+
+  async function getAuthCode(email: string) {
+    const res = await requestAuthCode(email)
+    if (res.success){
+      setCodeSended(true)
+      authForm.codeSended = true;
+    }
+    else
+      setCodeSended(false)
+  }
+
+  useEffect(() => {
+    if (email && email !== "" && !codeSended) {
+      getAuthCode(email)
+    }
+
+    return () => {
+      setEmail(undefined)
+    }
+  }, [])
 
   return (
     <div className={styles.registContainer}>
@@ -56,10 +83,12 @@ function RegisterTemplate({
               <Input
                 name="email"
                 type="email"
-                readOnly={authForm.codeSended ? true : false}
+                onChange = {(e) => {setInputEmail(e.target.value)}}
+                value = {email ? email :  inputEmail}
+                readOnly={email || authForm.codeSended ? true : false}
                 required
               />
-              {authForm.codeSended ? (
+              {authForm.codeSended || codeSended ? (
                 <>
                   <div> 위의 메일로 인증코드가 전송되었습니다 ! </div>
                   <Input name="code" type="text" required />

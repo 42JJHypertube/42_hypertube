@@ -9,16 +9,18 @@ import RegisterTemplate from '../register'
 import styles from './index.module.scss'
 
 interface ViewProps {
+  email?: string
   currentView: LoginView
   setCurrentView: Dispatch<SetStateAction<LoginViewEnum>>
+  setEmail: Dispatch<React.SetStateAction<string | undefined>>
 }
 
-const viewSelector = ({ currentView, setCurrentView }: ViewProps) => {
+const viewSelector = ({ email, currentView, setCurrentView, setEmail }: ViewProps) => {
   switch (currentView) {
     case LoginViewEnum.SIGN_IN:
-      return <LoginTemplate setCurrentView={setCurrentView} />
+      return <LoginTemplate setCurrentView={setCurrentView} setEmail={setEmail}/>
     case LoginViewEnum.REGISTER:
-      return <RegisterTemplate setCurrentView={setCurrentView} />
+      return <RegisterTemplate setCurrentView={setCurrentView} email={email} setEmail={setEmail}/>
     case LoginViewEnum.FIND_PW:
       return <ResetPwTemplate />
     default:
@@ -55,6 +57,7 @@ function AccountTemplate() {
     LoginViewEnum.SIGN_IN,
   )
   const [info, setInfo] = useState(infoSelector(currentView))
+  const [email, setEmail] = useState<string | undefined>(undefined)
   const [isAnimating, setIsAnimating] = useState(true)
 
   //광클했을 때 애니메이션이 적용되지않는 문제가있음..
@@ -83,7 +86,7 @@ function AccountTemplate() {
         <div className={styles.bigInfo}>{info?.title}</div>
         <div className={styles.smallInfo}>{info?.content}</div>
       </div>
-      {viewSelector({ currentView, setCurrentView })}
+      {viewSelector({ email, currentView, setCurrentView, setEmail })}
     </div>
   )
 }

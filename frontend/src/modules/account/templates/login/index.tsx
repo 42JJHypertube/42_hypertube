@@ -1,6 +1,6 @@
 'use client'
 
-import { Dispatch, SetStateAction } from 'react'
+import { Dispatch, SetStateAction, useEffect } from 'react'
 import { AuthForm, LoginForm } from '@/types/account/type'
 import styles from './index.module.scss'
 import Input from '@/modules/common/components/input'
@@ -14,6 +14,7 @@ const loginInitial: LoginForm = {
   email: null,
   loginType: null,
   message: null,
+  noAccount: false,
 }
 
 const authInitial: AuthForm = {
@@ -23,11 +24,22 @@ const authInitial: AuthForm = {
   codeSended: false,
 }
 
-function LoginTemplate(
-  setCurrentView: Dispatch<SetStateAction<LoginViewEnum>>,
-) {
+function LoginTemplate({
+  setCurrentView,
+  setEmail
+}: {
+  setCurrentView: Dispatch<SetStateAction<LoginViewEnum>>
+  setEmail: Dispatch<React.SetStateAction<string | undefined>>
+}) {
   const [authForm, authAction] = useFormState(loginWithEmail, authInitial)
   const [loginForm, loginAction] = useFormState(login, loginInitial)
+
+  useEffect(() => {
+    if (loginForm.noAccount){
+      setCurrentView(LoginViewEnum.REGISTER)
+      loginForm.email && setEmail(loginForm.email)
+    }
+  }, [loginForm])
 
   return (
     <div className={styles.loginContainer}>
@@ -58,7 +70,7 @@ function LoginTemplate(
         아직 멤버가 아니신가요?{' '}
         <a
           className={styles.aTag}
-          onClick={() => setCurrentView(LoginViewEnum.REGISTER)}
+          onClick={() => {setCurrentView(LoginViewEnum.REGISTER)}}
         >
           회원가입
         </a>

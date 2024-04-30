@@ -17,6 +17,7 @@ export type LoginForm = {
   email: string | null
   loginType: string | null
   message: string | null
+  noAccount: boolean
 }
 
 export type RegistForm = {
