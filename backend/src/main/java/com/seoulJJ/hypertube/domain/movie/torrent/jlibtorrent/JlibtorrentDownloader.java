@@ -37,6 +37,10 @@ public class JlibtorrentDownloader {
 
     public void startDownloadWithMagnet(String magnetUrl) throws Throwable {
         try {
+            StringBuilder builder = new StringBuilder(magnetUrl);
+            trackerUrls.forEach(url -> builder.append("&tr=").append(url));
+            magnetUrl = builder.toString();
+            
             log.info("Using libtorrent version: " + LibTorrent.version());
 
             final SessionManager s = new SessionManager();
