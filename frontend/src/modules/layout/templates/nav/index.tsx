@@ -12,9 +12,6 @@ export default async function Nav() {
             Main
           </Link>
           <NavSearchBar />
-          <Link className={styles.link} href="/account">
-            Account
-          </Link>
           <NavLogin />
         </nav>
       </header>

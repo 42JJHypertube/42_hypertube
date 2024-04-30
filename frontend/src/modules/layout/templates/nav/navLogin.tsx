@@ -5,6 +5,7 @@ import ProfileImage from '@/modules/common/components/profileImage'
 import NavLogOut from './navLogOut'
 import styles from './navLogin.module.scss'
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 
 function NavLogin() {
   const [imageUrl, setImageUrl] = useState(null)
@@ -32,7 +33,9 @@ function NavLogin() {
           </div>
           <NavLogOut />
         </div>
-      ) : null}
+      ) : <Link className={styles.link} href="/account">
+      LogIn
+    </Link>}
     </div>
   )
 }
