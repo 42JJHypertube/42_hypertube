@@ -13,6 +13,7 @@ import com.frostwire.jlibtorrent.alerts.AddTorrentAlert;
 import com.frostwire.jlibtorrent.alerts.Alert;
 import com.frostwire.jlibtorrent.alerts.AlertType;
 import com.frostwire.jlibtorrent.alerts.BlockFinishedAlert;
+import com.seoulJJ.hypertube.global.websocket.MovieDownloadSocket.MovieDownloadSocketHandler;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -35,12 +36,18 @@ public class JlibtorrentDownloader {
             "udp://222.84.21.178:6969/announce",
             "udp://220.130.15.30:6969/announce");
 
+    private final MovieDownloadSocketHandler movieDownloadSocketHandler;
+
+    public JlibtorrentDownloader(MovieDownloadSocketHandler movieDownloadSocketHandler) {
+        this.movieDownloadSocketHandler = movieDownloadSocketHandler;
+    }
+
     public void startDownloadWithMagnet(String magnetUrl) throws Throwable {
         try {
             StringBuilder builder = new StringBuilder(magnetUrl);
             trackerUrls.forEach(url -> builder.append("&tr=").append(url));
             magnetUrl = builder.toString();
-            
+
             log.info("Using libtorrent version: " + LibTorrent.version());
 
             final SessionManager s = new SessionManager();
@@ -59,11 +66,14 @@ public class JlibtorrentDownloader {
                     switch (type) {
                         case ADD_TORRENT:
                             System.out.println("Torrent added");
+                            movieDownloadSocketHandler.addTorrent("8CE082224BE3026057F0DB523725F6530939FF3E");
                             ((AddTorrentAlert) alert).handle().resume();
                             break;
                         case BLOCK_FINISHED:
                             BlockFinishedAlert a = (BlockFinishedAlert) alert;
                             int p = (int) (a.handle().status().progress() * 100);
+                            movieDownloadSocketHandler.sendMessage("8CE082224BE3026057F0DB523725F6530939FF3E",
+                                    p + "% for torrent name: " + a.torrentName());
                             System.out.println("Progress: " + p + "% for torrent name: " + a.torrentName());
                             System.out.println(s.stats().totalDownload());
                             break;

@@ -51,6 +51,7 @@ public class SecurityConfig {
 				.authorizeHttpRequests((authorizeRequests) -> authorizeRequests
 						.requestMatchers("/api/docs", "/api/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html")
 						.permitAll() // swagger
+						.requestMatchers("/socket/**").permitAll() // Socket
 						.requestMatchers("/", "/index.html").permitAll() // permit access to the root path
 						.requestMatchers("/api/auth/**").permitAll() // permit access to the auth path
 						.requestMatchers("/api/users/**").hasRole("USER")
@@ -78,6 +79,7 @@ public class SecurityConfig {
 						.userInfoEndpoint((userInfoEndpoint) -> userInfoEndpoint
 								.userService(customOAuth2UserService))
 						.successHandler(oAuthAuthenticationSuccessHandler));
+		
 
 		return http.build();
 	}
