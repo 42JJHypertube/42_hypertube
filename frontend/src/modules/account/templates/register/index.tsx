@@ -33,7 +33,7 @@ function RegisterTemplate({
   email,
 }: {
   setCurrentView: Dispatch<SetStateAction<LoginViewEnum>>
-  setEmail: Dispatch<React.SetStateAction<string | undefined>>
+  setEmail: Dispatch<React.SetStateAction<string>>
   email?: string
 }) {
   const [authForm, authAction] = useFormState(
@@ -45,27 +45,27 @@ function RegisterTemplate({
   const [codeSended, setCodeSended] = useState(false)
 
   async function getAuthCode(email: string) {
-    console.log('getAuthCode')
     const res = await requestAuthCode(email)
     if (res.success) {
       setCodeSended(true)
-      authForm.codeSended = true
-    } else setCodeSended(false)
+    } else {
+      setCodeSended(false)
+    }
   }
 
   // unmount할 때 authForm.codeSeneded를 초기화 하지않으면, 다시 화면을 전환했을 때 이전의 진행상황이 그대로 남아있음. 왤까?
   useEffect(() => {
-    console.log(codeSended)
-    console.log(authForm.codeSended)
-    if (email && email !== '' && !codeSended) {
-      getAuthCode(email)
-    }
-
-    return () => {
-      setEmail(undefined)
-      authForm.codeSended = false
-    }
+    if (inputEmail != '')
+      getAuthCode(inputEmail)
   }, [])
+
+  useEffect(() => {
+    if (authForm.codeSended){
+      setCodeSended(true)
+      authForm.codeSended = false
+      authForm.message = null
+    }
+  }, [authForm])
 
   return (
     <div className={styles.registContainer}>
@@ -93,21 +93,21 @@ function RegisterTemplate({
                 onChange={(e) => {
                   setInputEmail(e.target.value)
                 }}
-                value={email ? email : inputEmail}
-                readOnly={email || authForm.codeSended ? true : false}
+                value={inputEmail}
+                readOnly={codeSended ? true : false}
                 innerButton={
-                  email || authForm.codeSended ? (
+                  codeSended ? (
                     <InnerInputButton
                       title="수정"
                       onClick={() => {
-                        console.log('register')
+                        setCodeSended(false)
                       }}
                     />
                   ) : null
                 }
                 required
               />
-              {authForm.codeSended || codeSended ? (
+              {codeSended ? (
                 <>
                   <div> 위의 메일로 인증코드가 전송되었습니다 ! </div>
                   <Input
@@ -117,13 +117,13 @@ function RegisterTemplate({
                     innerButton={
                       <InnerInputButton
                         title="코드 재 전송"
-                        onClick={() => {}}
+                        onClick={() => {requestAuthCode(inputEmail)}}
                       />
                     }
                   />
+                  <span className={styles.infoMessage}> {authForm.message} </span>
                 </>
               ) : null}
-              <span className={styles.infoMessage}> {authForm.message} </span>
               <FormButton type="submit" content="계속하기" positive />
             </form>
           ) : (

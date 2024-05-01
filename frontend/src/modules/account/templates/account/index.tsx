@@ -12,7 +12,7 @@ interface ViewProps {
   email?: string
   currentView: LoginView
   setCurrentView: Dispatch<SetStateAction<LoginViewEnum>>
-  setEmail: Dispatch<React.SetStateAction<string | undefined>>
+  setEmail: Dispatch<React.SetStateAction<string>>
 }
 
 const viewSelector = ({
@@ -70,7 +70,7 @@ function AccountTemplate() {
     LoginViewEnum.SIGN_IN,
   )
   const [info, setInfo] = useState(infoSelector(currentView))
-  const [email, setEmail] = useState<string | undefined>(undefined)
+  const [email, setEmail] = useState<string>('')
   const [isAnimating, setIsAnimating] = useState(true)
 
   //광클했을 때 애니메이션이 적용되지않는 문제가있음..

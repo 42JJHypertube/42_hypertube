@@ -13,10 +13,7 @@ function InnerInputButton({
     <button
       className={styles.container}
       type="button"
-      onClick={() => {
-        console.log('here')
-        onClick()
-      }}
+      onClick={onClick}
     >
       {title}
     </button>

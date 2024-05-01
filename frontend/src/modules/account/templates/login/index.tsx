@@ -6,7 +6,7 @@ import styles from './index.module.scss'
 import Input from '@/modules/common/components/input'
 import { useFormState } from 'react-dom'
 import FormButton from '@/modules/common/components/formButton'
-import { login, loginWithEmail } from '../../action2'
+import { login, loginWithEmail, requestAuthCode } from '../../action2'
 import { LoginViewEnum } from '@/types/account/type'
 import AccountNav from '../../components/nav'
 import InnerInputButton from '@/modules/common/components/innerInputButton'
@@ -30,7 +30,7 @@ function LoginTemplate({
   setEmail,
 }: {
   setCurrentView: Dispatch<SetStateAction<LoginViewEnum>>
-  setEmail: Dispatch<React.SetStateAction<string | undefined>>
+  setEmail: Dispatch<React.SetStateAction<string>>
 }) {
   const [authForm, authAction] = useFormState(loginWithEmail, authInitial)
   const [loginForm, loginAction] = useFormState(login, loginInitial)
@@ -83,7 +83,7 @@ function LoginTemplate({
             type="text"
             required
             innerButton={
-              <InnerInputButton title="코드 재 전송" onClick={() => {}} />
+              <InnerInputButton title="코드 재 전송" onClick={() => {console.log("request Auth Code");requestAuthCode(loginForm.email!)}} />
             }
           />
           <FormButton type="submit" content={'계속하기'} positive />
