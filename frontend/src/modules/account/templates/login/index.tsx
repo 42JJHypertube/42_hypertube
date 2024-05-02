@@ -1,6 +1,6 @@
 'use client'
 
-import { Dispatch, SetStateAction, useEffect } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { AuthForm, LoginForm } from '@/types/account/type'
 import styles from './index.module.scss'
 import Input from '@/modules/common/components/input'
@@ -35,57 +35,84 @@ function LoginTemplate({
   const [authForm, authAction] = useFormState(loginWithEmail, authInitial)
   const [loginForm, loginAction] = useFormState(login, loginInitial)
 
+  const [isAuthEmail, setIsAuthEmail] = useState<boolean>(false)
+  const [isEmail, setIsEmail] = useState<boolean>(false)
+  const [isPassword, setIsPassword] = useState<boolean>(false)
+
   useEffect(() => {
     if (loginForm.noAccount) {
       setCurrentView(LoginViewEnum.REGISTER)
       loginForm.email && setEmail(loginForm.email)
     }
+    if (loginForm.loginType === "email"){
+      setIsAuthEmail(true)
+      setIsEmail(true) 
+    }
+    if (loginForm.loginType === "password"){
+      setIsAuthEmail(true)
+      setIsEmail(true)
+    }
   }, [loginForm])
+
+  useEffect(() => {
+    if (!isAuthEmail){
+      loginForm.email = null
+      loginForm.loginType = null
+      loginForm.message = null
+      loginForm.noAccount = false
+      authForm.codeSended = false
+      authForm.email = null
+      authForm.emailToken = null
+      authForm.message = null
+    }
+  }, [isAuthEmail])
     
     return (
     <div className={styles.loginContainer}>
-      {loginForm.loginType !== 'email' ? (
+      {!isEmail ? (
         <form className={styles.inputContainer} action={loginAction}>
           <Input
             name="email"
             type="email"
-            readOnly={loginForm.loginType ? true : false}
+            readOnly={isAuthEmail ? true : false}
             innerButton={
-              loginForm.loginType ? (
+              isAuthEmail ? (
                 <InnerInputButton
                   title="수정"
                   onClick={() => {
-                    loginForm.loginType = null
+                    setIsAuthEmail(false)
+                    setIsPassword(false)
                   }}
                 />
               ) : null
             }
             required
           />
-          {loginForm.loginType === 'password' ? (
+          {isPassword ? (
             <Input name="password" type="password" />
           ) : null}
           <span className={styles.infoMessage}> {loginForm.message}</span>
           <FormButton type="submit" content="계속하기" positive />
         </form>
       ) : null}
-      {loginForm.loginType === 'email' ? (
+      {isEmail ? (
         <form className={styles.inputContainer} action={authAction}>
           <Input
             name="email"
             type="text"
             value={loginForm.email!}
             readOnly
-            innerButton={<InnerInputButton title="수정" onClick={() => {loginForm.loginType = null}} />}
+            innerButton={<InnerInputButton title="수정" onClick={() => {setIsEmail(false);setIsAuthEmail(false)}} />}
           />
           <Input
             name="code"
             type="text"
             required
             innerButton={
-              <InnerInputButton title="코드 재 전송" onClick={() => {console.log("request Auth Code");requestAuthCode(loginForm.email!)}} />
+              <InnerInputButton title="코드 재 전송" onClick={() => {requestAuthCode(loginForm.email!)}} />
             }
           />
+          <span className={styles.infoMessage}> {authForm.message}</span>
           <FormButton type="submit" content={'계속하기'} positive />
         </form>
       ) : null}

@@ -51,7 +51,7 @@ const infoSelector = (currentView: LoginView) => {
       }
     case LoginViewEnum.REGISTER:
       return {
-        title: 'Hyper Tube에 가입하세요',
+        title: 'Hyper Tube 에\n가입하세요',
         content:
           '모든 영화인들을 위한 HyperTube 회원 커뮤니티에 오신 것을 환영합니다. 가입을 완료하고 모험을 시작하세요.',
       }

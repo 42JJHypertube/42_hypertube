@@ -12,7 +12,7 @@ function InnerInputButton({
   return (
     <button
       className={styles.container}
-      type="button"
+      type="submit"
       onClick={onClick}
     >
       {title}
