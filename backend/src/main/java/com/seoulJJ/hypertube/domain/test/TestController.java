@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @RestController
 @RequiredArgsConstructor
@@ -37,9 +39,17 @@ public class TestController {
             "udp://220.130.15.30:6969/announce");
 
     @PostMapping("/download")
-    public String postMethodName(@RequestBody String entity) throws Throwable{
+    public String postMethodName(@RequestBody String entity) throws Throwable {
         String magnetLink = "magnet:?xt=urn:btih:8CE082224BE3026057F0DB523725F6530939FF3E&dn=Scrat%3A+Spaced+Out+%282016%29+%5B720p%5D+%5BYTS.MX%5Ds&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.tracker.cl%3A1337%2Fannounce&tr=udp%3A%2F%2Fp4p.arenabg.com%3A1337%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Ftracker.dler.org%3A6969%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Fipv4.tracker.harry.lu%3A80%2Fannounce&tr=https%3A%2F%2Fopentracker.i2p.rocks%3A443%2Fannounce";
-        jlibtorrentDownloader.startDownloadWithMagnet(magnetLink);
-        return "Successed Rachat!";
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            try {
+                jlibtorrentDownloader.startDownloadWithMagnet(magnetLink);
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+            }
+        });
+        executor.shutdown();
+        return "Torrent download Started! => torrentHash: 8CE082224BE3026057F0DB523725F6530939FF3E";
     }
 }

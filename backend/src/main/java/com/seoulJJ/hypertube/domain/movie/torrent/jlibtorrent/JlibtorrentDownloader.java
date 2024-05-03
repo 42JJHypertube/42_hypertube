@@ -1,5 +1,6 @@
 package com.seoulJJ.hypertube.domain.movie.torrent.jlibtorrent;
 
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
