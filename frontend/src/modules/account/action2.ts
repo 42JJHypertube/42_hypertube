@@ -155,7 +155,7 @@ export async function requestRegistAuthCode(
 ) {
   const email = formData.get('email') as string
   const code = formData.get('code') as string
-  console.log(code)
+  
   if (code) {
     const res = await veriftyAuthCode({ email, code })
     if (res.response.status === 200)

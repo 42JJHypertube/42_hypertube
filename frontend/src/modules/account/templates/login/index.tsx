@@ -38,7 +38,9 @@ function LoginTemplate({
   const [isAuthEmail, setIsAuthEmail] = useState<boolean>(false)
   const [isEmail, setIsEmail] = useState<boolean>(false)
   const [isPassword, setIsPassword] = useState<boolean>(false)
+  const [isPending, setIsPending] = useState<boolean>(false)
 
+  //loginForm에 따라서, 회원가입 페이지로 넘길지, 혹은 로그인 과정을 진행할지 판별하도록 한다.
   useEffect(() => {
     if (loginForm.noAccount) {
       setCurrentView(LoginViewEnum.REGISTER)
@@ -50,10 +52,11 @@ function LoginTemplate({
     }
     if (loginForm.loginType === "password"){
       setIsAuthEmail(true)
-      setIsEmail(true)
+      setIsPassword(true)
     }
   }, [loginForm])
 
+  // 이메일 인증이 초기화됐다 -> 인증전의 화면으로 돌아옴 -> 기존의 데이터들을 모두 초기화 해주는 행동이 필요함.
   useEffect(() => {
     if (!isAuthEmail){
       loginForm.email = null
@@ -66,6 +69,13 @@ function LoginTemplate({
       authForm.message = null
     }
   }, [isAuthEmail])
+
+  // email인증 코드를 다시 보내는 함수.
+  async function reRequestAuth (email: string) {
+    setIsPending(true);
+    await requestAuthCode(email)
+    setIsPending(false);
+  }
     
     return (
     <div className={styles.loginContainer}>
@@ -107,9 +117,10 @@ function LoginTemplate({
           <Input
             name="code"
             type="text"
+            readOnly={isPending}
             required
             innerButton={
-              <InnerInputButton title="코드 재 전송" onClick={() => {requestAuthCode(loginForm.email!)}} />
+              <InnerInputButton pending={isPending} title="코드 재 전송" onClick={() => {reRequestAuth(loginForm.email!)}} />
             }
           />
           <span className={styles.infoMessage}> {authForm.message}</span>

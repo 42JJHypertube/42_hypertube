@@ -5,17 +5,19 @@ import styles from './index.module.scss'
 function InnerInputButton({
   title,
   onClick,
+  pending
 }: {
   title: string
   onClick: () => void
+  pending?: boolean
 }) {
   return (
     <button
       className={styles.container}
-      type="submit"
-      onClick={onClick}
+      type="button"
+      onClick={pending ? () => {} : onClick}
     >
-      {title}
+      {pending ? "..." : title}
     </button>
   )
 }

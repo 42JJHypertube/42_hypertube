@@ -42,32 +42,57 @@ function RegisterTemplate({
   )
   const [registForm, registAction] = useFormState(registUser, registInitial)
   const [inputEmail, setInputEmail] = useState<string>(email ? email : '')
-  const [codeSended, setCodeSended] = useState(false)
+  const [isCodeSended, setIsCodeSended] = useState(false)
+  const [isAuthEmail, setIsAuthEmail] = useState<boolean>(false)
+  const [isPending, setIsPending] = useState<boolean>(false)
 
   async function getAuthCode(email: string) {
+    setIsPending(true)
     const res = await requestAuthCode(email)
     if (res.success) {
-      setCodeSended(true)
+      setIsCodeSended(true)
     } else {
-      setCodeSended(false)
+      setIsCodeSended(false)
     }
+    setIsPending(false)
   }
 
-  // unmount할 때 authForm.codeSeneded를 초기화 하지않으면, 다시 화면을 전환했을 때 이전의 진행상황이 그대로 남아있음. 왤까?
+  async function reRequesetAuth (email: string) {
+    setIsPending(true);
+    await requestAuthCode(email)
+    setIsPending(false);
+  }
+
+  // 첫 렌더링시에 email이 존재한다면, 해당 email로 code전송
   useEffect(() => {
-    if (inputEmail != '')
-      getAuthCode(inputEmail)
+    if (email)
+      getAuthCode(email)
   }, [])
 
+  // 수정 버튼 클릭시 초기화
   useEffect(() => {
-    if (authForm.codeSended){
-      setCodeSended(true)
-      authForm.codeSended = false
-      authForm.message = null
+    if (!isAuthEmail) {
+      setIsCodeSended(false)
+      authForm.email =  null,
+      authForm.emailToken= null
+      authForm.message= null
+      authForm.codeSended= false
+      registForm.email= ''
+      registForm.emailToken= ''
+      registForm.message= null
+      registForm.success= false
     }
+  }, [isAuthEmail])
+
+  useEffect(() => {
+    if (authForm.codeSended)
+      setIsCodeSended(true)
+    if (authForm.emailToken)
+      setIsAuthEmail(true)
   }, [authForm])
 
   return (
+    //회원 가입에 성공했을 때 보이는 화면 
     <div className={styles.registContainer}>
       {registForm.success ? (
         <div>
@@ -84,8 +109,9 @@ function RegisterTemplate({
           </div>
         </div>
       ) : (
+        // 이메일을 입력 받는 화면
         <>
-          {authForm.emailToken === null ? (
+          {!isAuthEmail ? (
             <form className={styles.inputContainer} action={authAction}>
               <Input
                 name="email"
@@ -94,20 +120,21 @@ function RegisterTemplate({
                   setInputEmail(e.target.value)
                 }}
                 value={inputEmail}
-                readOnly={codeSended ? true : false}
+                readOnly={isCodeSended ? true : false}
                 innerButton={
-                  codeSended ? (
+                  isCodeSended ? (
                     <InnerInputButton
                       title="수정"
                       onClick={() => {
-                        setCodeSended(false)
+                        setIsCodeSended(false)
                       }}
                     />
                   ) : null
                 }
                 required
               />
-              {codeSended ? (
+              {/* 이메일을 입력 후 인증 요청시 보이는 화면 */}
+              {isCodeSended ? (
                 <>
                   <div> 위의 메일로 인증코드가 전송되었습니다 ! </div>
                   <Input
@@ -117,16 +144,18 @@ function RegisterTemplate({
                     innerButton={
                       <InnerInputButton
                         title="코드 재 전송"
-                        onClick={() => {requestAuthCode(inputEmail)}}
+                        pending={isPending}
+                        onClick={() => {reRequesetAuth(inputEmail)}}
                       />
                     }
                   />
-                  <span className={styles.infoMessage}> {authForm.message} </span>
                 </>
               ) : null}
               <FormButton type="submit" content="계속하기" positive />
+              <span className={styles.infoMessage}> {authForm.message} </span>
             </form>
           ) : (
+            // 인증 완료 후 가입을 위한 info 작성 화면
             <form className={styles.inputContainer} action={registAction}>
               <input
                 className={styles.hidden}
@@ -151,6 +180,7 @@ function RegisterTemplate({
               <FormButton type="submit" content="계속하기" positive />
             </form>
           )}
+          {/* 로그인 페이지로 이동하는 footer */}
           <div className={styles.redirect}>
             {' '}
             이미 계정이 있으신가요?{' '}
