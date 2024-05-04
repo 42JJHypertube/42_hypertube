@@ -34,7 +34,7 @@ function RegisterTemplate({
 }: {
   setCurrentView: Dispatch<SetStateAction<LoginViewEnum>>
   setEmail: Dispatch<React.SetStateAction<string>>
-  email?: string
+  email: string
 }) {
   const [authForm, authAction] = useFormState(
     requestRegistAuthCode,
@@ -65,8 +65,13 @@ function RegisterTemplate({
 
   // 첫 렌더링시에 email이 존재한다면, 해당 email로 code전송
   useEffect(() => {
-    if (email)
+    if (email !== '') 
       getAuthCode(email)
+    
+    // unmount시 setEmail 초기화
+    return () => {
+      setEmail('')
+    }
   }, [])
 
   // 수정 버튼 클릭시 초기화
@@ -140,6 +145,7 @@ function RegisterTemplate({
                   <Input
                     name="code"
                     type="text"
+                    error={authForm.message ? true : false}
                     required
                     innerButton={
                       <InnerInputButton
@@ -151,8 +157,8 @@ function RegisterTemplate({
                   />
                 </>
               ) : null}
-              <FormButton type="submit" content="계속하기" positive />
-              <span className={styles.infoMessage}> {authForm.message} </span>
+              <FormButton isPending={isPending} type="submit" content="계속하기" positive />
+              {authForm.message ? <span className={styles.errorMessage}> {"! " + authForm.message} </span> : null }
             </form>
           ) : (
             // 인증 완료 후 가입을 위한 info 작성 화면
@@ -176,8 +182,8 @@ function RegisterTemplate({
               <Input name="lastName" required />
               <Input name="password" type="password" required />
               <Input name="password2" type="password" required />
-              <span className={styles.infoMessage}> {registForm.message} </span>
-              <FormButton type="submit" content="계속하기" positive />
+              {registForm.message ? <span className={styles.errorMessage}> {"! " + registForm.message} </span> : null }
+              <FormButton isPending={isPending} type="submit" content="계속하기" positive />
             </form>
           )}
           {/* 로그인 페이지로 이동하는 footer */}

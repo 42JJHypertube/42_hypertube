@@ -3,6 +3,7 @@ import styles from './input.module.scss'
 
 type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
   innerButton?: React.ReactNode
+  error?: boolean
 }
 
 function Input({
@@ -13,7 +14,11 @@ function Input({
   readOnly = false,
   onChange = undefined,
   innerButton,
+  error
 }: InputProps) {
+  //불필요한 공백을 제거하기위한 trim() 사용.
+  const inputCss = `${styles.input} ${readOnly ? styles.readOnly : ''} ${error ? styles.error : styles.normal}`.trim();
+
   return (
     <div className={styles.inputContainer}>
       <input
@@ -24,7 +29,7 @@ function Input({
         value={value}
         readOnly={readOnly}
         className={
-          readOnly ? `${styles.input} ${styles.readOnly}` : styles.input
+          inputCss
         }
         onChange={onChange}
         tabIndex={readOnly ? -1 : 0}

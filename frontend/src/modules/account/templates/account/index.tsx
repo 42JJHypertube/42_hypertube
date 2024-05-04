@@ -9,7 +9,7 @@ import RegisterTemplate from '../register'
 import styles from './index.module.scss'
 
 interface ViewProps {
-  email?: string
+  email: string
   currentView: LoginView
   setCurrentView: Dispatch<SetStateAction<LoginViewEnum>>
   setEmail: Dispatch<React.SetStateAction<string>>

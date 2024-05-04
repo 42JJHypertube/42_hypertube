@@ -6,6 +6,13 @@
   height: 100%;
 }
 
+.error {
+  border: 1px solid #E84057;
+}
+.normal {
+  border: 1px solid gray
+}
+
 .input {
   position: relative;
   padding: 0.5rem 0.2rem 0rem 0.5rem;
@@ -14,7 +21,6 @@
   font-size: 0.7rem;
   background-color: black;
   color: rgb(162, 162, 162);
-  border: 1px solid gray;
   box-shadow: blue;
   border-radius: 0.3rem;
   color: white;

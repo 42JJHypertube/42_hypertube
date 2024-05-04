@@ -99,10 +99,10 @@ function LoginTemplate({
             required
           />
           {isPassword ? (
-            <Input name="password" type="password" />
+            <Input name="password" type="password" error={loginForm.message ? true : false} />
           ) : null}
-          <span className={styles.infoMessage}> {loginForm.message}</span>
-          <FormButton type="submit" content="계속하기" positive />
+          {loginForm.message ? <span className={styles.errorMessage}> {"! " + loginForm.message}</span> : null}
+          <FormButton isPending={isPending} type="submit" content="계속하기" positive />
         </form>
       ) : null}
       {isEmail ? (
@@ -117,14 +117,15 @@ function LoginTemplate({
           <Input
             name="code"
             type="text"
+            error={authForm.message ? true : false}
             readOnly={isPending}
             required
             innerButton={
               <InnerInputButton pending={isPending} title="코드 재 전송" onClick={() => {reRequestAuth(loginForm.email!)}} />
             }
           />
-          <span className={styles.infoMessage}> {authForm.message}</span>
-          <FormButton type="submit" content={'계속하기'} positive />
+          {authForm.message ? <span className={styles.errorMessage}> {"! " + authForm.message}</span> : null}
+          <FormButton isPending={isPending} type="submit" content={'계속하기'} positive />
         </form>
       ) : null}
       <div className={styles.redirect}>

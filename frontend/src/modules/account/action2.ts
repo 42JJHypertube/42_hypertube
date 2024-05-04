@@ -47,11 +47,12 @@ export async function login(currentState: LoginForm, formData: FormData) {
       if (response.status !== 200)
         return {
           ...currentState,
-          message: '에러가 발생했습니다. 다시 시도해주세요',
+          message: '다시 시도해주세요',
         }
 
       return {
         ...currentState,
+        message: null,
         email,
         loginType: 'email',
       }
@@ -61,6 +62,7 @@ export async function login(currentState: LoginForm, formData: FormData) {
       return {
         ...currentState,
         email,
+        message: null,
         loginType: 'password',
       }
 
@@ -68,6 +70,7 @@ export async function login(currentState: LoginForm, formData: FormData) {
       return {
         ...currentState,
         email,
+        message: null,
         noAccount: true,
       }
 
@@ -90,7 +93,7 @@ export async function login(currentState: LoginForm, formData: FormData) {
       cookies().set('access_token', data?.accessToken, cookieOptions)
       cookies().set('refresh_token', data?.refreshToken, cookieOptions)
 
-      return currentState
+      return {...currentState, message: null}
     }
   }
 
@@ -155,7 +158,7 @@ export async function requestRegistAuthCode(
 ) {
   const email = formData.get('email') as string
   const code = formData.get('code') as string
-  
+
   if (code) {
     const res = await veriftyAuthCode({ email, code })
     if (res.response.status === 200)
