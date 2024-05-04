@@ -1,6 +1,5 @@
 package com.seoulJJ.hypertube.domain.movie.torrent.jlibtorrent;
 
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -75,11 +74,13 @@ public class JlibtorrentDownloader {
                             int p = (int) (a.handle().status().progress() * 100);
                             movieDownloadSocketHandler.sendMessage("8CE082224BE3026057F0DB523725F6530939FF3E",
                                     p + "% for torrent name: " + a.torrentName());
-                            System.out.println("Progress: " + p + "% for torrent name: " + a.torrentName());
-                            System.out.println(s.stats().totalDownload());
+
                             break;
                         case TORRENT_FINISHED:
                             System.out.println("Torrent finished");
+                            movieDownloadSocketHandler.sendMessage("8CE082224BE3026057F0DB523725F6530939FF3E",
+                                    "Torrent finished");
+                            movieDownloadSocketHandler.removeTorrent("8CE082224BE3026057F0DB523725F6530939FF3E");
                             signal.countDown();
                             break;
 
