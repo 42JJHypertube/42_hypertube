@@ -6,6 +6,7 @@ import {
   loginEmailToken,
   loginPassword,
   makeUser,
+  modifyPassword,
   veriftyAuthCode,
 } from '@/lib/data'
 import { getCookieOption } from '@/lib/utill/cookieOption'
@@ -241,5 +242,77 @@ export async function registUser(currentState: RegistForm, formData: FormData) {
   return {
     ...currentState,
     message: '에러가 발생했습니다.',
+  }
+}
+
+export async function setPassword(
+  currentState: {
+    code: null | string
+    emailToken: null | string
+    message: null | string
+    email: string
+    getCode: boolean
+    success: boolean
+  },
+  formData: FormData,
+) {
+  const defaultres = {
+    ...currentState,
+  }
+  const code = formData.get('code') as string
+  const emailToken = currentState.emailToken
+  const email = currentState.email
+
+  if (!code && !emailToken) {
+    const res = await getAuthCode({ email })
+    console.log(res.data)
+    if (res.response.status === 200) {
+      return {
+        ...defaultres,
+        getCode: true,
+      }
+    }
+    return {
+      ...defaultres,
+      getCode: false,
+    }
+  }
+
+  if (code) {
+    const res = await veriftyAuthCode({ email, code })
+    if (res.response.status === 200)
+      return {
+        ...defaultres,
+        code: null,
+        message: null,
+        emailToken: res.data.emailToken,
+      }
+    return {
+      ...defaultres,
+      code: null,
+      message: '잘못된 코드입니다',
+    }
+  }
+
+  if (emailToken) {
+    const password = formData.get('password') as string
+    const password2 = formData.get('password2') as string
+
+    if (password !== password2)
+      return {
+        ...defaultres,
+        message: '비밀번호 확인이 일치하지 않습니다.',
+      }
+    const res = await modifyPassword({password, password2, emailToken})
+    if (res.response.status === 200)
+      return {
+        ...defaultres,
+        success: true
+    }
+  }
+
+  return {
+    ...defaultres,
+    message: '에러가 발생했습니다.'
   }
 }
