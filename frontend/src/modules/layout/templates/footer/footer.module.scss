@@ -4,7 +4,7 @@
   width: 100%;
   height: auto;
   padding: 0.5rem 0;
-  background: black;
+  background: transparent;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -18,9 +18,11 @@
 }
 
 .people {
+  color: white;
   font-size: 0.5rem;
 }
 
 .at {
+  color: white;
   font-size: 0.5rem;
 }

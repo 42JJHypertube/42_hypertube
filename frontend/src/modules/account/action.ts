@@ -12,7 +12,7 @@ import {
   changeProfile,
 } from '@/lib/data'
 import { getCookieOption } from '@/lib/utill/cookieOption'
-import { AuthForm, AuthSequence } from '@/types/account/type'
+import { AuthForm, LoginForm } from '@/types/account/type'
 import { cookies } from 'next/headers'
 
 export async function registUser(currentState: AuthForm, formData: FormData) {

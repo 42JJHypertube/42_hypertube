@@ -5,7 +5,7 @@ import UseIntersectionObserve from '@/lib/hooks/useIntersectionObserve'
 import { getMovie } from '@/lib/data'
 
 async function fetchNextPage(page: number) {
-  const data = await getMovie(page)
+  const data = await getMovie({ pages: page })
   console.log(data)
 }
 

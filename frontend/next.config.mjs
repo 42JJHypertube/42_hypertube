@@ -13,6 +13,7 @@ const nextConfig = {
   images: {
     domains: ['image.tmdb.org', 'lh3.googleusercontent.com'],
   },
+  reactStrictMode: false,
 }
 
 export default nextConfig

@@ -6,12 +6,24 @@
   height: 100%;
 }
 
+.error {
+  border: 1px solid #E84057;
+}
+.normal {
+  border: 1px solid gray
+}
+
 .input {
   position: relative;
   padding: 0.5rem 0.2rem 0rem 0.5rem;
   height: 2.3rem;
   width: 100%;
   font-size: 0.7rem;
+  background-color: black;
+  color: rgb(162, 162, 162);
+  box-shadow: blue;
+  border-radius: 0.3rem;
+  color: white;
 }
 
 .label {
@@ -25,4 +37,14 @@
   padding-left: 0.1rem;
   font-size: 0.5rem;
   color: red;
+}
+
+.readOnly {
+  color: gray;
+  cursor: not-allowed;
+
+  &:focus {
+    box-shadow: none;
+    outline: none;
+  }
 }
