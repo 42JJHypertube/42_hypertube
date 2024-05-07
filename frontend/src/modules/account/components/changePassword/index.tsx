@@ -26,7 +26,7 @@ export default function ChangePassword({ email }: { email: string }) {
   }
 
   const [curForm, action] = useFormState(setPassword, initialForm)
-  
+
   const [isEmailAuth, setIsEmailAuth] = useState<boolean>(false)
 
   return (
@@ -56,8 +56,14 @@ export default function ChangePassword({ email }: { email: string }) {
               )}
             </div>
           )}
-          <span> {(curForm.message && !curForm.success) ? curForm.message : null}</span>
-          <span> {curForm.success ? '비밀번호가 설정 되었습니다 !' : null}</span>
+          <span>
+            {' '}
+            {curForm.message && !curForm.success ? curForm.message : null}
+          </span>
+          <span>
+            {' '}
+            {curForm.success ? '비밀번호가 설정 되었습니다 !' : null}
+          </span>
         </div>
       </ChangeInfo>
     </form>

@@ -46,11 +46,11 @@ function LoginTemplate({
       setCurrentView(LoginViewEnum.REGISTER)
       loginForm.email && setEmail(loginForm.email)
     }
-    if (loginForm.loginType === "email"){
+    if (loginForm.loginType === 'email') {
       setIsAuthEmail(true)
-      setIsEmail(true) 
+      setIsEmail(true)
     }
-    if (loginForm.loginType === "password"){
+    if (loginForm.loginType === 'password') {
       setIsAuthEmail(true)
       setIsPassword(true)
     }
@@ -58,7 +58,7 @@ function LoginTemplate({
 
   // 이메일 인증이 초기화됐다 -> 인증전의 화면으로 돌아옴 -> 기존의 데이터들을 모두 초기화 해주는 행동이 필요함.
   useEffect(() => {
-    if (!isAuthEmail){
+    if (!isAuthEmail) {
       loginForm.email = null
       loginForm.loginType = null
       loginForm.message = null
@@ -71,13 +71,13 @@ function LoginTemplate({
   }, [isAuthEmail])
 
   // email인증 코드를 다시 보내는 함수.
-  async function reRequestAuth (email: string) {
-    setIsPending(true);
+  async function reRequestAuth(email: string) {
+    setIsPending(true)
     await requestAuthCode(email)
-    setIsPending(false);
+    setIsPending(false)
   }
-    
-    return (
+
+  return (
     <div className={styles.loginContainer}>
       {!isEmail ? (
         <form className={styles.inputContainer} action={loginAction}>
@@ -99,10 +99,24 @@ function LoginTemplate({
             required
           />
           {isPassword ? (
-            <Input name="password" type="password" error={loginForm.message ? true : false} />
+            <Input
+              name="password"
+              type="password"
+              error={loginForm.message ? true : false}
+            />
           ) : null}
-          {loginForm.message ? <span className={styles.errorMessage}> {"! " + loginForm.message}</span> : null}
-          <FormButton isPending={isPending} type="submit" content="계속하기" positive />
+          {loginForm.message ? (
+            <span className={styles.errorMessage}>
+              {' '}
+              {'! ' + loginForm.message}
+            </span>
+          ) : null}
+          <FormButton
+            isPending={isPending}
+            type="submit"
+            content="계속하기"
+            positive
+          />
         </form>
       ) : null}
       {isEmail ? (
@@ -112,7 +126,15 @@ function LoginTemplate({
             type="text"
             value={loginForm.email!}
             readOnly
-            innerButton={<InnerInputButton title="수정" onClick={() => {setIsEmail(false);setIsAuthEmail(false)}} />}
+            innerButton={
+              <InnerInputButton
+                title="수정"
+                onClick={() => {
+                  setIsEmail(false)
+                  setIsAuthEmail(false)
+                }}
+              />
+            }
           />
           <Input
             name="code"
@@ -121,11 +143,27 @@ function LoginTemplate({
             readOnly={isPending}
             required
             innerButton={
-              <InnerInputButton pending={isPending} title="코드 재 전송" onClick={() => {reRequestAuth(loginForm.email!)}} />
+              <InnerInputButton
+                pending={isPending}
+                title="코드 재 전송"
+                onClick={() => {
+                  reRequestAuth(loginForm.email!)
+                }}
+              />
             }
           />
-          {authForm.message ? <span className={styles.errorMessage}> {"! " + authForm.message}</span> : null}
-          <FormButton isPending={isPending} type="submit" content={'계속하기'} positive />
+          {authForm.message ? (
+            <span className={styles.errorMessage}>
+              {' '}
+              {'! ' + authForm.message}
+            </span>
+          ) : null}
+          <FormButton
+            isPending={isPending}
+            type="submit"
+            content={'계속하기'}
+            positive
+          />
         </form>
       ) : null}
       <div className={styles.redirect}>

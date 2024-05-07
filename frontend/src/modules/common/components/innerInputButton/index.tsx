@@ -5,7 +5,7 @@ import styles from './index.module.scss'
 function InnerInputButton({
   title,
   onClick,
-  pending
+  pending,
 }: {
   title: string
   onClick: () => void
@@ -17,7 +17,7 @@ function InnerInputButton({
       type="button"
       onClick={pending ? () => {} : onClick}
     >
-      {pending ? "..." : title}
+      {pending ? '...' : title}
     </button>
   )
 }

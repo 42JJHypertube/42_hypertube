@@ -94,7 +94,7 @@ export async function login(currentState: LoginForm, formData: FormData) {
       cookies().set('access_token', data?.accessToken, cookieOptions)
       cookies().set('refresh_token', data?.refreshToken, cookieOptions)
 
-      return {...currentState, message: null}
+      return { ...currentState, message: null }
     }
   }
 
@@ -303,16 +303,16 @@ export async function setPassword(
         ...defaultres,
         message: '비밀번호 확인이 일치하지 않습니다.',
       }
-    const res = await modifyPassword({password, password2, emailToken})
+    const res = await modifyPassword({ password, password2, emailToken })
     if (res.response.status === 200)
       return {
         ...defaultres,
-        success: true
-    }
+        success: true,
+      }
   }
 
   return {
     ...defaultres,
-    message: '에러가 발생했습니다.'
+    message: '에러가 발생했습니다.',
   }
 }

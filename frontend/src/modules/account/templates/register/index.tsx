@@ -57,17 +57,16 @@ function RegisterTemplate({
     setIsPending(false)
   }
 
-  async function reRequesetAuth (email: string) {
-    setIsPending(true);
+  async function reRequesetAuth(email: string) {
+    setIsPending(true)
     await requestAuthCode(email)
-    setIsPending(false);
+    setIsPending(false)
   }
 
   // 첫 렌더링시에 email이 존재한다면, 해당 email로 code전송
   useEffect(() => {
-    if (email !== '') 
-      getAuthCode(email)
-    
+    if (email !== '') getAuthCode(email)
+
     // unmount시 setEmail 초기화
     return () => {
       setEmail('')
@@ -78,26 +77,23 @@ function RegisterTemplate({
   useEffect(() => {
     if (!isAuthEmail) {
       setIsCodeSended(false)
-      authForm.email =  null,
-      authForm.emailToken= null
-      authForm.message= null
-      authForm.codeSended= false
-      registForm.email= ''
-      registForm.emailToken= ''
-      registForm.message= null
-      registForm.success= false
+      ;(authForm.email = null), (authForm.emailToken = null)
+      authForm.message = null
+      authForm.codeSended = false
+      registForm.email = ''
+      registForm.emailToken = ''
+      registForm.message = null
+      registForm.success = false
     }
   }, [isAuthEmail])
 
   useEffect(() => {
-    if (authForm.codeSended)
-      setIsCodeSended(true)
-    if (authForm.emailToken)
-      setIsAuthEmail(true)
+    if (authForm.codeSended) setIsCodeSended(true)
+    if (authForm.emailToken) setIsAuthEmail(true)
   }, [authForm])
 
   return (
-    //회원 가입에 성공했을 때 보이는 화면 
+    //회원 가입에 성공했을 때 보이는 화면
     <div className={styles.registContainer}>
       {registForm.success ? (
         <div>
@@ -151,14 +147,26 @@ function RegisterTemplate({
                       <InnerInputButton
                         title="코드 재 전송"
                         pending={isPending}
-                        onClick={() => {reRequesetAuth(inputEmail)}}
+                        onClick={() => {
+                          reRequesetAuth(inputEmail)
+                        }}
                       />
                     }
                   />
                 </>
               ) : null}
-              <FormButton isPending={isPending} type="submit" content="계속하기" positive />
-              {authForm.message ? <span className={styles.errorMessage}> {"! " + authForm.message} </span> : null }
+              <FormButton
+                isPending={isPending}
+                type="submit"
+                content="계속하기"
+                positive
+              />
+              {authForm.message ? (
+                <span className={styles.errorMessage}>
+                  {' '}
+                  {'! ' + authForm.message}{' '}
+                </span>
+              ) : null}
             </form>
           ) : (
             // 인증 완료 후 가입을 위한 info 작성 화면
@@ -182,8 +190,18 @@ function RegisterTemplate({
               <Input name="lastName" required />
               <Input name="password" type="password" required />
               <Input name="password2" type="password" required />
-              {registForm.message ? <span className={styles.errorMessage}> {"! " + registForm.message} </span> : null }
-              <FormButton isPending={isPending} type="submit" content="계속하기" positive />
+              {registForm.message ? (
+                <span className={styles.errorMessage}>
+                  {' '}
+                  {'! ' + registForm.message}{' '}
+                </span>
+              ) : null}
+              <FormButton
+                isPending={isPending}
+                type="submit"
+                content="계속하기"
+                positive
+              />
             </form>
           )}
           {/* 로그인 페이지로 이동하는 footer */}
