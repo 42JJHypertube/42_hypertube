@@ -14,10 +14,11 @@ import { AiFillSound } from 'react-icons/ai' // 사운드 설정 버튼
 import styles from './index.module.scss'
 
 export default function TestPage() {
-  const videoRef = useRef(null)
+  const videoRef = useRef<HTMLVideoElement>(null)
   const outSideRef = useRef<HTMLDivElement>(null)
   const [showController, setShowController] = useState<boolean>(false)
-
+  const [isPlay, setIsPlay] = useState<boolean>(false)
+  const [isFullScreen, setIsFullScreen] = useState<boolean>(false)
   let hideControllerTimeout: NodeJS.Timeout // 컨트롤러 숨김을 위한 타이머
 
   const showVideoController = () => {
@@ -28,6 +29,28 @@ export default function TestPage() {
     hideControllerTimeout = setTimeout(() => {
       setShowController(false)
     }, 3000) // 3초 후 컨트롤러 숨김
+  }
+
+  const toggleFullScreen = () => {
+    const videoElement = videoRef.current?.parentNode as HTMLDivElement;
+    if (!isFullScreen){
+      if (videoElement) {
+        if (videoElement.requestFullscreen) {
+          videoElement.requestFullscreen(); // 전체화면 모드 활성화
+        // } else if (videoElement.webkitRequestFullscreen) {
+        //   videoElement.webkitRequestFullscreen(); // 웹킷 브라우저 호환성
+        // } else if (videoElement.mozRequestFullScreen) {
+        //   videoElement.mozRequestFullScreen(); // 파이어폭스 호환성
+        // } else if (videoElement.msRequestFullscreen) {
+        //   videoElement.msRequestFullscreen(); // IE/Edge 호환성
+        // }
+          }
+        setIsFullScreen(true)
+      }
+    } else {
+      document.exitFullscreen()
+      setIsFullScreen(false)
+    }
   }
 
   useEffect(() => {
@@ -80,21 +103,21 @@ export default function TestPage() {
   return (
     <div>
       <p>Test Page</p>
-      <div className={styles.videoContainer} ref={outSideRef}>
+      <div className={isFullScreen ? `${styles.videoContainer}  ${styles.fullScreen}` :  `${styles.videoContainer}`} ref={outSideRef}>
         <video
           className={styles.videoPlayer}
           ref={videoRef}
           id="video-player"
-          height="300"
-          width="400"
+          height={outSideRef?.current?.clientHeight}
+          width={outSideRef.current?.clientWidth}
         >
           Your browser does not support the video tag.
         </video>
         {showController && (
           <div className={styles.videoController}>
             <div className={styles.leftController}>
-              <button className={styles.buttons}>
-                <FaPlay />
+              <button className={styles.buttons} onClick={isPlay ? () => {setIsPlay(false);videoRef.current?.pause()} : () => {setIsPlay(true);videoRef.current?.play()}}>
+                {isPlay ? <FaRegStopCircle/> : <FaPlay />}
               </button>
               <button className={styles.buttons}>
                 <AiFillSound />
@@ -107,7 +130,7 @@ export default function TestPage() {
               <button className={styles.buttons}>
                 <MdSettings />
               </button>
-              <button className={styles.buttons}>
+              <button className={styles.buttons} onClick={toggleFullScreen}>
                 <MdFullscreen />
               </button>
             </div>
