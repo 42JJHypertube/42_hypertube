@@ -31,6 +31,12 @@ export default function TestPage() {
     }, 3000) // 3초 후 컨트롤러 숨김
   }
 
+  const handleEscape = () => {
+    if (!document.fullscreenElement){
+      setIsFullScreen(false)
+    }
+  }
+
   const toggleFullScreen = () => {
     const videoElement = videoRef.current?.parentNode as HTMLDivElement;
     if (!isFullScreen){
@@ -48,7 +54,7 @@ export default function TestPage() {
         setIsFullScreen(true)
       }
     } else {
-      document.exitFullscreen()
+      document.exitFullscreen().then(() => console.log("exit full screen")).catch(() => console.log("error occured"))
       setIsFullScreen(false)
     }
   }
@@ -83,6 +89,7 @@ export default function TestPage() {
           setShowController(false)
         })
       }
+      document.addEventListener('fullscreenchange', handleEscape);
 
       return () => {
         videoElement.removeEventListener('mousemove', showVideoController)
@@ -108,8 +115,6 @@ export default function TestPage() {
           className={styles.videoPlayer}
           ref={videoRef}
           id="video-player"
-          height={outSideRef?.current?.clientHeight}
-          width={outSideRef.current?.clientWidth}
         >
           Your browser does not support the video tag.
         </video>
