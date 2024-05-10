@@ -17,11 +17,20 @@ import com.frostwire.jlibtorrent.alerts.AddTorrentAlert;
 import com.frostwire.jlibtorrent.alerts.Alert;
 import com.frostwire.jlibtorrent.alerts.AlertType;
 import com.frostwire.jlibtorrent.alerts.BlockFinishedAlert;
-import com.seoulJJ.hypertube.global.utils.VideoConverter;
+import com.frostwire.jlibtorrent.alerts.PeerBanAlert;
+import com.frostwire.jlibtorrent.alerts.PeerConnectAlert;
+import com.frostwire.jlibtorrent.alerts.PeerDisconnectedAlert;
+import com.seoulJJ.hypertube.domain.movie.MovieDownDto;
+import com.seoulJJ.hypertube.global.utils.FileManager.VideoFile;
+import com.seoulJJ.hypertube.global.utils.FileManager.VideoFileManager;
 import com.seoulJJ.hypertube.global.websocket.MovieDownloadSocket.MovieDownloadSocketHandler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 
 @Log4j2
 @Component
@@ -47,19 +56,21 @@ public class JlibtorrentDownloader {
     private final MovieDownloadSocketHandler movieDownloadSocketHandler;
 
     @Autowired
-    private final VideoConverter videoConverter;
+    private final VideoFileManager videoFileManager;
 
-    public void startDownloadWithMagnet(String magnetUrl) throws Throwable {
+    public void startDownloadWithMagnet(MovieDownDto movieDownDto) throws Throwable {
         try {
-            StringBuilder builder = new StringBuilder(magnetUrl);
+            StringBuilder builder = new StringBuilder(movieDownDto.getMagnetUrl());
             trackerUrls.forEach(url -> builder.append("&tr=").append(url));
-            magnetUrl = builder.toString();
+            String magnetUrl = builder.toString();
 
             log.info("Using libtorrent version: " + LibTorrent.version());
 
             final SessionManager s = new SessionManager();
 
             final CountDownLatch signal = new CountDownLatch(1);
+
+            String torrentHash = movieDownDto.getTorrentHash();
 
             s.addListener(new AlertListener() {
                 @Override
@@ -72,75 +83,94 @@ public class JlibtorrentDownloader {
                     AlertType type = alert.type();
                     switch (type) {
                         case ADD_TORRENT:
-                            System.out.println("Torrent added");
-                            movieDownloadSocketHandler.addTorrent("8CE082224BE3026057F0DB523725F6530939FF3E");
+                            log.info("Torrent added");
+                            movieDownloadSocketHandler.addTorrent(torrentHash);
                             ((AddTorrentAlert) alert).handle().resume();
                             break;
                         case BLOCK_FINISHED:
                             BlockFinishedAlert a = (BlockFinishedAlert) alert;
                             int p = (int) (a.handle().status().progress() * 100);
-                            movieDownloadSocketHandler.sendMessage("8CE082224BE3026057F0DB523725F6530939FF3E",
+                            movieDownloadSocketHandler.sendMessage(torrentHash,
                                     p + "% for torrent name: " + a.torrentName());
-
+                            break;
+                        case PEER_BAN:
+                            PeerBanAlert pba = (PeerBanAlert) alert;
+                            log.info("Peer banned " + pba.handle().peerInfo());
+                            break;
+                        case PEER_CONNECT:
+                            PeerConnectAlert pca = (PeerConnectAlert) alert;
+                            log.info("Peer connected " + pca.handle().peerInfo());
+                            break;
+                        case PEER_DISCONNECTED:
+                            PeerDisconnectedAlert pda = (PeerDisconnectedAlert) alert;
+                            log.info("Peer disconnected " + pda.handle().peerInfo());
                             break;
                         case TORRENT_FINISHED:
-                            System.out.println("Torrent finished");
-                            movieDownloadSocketHandler.sendMessage("8CE082224BE3026057F0DB523725F6530939FF3E",
-                                    "Torrent finished");
-                            movieDownloadSocketHandler.removeTorrent("8CE082224BE3026057F0DB523725F6530939FF3E");
+                            log.info("Torrent finished");
                             signal.countDown();
+                            movieDownloadSocketHandler.sendMessage(torrentHash,
+                                    "Torrent finished");
+                            movieDownloadSocketHandler.removeTorrent(torrentHash);
                             break;
 
                     }
                 }
             });
 
-            s.start();
-            String imdbId = "tt4291600";
+            // s.start();
+            String imdbId = movieDownDto.getImdbId();
             File destDir = new File("/Users/kimjaehyuk/Desktop/42_hypertube/file_storage/movies" + "/" + imdbId);
             if (!destDir.exists()) {
                 destDir.mkdirs();
             }
-            s.download(magnetUrl, destDir);
+            // log.info("Trying to download torrent: " + magnetUrl);
+            // s.download(magnetUrl, destDir);
+            // log.info("Downloading torrent: " + magnetUrl);
+            // signal.await();
 
-            signal.await();
+            // log.info("Trying to stop session");
+            // s.stop();
+            // log.info("Session stopped");
 
-            s.stop();
+            VideoFile videoFile = restructureFiles(imdbId, destDir);
 
-            File videoFile = restructureFiles(imdbId, destDir);
-
-            videoConverter.convertVideo(videoFile,
+            videoFileManager.convertVideoToHls(videoFile,
                     destDir.getPath());
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private File restructureFiles(String imdbId, File rootDirectory) {
+    private VideoFile restructureFiles(String imdbId, File rootDirectory) {
 
         // 특정 숫자로 시작하는 파일 이름을 지정
         String newFileName = imdbId + ".mp4";
 
-        // 주어진 디렉터리 아래에서 .mp4 파일을 찾음
         if (rootDirectory.exists() && rootDirectory.isDirectory()) {
-            File[] files = rootDirectory.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    if (file.isFile() && file.getName().toLowerCase().endsWith(".mp4")) {
-                        try {
-                            // .mp4 파일을 특정 디렉터리로 옮기고 이름 변경
-                            Files.move(file.toPath(), new File(rootDirectory.getPath(), newFileName).toPath(),
-                                    StandardCopyOption.REPLACE_EXISTING);
-                            break; // 하나의 .mp4 파일을 찾았으므로 반복문 종료
-                        } catch (IOException e) {
-                            e.printStackTrace();
+            try {
+                Files.walkFileTree(rootDirectory.toPath(), new SimpleFileVisitor<Path>() {
+                    @Override
+                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                        log.info("Checking file: " + file.getFileName());
+                        if (file.toFile().isFile() && file.getFileName().toString().toLowerCase().endsWith(".mp4")) {
+                            log.info("Found .mp4 file: " + file.getFileName());
+                            try {
+                                // .mp4 파일을 특정 디렉터리로 복사하고 이름 변경
+                                Files.copy(file, new File(rootDirectory, newFileName).toPath(),
+                                        StandardCopyOption.REPLACE_EXISTING);
+                                return FileVisitResult.TERMINATE; // 하나의 .mp4 파일을 찾았으므로 종료
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         }
+                        return FileVisitResult.CONTINUE;
                     }
-                }
+                });
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
 
-        return new File(rootDirectory, newFileName);
+        return new VideoFile(rootDirectory, newFileName);
     }
-
 }

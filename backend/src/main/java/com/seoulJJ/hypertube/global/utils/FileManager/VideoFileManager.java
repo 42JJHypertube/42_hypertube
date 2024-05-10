@@ -1,10 +1,9 @@
-package com.seoulJJ.hypertube.global.utils;
+package com.seoulJJ.hypertube.global.utils.FileManager;
 
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.File;
 import java.io.IOException;
 
 import jakarta.annotation.PostConstruct;
@@ -12,7 +11,7 @@ import lombok.extern.log4j.Log4j2;
 
 @Component
 @Log4j2
-public class VideoConverter {
+public class VideoFileManager {
 
     /*
      * FFmpeg 사용 가능 여부 체크
@@ -43,19 +42,23 @@ public class VideoConverter {
         }
     }
 
-    public void convertVideo(File videoFile, String outputPath) {
+    public void convertVideoToHls(VideoFile videoFile, String outputPath) {
+
+        log.info("VideoFile 정보 : " + videoFile.toString());
+
         try {
+            String resolution = videoFile.getWidth() + "x" + videoFile.getHeight();
             String[] command = {
                     "ffmpeg",
                     "-i", videoFile.getAbsolutePath(),
                     "-profile:v", "baseline",
                     "-level", "3.0",
-                    "-s", "1920x1080",
+                    "-s", resolution,
                     "-start_number", "0",
                     "-hls_time", "10",
                     "-hls_list_size", "0",
                     "-f", "hls",
-                    outputPath + "/" + videoFile.getName() + ".m3u8"
+                    outputPath + "/" + videoFile.getNameWithoutExtension() + "_" + videoFile.getHeight() + "p" + ".m3u8"
             };
 
             // ProcessBuilder를 사용하여 FFmpeg 명령어 실행

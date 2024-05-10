@@ -7,7 +7,10 @@ import java.util.ArrayList;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketSession;
 
+import lombok.extern.log4j.Log4j2;
+
 @Component
+@Log4j2
 public class TorrentSessionSocketManager {
     private static final ConcurrentHashMap<String, List<WebSocketSession>> DOWNLOADING_TORRENTS = new ConcurrentHashMap<String, List<WebSocketSession>>();
     private static final ConcurrentHashMap<String, List<String>> CLIENTS = new ConcurrentHashMap<String, List<String>>();
@@ -41,7 +44,6 @@ public class TorrentSessionSocketManager {
             torrents.remove(torrentHash);
             CLIENTS.put(session.getId(), torrents);
         }
-        DOWNLOADING_TORRENTS.remove(torrentHash);
         return true;
     }
 

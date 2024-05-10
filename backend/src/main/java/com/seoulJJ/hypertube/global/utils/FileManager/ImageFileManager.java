@@ -43,7 +43,7 @@ public class ImageFileManager {
         if (oldFileName != null) {
             deleteFile(profileImageDir, oldFileName);
         }
-
+        
         // 새로운 이미지 추가
         String newFileName = generateFileName(file, email);
         try {
@@ -60,7 +60,7 @@ public class ImageFileManager {
     }
 
     private String saveFile(MultipartFile file, String dirPath, String fileName) throws IOException {
-        // 저장할 디렉토리가 없다면 생성
+
         File uploadDir = new File(profileImageDir);
         if (!uploadDir.exists()) {
             throw new FileException("프로필 이미지 저장 디렉토리가 존재하지 않습니다.", ErrorCode.INTERNAL_SERVER_ERR);

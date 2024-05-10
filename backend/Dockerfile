@@ -15,6 +15,11 @@ WORKDIR /app
 
 COPY --from=builder /app/build/libs/hypertube-0.0.1-SNAPSHOT.war .
 
+COPY --from=builder /app/libs/jlibtorrent/lib/arm64/* /usr/lib/
+
+# Install ffmpeg
+# RUN apt-get update && apt-get install -y ffmpeg
+
 EXPOSE 8080
 
 CMD ["java", "-jar", "hypertube-0.0.1-SNAPSHOT.war"]

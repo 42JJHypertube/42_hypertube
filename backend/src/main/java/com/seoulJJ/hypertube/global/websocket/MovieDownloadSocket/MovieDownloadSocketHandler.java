@@ -64,7 +64,8 @@ public class MovieDownloadSocketHandler extends TextWebSocketHandler {
     public void removeTorrent(String torrentHash) {
         torrentSessionSocketManager.getTorrentSessions(torrentHash).forEach(session -> {
             try {
-                session.close();
+                if (session.isOpen())
+                    session.close();
             } catch (Exception e) {
                 log.error(e);
             }
