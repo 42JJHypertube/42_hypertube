@@ -40,12 +40,12 @@ export default function ChangeImage({ imageUrl }: { imageUrl: string }) {
           <div className={styles.image}>
             <ProfileImage imageUrl={preview ? preview : imageUrl} />
           </div>
-          <label className={styles.uploadButton} htmlFor="profileImage">
+          <label className={styles.uploadButton} htmlFor="file">
             Choose File
           </label>
           <div className={styles.inputContainer}>
             <Input
-              name="profileImage"
+              name="file"
               type="file"
               onChange={handleFileChange}
             />

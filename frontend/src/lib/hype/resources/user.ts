@@ -8,9 +8,15 @@ class UserResource extends BaseResource {
     return this.client.request('GET', path, {}, {}, customHeaders)
   }
 
-  changeProfile(customHeaders: CustomHeaders, payload: Blob) {
+  changeProfile(customHeaders: CustomHeaders, payload: FormData) {
     const path = '/users/me/profile-image'
-    return this.client.request('POST', path, payload, {}, customHeaders)
+    const newCustomHeaders = {
+      ...customHeaders,
+      Accept: '*/*',
+      withCredentials: true,
+      'Content-Type': 'multipart/form-data' as string,
+    }
+    return this.client.request('POST', path, payload, {}, newCustomHeaders)
   }
 }
 
