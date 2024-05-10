@@ -17,12 +17,12 @@ import com.seoulJJ.hypertube.global.exception.ErrorCode;
 import com.seoulJJ.hypertube.global.exception.custom.FileException;
 
 import jakarta.transaction.Transactional;
-import lombok.extern.log4j.Log4j2;
+import lombok.RequiredArgsConstructor;
 
 import java.net.URL;
 
 @Service
-@Log4j2
+@RequiredArgsConstructor
 public class ImageFileManager {
 
     @Autowired

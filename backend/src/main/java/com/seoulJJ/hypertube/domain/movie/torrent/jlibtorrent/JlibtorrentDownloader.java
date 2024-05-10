@@ -1,6 +1,7 @@
 package com.seoulJJ.hypertube.domain.movie.torrent.jlibtorrent;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -36,6 +37,9 @@ import java.nio.file.attribute.BasicFileAttributes;
 @Component
 @RequiredArgsConstructor
 public class JlibtorrentDownloader {
+
+    @Value("${spring.file_path.movies}")
+    private String movieDir;
 
     private final List<String> trackerUrls = List.of(
             "udp://93.158.213.92:1337/announce",
