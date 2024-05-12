@@ -9,16 +9,16 @@ RUN gradle wrapper
 RUN ./gradlew build -x test
 
 # 최종 실행
-FROM openjdk:17-jdk
+FROM openjdk:23-ea-17-jdk-bullseye
 
 WORKDIR /app
 
 COPY --from=builder /app/build/libs/hypertube-0.0.1-SNAPSHOT.war .
 
-COPY --from=builder /app/libs/jlibtorrent/lib/arm64/* /usr/lib/
+# COPY --from=builder /app/libs/jlibtorrent/lib/arm64/* /usr/lib/
 
 # Install ffmpeg
-# RUN apt-get update && apt-get install -y ffmpeg
+RUN apt-get update && apt-get install -y ffmpeg
 
 EXPOSE 8080
 

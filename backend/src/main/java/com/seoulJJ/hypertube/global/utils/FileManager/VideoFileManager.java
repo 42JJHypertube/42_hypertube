@@ -16,11 +16,34 @@ public class VideoFileManager {
     /*
      * FFmpeg 사용 가능 여부 체크
      */
-    @PostConstruct
+    // @PostConstruct
     public void init() {
         try {
             log.info("Checking ffmepg...");
             ProcessBuilder processBuilder = new ProcessBuilder("which", "ffmpeg");
+            processBuilder.redirectErrorStream(true);
+            Process process = processBuilder.start();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            StringBuilder result = new StringBuilder();
+            while ((line = reader.readLine()) != null) {
+                result.append(line).append("\n");
+            }
+
+            int exitCode = process.waitFor();
+            if (exitCode != 0) {
+                log.error("FFmpeg을 찾을 수 없습니다.");
+                throw new RuntimeException("FFmpeg을 찾을 수 없습니다.");
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new RuntimeException("FFmpeg 초기화 중 에러 발생");
+        }
+
+        try {
+            log.info("Checking ffmepg...");
+            ProcessBuilder processBuilder = new ProcessBuilder("which", "ffprobe");
             processBuilder.redirectErrorStream(true);
             Process process = processBuilder.start();
 
