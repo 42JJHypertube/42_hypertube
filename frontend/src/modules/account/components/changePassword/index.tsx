@@ -1,12 +1,12 @@
 'use client'
-import { setPassword } from '../../action2'
+
+import { useFormState } from 'react-dom'
 import FormButton from '@/modules/common/components/formButton'
 import Input from '@/modules/common/components/input'
-import { useFormState } from 'react-dom'
+import { setPassword } from '../../action2'
 import ChangeInfo from '../changeInfo'
-import { useState } from 'react'
 
-export type changePasswordForm = {
+export type ChangePasswordForm = {
   code: null | string
   emailToken: null | string
   message: null | string
@@ -16,18 +16,16 @@ export type changePasswordForm = {
 }
 
 export default function ChangePassword({ email }: { email: string }) {
-  const initialForm: changePasswordForm = {
+  const initialForm: ChangePasswordForm = {
     code: null,
     emailToken: null,
     message: null,
-    email: email,
     getCode: false,
     success: false,
+    email,
   }
 
   const [curForm, action] = useFormState(setPassword, initialForm)
-  
-  const [isEmailAuth, setIsEmailAuth] = useState<boolean>(false)
 
   return (
     <form action={action}>
@@ -56,8 +54,14 @@ export default function ChangePassword({ email }: { email: string }) {
               )}
             </div>
           )}
-          <span> {(curForm.message && !curForm.success) ? curForm.message : null}</span>
-          <span> {curForm.success ? '비밀번호가 설정 되었습니다 !' : null}</span>
+          <span>
+            {' '}
+            {curForm.message && !curForm.success ? curForm.message : null}
+          </span>
+          <span>
+            {' '}
+            {curForm.success ? '비밀번호가 설정 되었습니다 !' : null}
+          </span>
         </div>
       </ChangeInfo>
     </form>

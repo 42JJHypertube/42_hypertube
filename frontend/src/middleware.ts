@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { getCookieOption } from './lib/utill/cookieOption'
+import getCookieOption from './lib/utill/cookieOption'
 
 type TypeCookie = {
   name: string
@@ -48,7 +48,7 @@ async function getProfile(cookies: TypeCookie[]) {
   try {
     const response = await fetch(url, options)
     const data = await response.json()
-    return { data: data, response: { status: response.status } }
+    return { data, response: { status: response.status } }
   } catch (error) {
     return { data: error, response: { status: 500 } }
   }

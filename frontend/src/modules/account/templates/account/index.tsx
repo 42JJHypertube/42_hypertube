@@ -1,7 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import React, { Dispatch, SetStateAction } from 'react'
+import React, { useEffect, useState, Dispatch, SetStateAction } from 'react'
 import { LoginViewEnum, LoginView } from '@/types/account/type'
 import LoginTemplate from '../login'
 import ResetPwTemplate from '../resetPw'
@@ -73,12 +72,12 @@ function AccountTemplate() {
   const [email, setEmail] = useState<string>('')
   const [isAnimating, setIsAnimating] = useState(true)
 
-  //광클했을 때 애니메이션이 적용되지않는 문제가있음..
+  // 광클했을 때 애니메이션이 적용되지않는 문제가있음..
   useEffect(() => {
     setInfo(infoSelector(currentView))
     const timer = setTimeout(() => {
       setIsAnimating(false)
-    }, 2000) // 애니메이션 시간 (2초) 후에 다시 초기화
+    }, 2000)
 
     return () => {
       clearTimeout(timer)

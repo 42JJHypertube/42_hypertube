@@ -1,10 +1,10 @@
 'use client'
 
-import MovieCard from '../movieCard'
 import { useEffect, useRef, useState } from 'react'
 import UseIntersectionObserve from '@/lib/hooks/useIntersectionObserve'
 import { actionWrapper } from '@/lib/data'
 import styles from './main.module.scss'
+import MovieCard from '../movieCard'
 
 type LoadParams = {
   pages?: number

@@ -9,7 +9,9 @@ export async function searchMovie({
   query: string
   pages: number
 }) {
-  return await serachMovie({ query: query, pages: pages, genre: [] })
+  const ret = await serachMovie({ query, pages, genre: [] })
     .then((res) => res)
     .catch((error) => error)
+
+  return ret
 }
