@@ -3,8 +3,8 @@ import { Config } from './hype/type/client'
 
 // change baseURL using .env file
 const defaultConfig: Config = {
-  // baseURL: `http://${process.env.BACKEND}:8080/api`,
-  baseURL: `https://localhost/api`,
+  baseURL: `http://${process.env.BACKEND}:8080/api`,
+  // baseURL: `https://localhost/api`,
   maxRetries: 3,
 }
 
