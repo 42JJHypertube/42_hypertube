@@ -51,8 +51,10 @@ public class SecurityConfig {
 				.authorizeHttpRequests((authorizeRequests) -> authorizeRequests
 						.requestMatchers("/api/docs", "/api/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html")
 						.permitAll() // swagger
+						.requestMatchers("/api").permitAll() // pingpong
+						.requestMatchers("/socket/**").permitAll() // Socket
 						.requestMatchers("/", "/index.html").permitAll() // permit access to the root path
-						.requestMatchers("/api/auth/**").permitAll() // permit access to the auth path
+						.requestMatchers("/api/auth/**").permitAll() // 로그인, 회원가입
 						.requestMatchers("/api/users/**").hasRole("USER")
 						.requestMatchers("/api/users/test/role-user").hasRole("USER") // USER 권한 테스트용 허용
 						.requestMatchers("/api/users/test/role-admin").hasRole("ADMIN") // ADMIN 권한 테스트용 허용
@@ -78,6 +80,7 @@ public class SecurityConfig {
 						.userInfoEndpoint((userInfoEndpoint) -> userInfoEndpoint
 								.userService(customOAuth2UserService))
 						.successHandler(oAuthAuthenticationSuccessHandler));
+		
 
 		return http.build();
 	}
