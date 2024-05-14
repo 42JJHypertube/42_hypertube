@@ -9,7 +9,7 @@ import {
   modifyPassword,
   veriftyAuthCode,
 } from '@/lib/data'
-import { getCookieOption } from '@/lib/utill/cookieOption'
+import getCookieOption from '@/lib/utill/cookieOption'
 import { AuthForm, LoginForm, RegistForm } from '@/types/account/type'
 import { cookies } from 'next/headers'
 
@@ -113,7 +113,7 @@ export async function loginWithEmail(
 
   const res = await veriftyAuthCode({ email, code })
   if (res.response.status === 200) {
-    const emailToken = res.data.emailToken
+    const { emailToken } = res.data
     const { data, response } = await loginEmailToken({
       email,
       emailToken,
@@ -260,8 +260,7 @@ export async function setPassword(
     ...currentState,
   }
   const code = formData.get('code') as string
-  const emailToken = currentState.emailToken
-  const email = currentState.email
+  const { emailToken, email } = currentState
 
   if (!code && !emailToken) {
     const res = await getAuthCode({ email })

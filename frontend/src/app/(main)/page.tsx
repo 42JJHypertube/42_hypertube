@@ -6,13 +6,11 @@ export default async function Home() {
   if (response.status !== 200) return <div> Error </div>
 
   return (
-    <>
-      <MovieSection
-        initData={data.results}
-        total_pages={data.total_pages}
-        loadFunction={getMovie}
-        loadParams={{ pages: 1 }}
-      />
-    </>
+    <MovieSection
+      initData={data.results}
+      total_pages={data.total_pages}
+      loadFunction={getMovie}
+      loadParams={{ pages: 1 }}
+    />
   )
 }

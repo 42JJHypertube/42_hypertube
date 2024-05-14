@@ -1,6 +1,6 @@
 import Image from 'next/image'
-import style from './movieCard.module.scss'
 import { useRouter } from 'next/navigation'
+import style from './movieCard.module.scss'
 
 type MovieCardProps = {
   title: string

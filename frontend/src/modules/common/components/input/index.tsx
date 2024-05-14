@@ -16,7 +16,7 @@ function Input({
   innerButton,
   error,
 }: InputProps) {
-  //불필요한 공백을 제거하기위한 trim() 사용.
+  // 불필요한 공백을 제거하기위한 trim() 사용.
   const inputCss =
     `${styles.input} ${readOnly ? styles.readOnly : ''} ${error ? styles.error : styles.normal}`.trim()
 
@@ -37,7 +37,7 @@ function Input({
         {name === 'password2' ? 'password confirm' : name}
         {required && <span className={styles.required}>*</span>}
       </label>
-      {innerButton ? innerButton : null}
+      {innerButton}
     </div>
   )
 }

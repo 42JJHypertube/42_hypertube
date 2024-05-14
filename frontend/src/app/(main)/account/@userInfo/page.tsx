@@ -1,10 +1,9 @@
 import { getProfile } from '@/lib/data'
-import ProfileImage from '@/modules/common/components/profileImage'
-import styles from './useInfo.module.scss'
 import { notFound } from 'next/navigation'
 import ChangePassword from '@/modules/account/components/changePassword'
 import ChangeImage from '@/modules/account/components/changeImage'
 import ChangeNickname from '@/modules/account/components/changeNickname'
+import styles from './useInfo.module.scss'
 
 export default async function UserInfo() {
   const { data, response } = await getProfile()

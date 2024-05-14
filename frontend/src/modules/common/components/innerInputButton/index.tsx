@@ -5,7 +5,7 @@ import styles from './index.module.scss'
 function InnerInputButton({
   title,
   onClick,
-  pending,
+  pending = false,
 }: {
   title: string
   onClick: () => void

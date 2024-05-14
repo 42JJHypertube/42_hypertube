@@ -1,15 +1,14 @@
 'use client'
 
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
-import { AuthForm, LoginForm } from '@/types/account/type'
-import styles from './index.module.scss'
-import Input from '@/modules/common/components/input'
 import { useFormState } from 'react-dom'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { AuthForm, LoginForm, LoginViewEnum } from '@/types/account/type'
+import Input from '@/modules/common/components/input'
+import InnerInputButton from '@/modules/common/components/innerInputButton'
 import FormButton from '@/modules/common/components/formButton'
 import { login, loginWithEmail, requestAuthCode } from '../../action2'
-import { LoginViewEnum } from '@/types/account/type'
 import AccountNav from '../../components/nav'
-import InnerInputButton from '@/modules/common/components/innerInputButton'
+import styles from './index.module.scss'
 
 const loginInitial: LoginForm = {
   email: null,
@@ -40,11 +39,11 @@ function LoginTemplate({
   const [isPassword, setIsPassword] = useState<boolean>(false)
   const [isPending, setIsPending] = useState<boolean>(false)
 
-  //loginForm에 따라서, 회원가입 페이지로 넘길지, 혹은 로그인 과정을 진행할지 판별하도록 한다.
+  // loginForm에 따라서, 회원가입 페이지로 넘길지, 혹은 로그인 과정을 진행할지 판별하도록 한다.
   useEffect(() => {
     if (loginForm.noAccount) {
       setCurrentView(LoginViewEnum.REGISTER)
-      loginForm.email && setEmail(loginForm.email)
+      if (loginForm.email) setEmail(loginForm.email)
     }
     if (loginForm.loginType === 'email') {
       setIsAuthEmail(true)
@@ -84,9 +83,9 @@ function LoginTemplate({
           <Input
             name="email"
             type="email"
-            readOnly={isAuthEmail ? true : false}
+            readOnly={isAuthEmail}
             innerButton={
-              isAuthEmail ? (
+              isAuthEmail && (
                 <InnerInputButton
                   title="수정"
                   onClick={() => {
@@ -94,23 +93,20 @@ function LoginTemplate({
                     setIsPassword(false)
                   }}
                 />
-              ) : null
+              )
             }
             required
           />
-          {isPassword ? (
+          {isPassword && (
             <Input
               name="password"
               type="password"
-              error={loginForm.message ? true : false}
+              error={!!loginForm.message}
             />
-          ) : null}
-          {loginForm.message ? (
-            <span className={styles.errorMessage}>
-              {' '}
-              {'! ' + loginForm.message}
-            </span>
-          ) : null}
+          )}
+          {loginForm.message && (
+            <span className={styles.errorMessage}>! ${loginForm.message}</span>
+          )}
           <FormButton
             isPending={isPending}
             type="submit"
@@ -139,7 +135,7 @@ function LoginTemplate({
           <Input
             name="code"
             type="text"
-            error={authForm.message ? true : false}
+            error={!!authForm.message}
             readOnly={isPending}
             required
             innerButton={
@@ -152,16 +148,13 @@ function LoginTemplate({
               />
             }
           />
-          {authForm.message ? (
-            <span className={styles.errorMessage}>
-              {' '}
-              {'! ' + authForm.message}
-            </span>
-          ) : null}
+          {authForm.message && (
+            <span className={styles.errorMessage}>! ${authForm.message}</span>
+          )}
           <FormButton
             isPending={isPending}
             type="submit"
-            content={'계속하기'}
+            content="계속하기"
             positive
           />
         </form>
@@ -169,14 +162,15 @@ function LoginTemplate({
       <div className={styles.redirect}>
         {' '}
         아직 멤버가 아니신가요?{' '}
-        <a
+        <button
+          type="button"
           className={styles.aTag}
           onClick={() => {
             setCurrentView(LoginViewEnum.REGISTER)
           }}
         >
           회원가입
-        </a>
+        </button>
       </div>
       <AccountNav />
     </div>

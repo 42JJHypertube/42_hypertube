@@ -1,17 +1,17 @@
 'use client'
 
-import Input from '@/modules/common/components/input'
-import styles from './index.module.scss'
-import FormButton from '@/modules/common/components/formButton'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useFormState } from 'react-dom'
+import Input from '@/modules/common/components/input'
+import FormButton from '@/modules/common/components/formButton'
+import InnerInputButton from '@/modules/common/components/innerInputButton'
 import { LoginViewEnum, AuthForm, RegistForm } from '@/types/account/type'
 import {
   registUser,
   requestAuthCode,
   requestRegistAuthCode,
 } from '../../action2'
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
-import InnerInputButton from '@/modules/common/components/innerInputButton'
+import styles from './index.module.scss'
 
 const authInitial: AuthForm = {
   email: null,
@@ -41,14 +41,14 @@ function RegisterTemplate({
     authInitial,
   )
   const [registForm, registAction] = useFormState(registUser, registInitial)
-  const [inputEmail, setInputEmail] = useState<string>(email ? email : '')
+  const [inputEmail, setInputEmail] = useState<string>(email)
   const [isCodeSended, setIsCodeSended] = useState(false)
   const [isAuthEmail, setIsAuthEmail] = useState<boolean>(false)
   const [isPending, setIsPending] = useState<boolean>(false)
 
-  async function getAuthCode(email: string) {
+  async function getAuthCode(Email: string) {
     setIsPending(true)
-    const res = await requestAuthCode(email)
+    const res = await requestAuthCode(Email)
     if (res.success) {
       setIsCodeSended(true)
     } else {
@@ -57,9 +57,9 @@ function RegisterTemplate({
     setIsPending(false)
   }
 
-  async function reRequesetAuth(email: string) {
+  async function reRequesetAuth(Email: string) {
     setIsPending(true)
-    await requestAuthCode(email)
+    await requestAuthCode(Email)
     setIsPending(false)
   }
 
@@ -77,7 +77,8 @@ function RegisterTemplate({
   useEffect(() => {
     if (!isAuthEmail) {
       setIsCodeSended(false)
-      ;(authForm.email = null), (authForm.emailToken = null)
+      authForm.email = null
+      authForm.emailToken = null
       authForm.message = null
       authForm.codeSended = false
       registForm.email = ''
@@ -93,7 +94,7 @@ function RegisterTemplate({
   }, [authForm])
 
   return (
-    //회원 가입에 성공했을 때 보이는 화면
+    // 회원 가입에 성공했을 때 보이는 화면
     <div className={styles.registContainer}>
       {registForm.success ? (
         <div>
@@ -101,12 +102,13 @@ function RegisterTemplate({
           <div className={styles.redirect}>
             {' '}
             로그인 후 이용해보세요 !{' '}
-            <a
+            <button
+              type="button"
               className={styles.aTag}
               onClick={() => setCurrentView(LoginViewEnum.SIGN_IN)}
             >
               로그인으로 이동
-            </a>
+            </button>
           </div>
         </div>
       ) : (
@@ -121,27 +123,27 @@ function RegisterTemplate({
                   setInputEmail(e.target.value)
                 }}
                 value={inputEmail}
-                readOnly={isCodeSended ? true : false}
+                readOnly={isCodeSended}
                 innerButton={
-                  isCodeSended ? (
+                  isCodeSended && (
                     <InnerInputButton
                       title="수정"
                       onClick={() => {
                         setIsCodeSended(false)
                       }}
                     />
-                  ) : null
+                  )
                 }
                 required
               />
               {/* 이메일을 입력 후 인증 요청시 보이는 화면 */}
-              {isCodeSended ? (
+              {isCodeSended && (
                 <>
                   <div> 위의 메일로 인증코드가 전송되었습니다 ! </div>
                   <Input
                     name="code"
                     type="text"
-                    error={authForm.message ? true : false}
+                    error={!!authForm.message}
                     required
                     innerButton={
                       <InnerInputButton
@@ -154,7 +156,7 @@ function RegisterTemplate({
                     }
                   />
                 </>
-              ) : null}
+              )}
               <FormButton
                 isPending={isPending}
                 type="submit"
@@ -163,8 +165,7 @@ function RegisterTemplate({
               />
               {authForm.message ? (
                 <span className={styles.errorMessage}>
-                  {' '}
-                  {'! ' + authForm.message}{' '}
+                  ! + ${authForm.message}
                 </span>
               ) : null}
             </form>
@@ -190,12 +191,11 @@ function RegisterTemplate({
               <Input name="lastName" required />
               <Input name="password" type="password" required />
               <Input name="password2" type="password" required />
-              {registForm.message ? (
+              {registForm.message && (
                 <span className={styles.errorMessage}>
-                  {' '}
-                  {'! ' + registForm.message}{' '}
+                  ! + ${registForm.message}
                 </span>
-              ) : null}
+              )}
               <FormButton
                 isPending={isPending}
                 type="submit"
@@ -208,12 +208,13 @@ function RegisterTemplate({
           <div className={styles.redirect}>
             {' '}
             이미 계정이 있으신가요?{' '}
-            <a
+            <button
+              type="button"
               className={styles.aTag}
               onClick={() => setCurrentView(LoginViewEnum.SIGN_IN)}
             >
               로그인
-            </a>
+            </button>
           </div>
         </>
       )}

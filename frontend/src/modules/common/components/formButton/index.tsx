@@ -16,7 +16,7 @@ function FormButton({
       type={type}
       content={content}
       positive={positive}
-      pending={pending || isPending ? true : false}
+      pending={isPending || !!pending}
     />
   )
 }

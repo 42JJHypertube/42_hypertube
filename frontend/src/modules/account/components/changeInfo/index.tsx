@@ -2,7 +2,8 @@
 
 import useToggleState from '@/lib/hooks/useToggleState'
 import styles from './index.module.scss'
-type changeBoxProps = {
+
+type ChangeBoxProps = {
   label: string
   currentInfo: string | React.ReactNode
   children?: React.ReactNode
@@ -12,7 +13,7 @@ export default function ChangeInfo({
   label,
   currentInfo,
   children,
-}: changeBoxProps) {
+}: ChangeBoxProps) {
   const { state, toggle } = useToggleState()
 
   return (
@@ -29,7 +30,7 @@ export default function ChangeInfo({
         </div>
       </div>
       {state ? <div className={styles.children}>{children}</div> : null}
-      <div className={styles.bar}></div>
+      <div className={styles.bar} />
     </>
   )
 }
