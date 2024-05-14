@@ -11,11 +11,7 @@ export default async function Nav() {
           <Link className={styles.link} href="/">
             Main
           </Link>
-          <div className="menubar">menuBar</div>
           <NavSearchBar />
-          <Link className={styles.link} href="/account">
-            Account
-          </Link>
           <NavLogin />
         </nav>
       </header>

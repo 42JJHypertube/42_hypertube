@@ -1,4 +1,7 @@
 /** @type {import('next').NextConfig} */
+
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
+
 const nextConfig = {
   experimental: {
     serverActions: {
@@ -13,6 +16,7 @@ const nextConfig = {
   images: {
     domains: ['image.tmdb.org', 'lh3.googleusercontent.com'],
   },
+  reactStrictMode: false,
 }
 
 export default nextConfig

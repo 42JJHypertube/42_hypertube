@@ -1,31 +1,28 @@
 'use client'
-import { resetPassword, setPassword } from '../../action'
+
+import { useFormState } from 'react-dom'
 import FormButton from '@/modules/common/components/formButton'
 import Input from '@/modules/common/components/input'
-import { useFormState } from 'react-dom'
+import { setPassword } from '../../action2'
 import ChangeInfo from '../changeInfo'
-import { actionWrapper, getAuthCode } from '@/lib/data'
-import { useState } from 'react'
 
-export type changePasswordForm = {
-  password: string
-  password2: string
+export type ChangePasswordForm = {
   code: null | string
   emailToken: null | string
   message: null | string
   email: string
   getCode: boolean
+  success: boolean
 }
 
 export default function ChangePassword({ email }: { email: string }) {
-  const initialForm: changePasswordForm = {
-    password: '',
-    password2: '',
+  const initialForm: ChangePasswordForm = {
     code: null,
     emailToken: null,
     message: null,
-    email: email,
     getCode: false,
+    success: false,
+    email,
   }
 
   const [curForm, action] = useFormState(setPassword, initialForm)
@@ -57,7 +54,14 @@ export default function ChangePassword({ email }: { email: string }) {
               )}
             </div>
           )}
-          <span> {curForm.message ? curForm.message : null}</span>
+          <span>
+            {' '}
+            {curForm.message && !curForm.success ? curForm.message : null}
+          </span>
+          <span>
+            {' '}
+            {curForm.success ? '비밀번호가 설정 되었습니다 !' : null}
+          </span>
         </div>
       </ChangeInfo>
     </form>

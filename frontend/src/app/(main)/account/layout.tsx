@@ -1,4 +1,5 @@
 import { getProfile } from '@/lib/data'
+import styles from './layout.module.scss'
 
 export default async function AccountPageLayout({
   userInfo,
@@ -9,5 +10,9 @@ export default async function AccountPageLayout({
 }) {
   const res = await getProfile()
 
-  return <div>{res.response.status === 200 ? userInfo : login}</div>
+  return (
+    <div className={styles.container}>
+      {res.response.status === 200 ? userInfo : login}
+    </div>
+  )
 }

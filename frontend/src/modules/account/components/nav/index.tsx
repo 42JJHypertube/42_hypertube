@@ -1,64 +1,49 @@
-import { LoginViewEnum } from '@/types/account/type'
 import Link from 'next/link'
+import Image from 'next/image'
 import styles from './index.module.scss'
 
-function AccountNav({
-  setCurrentView,
-}: {
-  setCurrentView: React.Dispatch<React.SetStateAction<LoginViewEnum>>
-}) {
+function AccountNav() {
   return (
     <nav className={styles.AccountNavContainer}>
-      <div className={styles.seperator} />
+      <div className={styles.seperatorContainer}>
+        <div className={styles.seperator} />
+        <div className={styles.text}> OR </div>
+        <div className={styles.seperator} />
+      </div>
       <div className={styles.AccountNavOauth}>
         <Link
           href="https://localhost/api/auth/oauth2/login/google"
           prefetch={false}
         >
-          <img src="/authImage/google.svg" alt="google login" />
+          <Image
+            width="30"
+            height="30"
+            src="/authImage/google.svg"
+            alt="google login"
+          />
         </Link>
         <Link
-          href="https://localhost/api/auth/oauth2/login/42"
+          href="https://localhost/api/auth/oauth2/login/22"
           prefetch={false}
         >
-          <div className={styles.customAuth}> Continue with 42 </div>
+          <Image
+            width="30"
+            height="30"
+            src="/authImage/google.svg"
+            alt="google login"
+          />
         </Link>
         <Link
           href="https://localhost/api/auth/oauth2/login/facebook"
           prefetch={false}
         >
-          <div className={styles.customAuth}> Continue with FaceBook </div>
+          <Image
+            width="30"
+            height="30"
+            src="/authImage/google.svg"
+            alt="google login"
+          />
         </Link>
-      </div>
-      <div className={styles.AccountNavLine}>
-        <span className={styles.text}> If you have Account </span>
-        <button
-          type="button"
-          onClick={() => setCurrentView(LoginViewEnum.SIGN_IN)}
-          className={styles.button}
-        >
-          Log-In
-        </button>
-      </div>
-      <div className={styles.AccountNavLine}>
-        <span className={styles.text}> No Account? </span>
-        <button
-          type="button"
-          onClick={() => setCurrentView(LoginViewEnum.REGISTER)}
-          className={styles.button}
-        >
-          Sign-Up
-        </button>
-      </div>
-      <div className={styles.AccountNavLine}>
-        <span className={styles.text}> Forgot your password? </span>
-        <button
-          type="button"
-          onClick={() => setCurrentView(LoginViewEnum.FIND_PW)}
-          className={styles.button}
-        >
-          Find Password
-        </button>
       </div>
     </nav>
   )

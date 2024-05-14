@@ -4,7 +4,7 @@
   width: 100%;
   height: auto;
   padding: 0.5rem 0;
-  background: rgb(32, 32, 32);
+  background-color: rgba(0, 0, 0, 0.9);
 }
 
 .navContainer {
@@ -23,6 +23,7 @@
 }
 
 .link {
+  color: white;
   &:hover {
     color: red;
   }
