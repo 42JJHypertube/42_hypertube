@@ -1,12 +1,13 @@
 'use client'
 
 import { useFormState } from 'react-dom'
-import ChangeInfo from '../changeInfo'
 import Input from '@/modules/common/components/input'
-import FormButton from '@/modules/common/components/formButton'
+import ChangeInfo from '../changeInfo'
+// import FormButton from '@/modules/common/components/formButton'
 
 export default function ChangeNickname({ nickname }: { nickname: string }) {
   const [curForm, action] = useFormState(() => ({}), {})
+  console.log(curForm) // 제거 필요
 
   return (
     <form action={action}>

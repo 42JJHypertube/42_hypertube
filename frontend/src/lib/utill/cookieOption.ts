@@ -1,4 +1,4 @@
-export function getCookieOption() {
+function getCookieOption() {
   const duration: number = Number(process.env.JWT_ACCESS_DURATION)
   const currentDate = new Date()
   const expireDate = new Date(currentDate.getTime() + duration) // 10000초 후
@@ -11,3 +11,5 @@ export function getCookieOption() {
 
   return cookieOptions
 }
+
+export default getCookieOption

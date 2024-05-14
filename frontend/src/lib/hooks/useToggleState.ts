@@ -19,7 +19,7 @@ const useToggleState = () => {
   }
 
   const toggle = () => {
-    setState((state) => !state)
+    setState(() => !state)
   }
 
   const hookData = [state, open, close, toggle] as StateType

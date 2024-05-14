@@ -7,8 +7,8 @@ function FormButton({
   type,
   content,
   positive = true,
-  isPending
-}: ButtonProps & { positive: boolean; content: string; isPending?: boolean}) {
+  isPending,
+}: ButtonProps & { positive: boolean; content: string; isPending?: boolean }) {
   const { pending } = useFormStatus()
 
   return (
@@ -16,7 +16,7 @@ function FormButton({
       type={type}
       content={content}
       positive={positive}
-      pending={pending || isPending ? true : false}
+      pending={isPending || !!pending}
     />
   )
 }

@@ -1,5 +1,5 @@
-import { searchMovie } from '@/modules/layout/templates/nav/action'
 import MovieSection from '@/modules/common/components/movieSection'
+import { searchMovie } from '@/modules/layout/templates/nav/action'
 import { notFound } from 'next/navigation'
 
 export default async function SearchResult({
@@ -12,13 +12,11 @@ export default async function SearchResult({
   if (res.response.status !== 200) return notFound()
 
   return (
-    <>
-      <MovieSection
-        initData={res.data?.results}
-        total_pages={res.data.total_pages}
-        loadFunction={searchMovie}
-        loadParams={{ query: params.query, pages: 1 }}
-      />
-    </>
+    <MovieSection
+      initData={res.data?.results}
+      total_pages={res.data.total_pages}
+      loadFunction={searchMovie}
+      loadParams={{ query: params.query, pages: 1 }}
+    />
   )
 }
