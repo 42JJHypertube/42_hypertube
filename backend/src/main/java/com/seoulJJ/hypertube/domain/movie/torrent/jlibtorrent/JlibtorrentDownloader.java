@@ -121,20 +121,21 @@ public class JlibtorrentDownloader {
                 }
             });
 
-            // s.start();
+            s.start();
             String imdbId = movieDownDto.getImdbId();
             File destDir = new File(movieDir + "/" + imdbId);
             if (!destDir.exists()) {
                 destDir.mkdirs();
             }
-            // log.info("Trying to download torrent: " + magnetUrl);
-            // s.download(magnetUrl, destDir);
-            // log.info("Downloading torrent: " + magnetUrl);
-            // signal.await();
 
-            // log.info("Trying to stop session");
-            // s.stop();
-            // log.info("Session stopped");
+            log.info("Trying to download torrent: " + magnetUrl);
+            s.download(magnetUrl, destDir);
+            log.info("Downloading torrent: " + magnetUrl);
+            signal.await();
+
+            log.info("Trying to stop session");
+            s.stop();
+            log.info("Session stopped");
 
             VideoFile videoFile = restructureFiles(imdbId, destDir);
 
