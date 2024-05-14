@@ -16,7 +16,7 @@ public class VideoFileManager {
     /*
      * FFmpeg 사용 가능 여부 체크
      */
-    // @PostConstruct
+    @PostConstruct
     public void init() {
         try {
             log.info("Checking ffmepg...");

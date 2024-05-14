@@ -123,7 +123,7 @@ public class JlibtorrentDownloader {
 
             // s.start();
             String imdbId = movieDownDto.getImdbId();
-            File destDir = new File("/Users/kimjaehyuk/Desktop/42_hypertube/file_storage/movies" + "/" + imdbId);
+            File destDir = new File(movieDir + "/" + imdbId);
             if (!destDir.exists()) {
                 destDir.mkdirs();
             }
