@@ -1,5 +1,6 @@
 import { getMovieDetail } from '@/lib/data'
 import { notFound } from 'next/navigation'
+import styles from './layout.module.scss'
 
 export default async function movieInfo({
   params,
@@ -13,14 +14,9 @@ export default async function movieInfo({
   const { data } = res
 
   return (
-    <>
-      <p> title: {data.original_title}</p>
-      <p> release_date: {data.release_date}</p>
-      <p> runtime: {data.runtime}</p>
-      <p> tagLine: {data.tagline}</p>
-      <p> vote_average: {data.vote_average}</p>
-      <p> vote_count: {data.vote_count}</p>
-    </>
+    <div className={styles.movieDetailContainer}>
+      <div className={styles.title}/>
+    </div>
   )
 }
 
