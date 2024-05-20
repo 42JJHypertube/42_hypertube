@@ -8,8 +8,10 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.seoulJJ.hypertube.global.utils.FFmpeg;
@@ -22,17 +24,27 @@ import lombok.extern.log4j.Log4j2;
 @RequiredArgsConstructor
 public class VideoFileManager {
 
+    @Value("${spring.file_path.movies}")
+    private String movieDir;
+
     @Autowired
     private final FFmpeg fFmpeg;
 
     public void convertVideoToHls(VideoFile videoFile, String outputPath) {
         log.info("VideoFile 정보 : " + videoFile.toString());
-        fFmpeg.convertVideoToHls(videoFile, outputPath);
+
+        File destDir = new File(outputPath + "/" + videoFile.getResolution());
+        if (!destDir.exists()) {
+            destDir.mkdirs();
+        }
+
+        log.info("HLS 변환 시작 " + videoFile.getPath() + " -> " + destDir);
+        fFmpeg.convertVideoToHls(videoFile, destDir.getAbsolutePath());
     }
 
-    public VideoFile restructureFiles(String imdbId, File rootDirectory) {
-        String newFileName = imdbId + ".mp4";
+    public VideoFile searchVideoFile(File rootDirectory) {
 
+        AtomicReference<VideoFile> videoFileRef = new AtomicReference<>(null);
         if (rootDirectory.exists() && rootDirectory.isDirectory()) {
             try {
                 Files.walkFileTree(rootDirectory.toPath(), new SimpleFileVisitor<Path>() {
@@ -41,13 +53,8 @@ public class VideoFileManager {
                         log.info("Checking file: " + file.getFileName());
                         if (file.toFile().isFile() && file.getFileName().toString().toLowerCase().endsWith(".mp4")) {
                             log.info("Found .mp4 file: " + file.getFileName());
-                            try {
-                                Files.copy(file, new File(rootDirectory, newFileName).toPath(),
-                                        StandardCopyOption.REPLACE_EXISTING);
-                                return FileVisitResult.TERMINATE;
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                            videoFileRef.set(new VideoFile(file));
+                            return FileVisitResult.TERMINATE;
                         }
                         return FileVisitResult.CONTINUE;
                     }
@@ -57,6 +64,14 @@ public class VideoFileManager {
             }
         }
 
-        return new VideoFile(rootDirectory, newFileName);
+        return videoFileRef.get();
+    }
+
+    public File getMovieRootPath(String imdbId) {
+        File movieRootPath = new File(movieDir + "/" + imdbId);
+        if (!movieRootPath.exists()) {
+            movieRootPath.mkdirs();
+        }
+        return movieRootPath;
     }
 }

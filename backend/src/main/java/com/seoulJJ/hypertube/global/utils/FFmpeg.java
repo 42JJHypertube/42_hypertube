@@ -48,7 +48,8 @@ public class FFmpeg {
                     "-hls_time", "10",
                     "-hls_list_size", "0",
                     "-f", "hls",
-                    outputPath + "/" + videoFile.getNameWithoutExtension() + "_" + videoFile.getHeight() + "p"
+                    outputPath + "/" + videoFile.getNameWithoutExtension() + "_"
+                            + videoFile.getResolution()
                             + ".m3u8");
             excuteCommand(command);
         } catch (Exception e) {

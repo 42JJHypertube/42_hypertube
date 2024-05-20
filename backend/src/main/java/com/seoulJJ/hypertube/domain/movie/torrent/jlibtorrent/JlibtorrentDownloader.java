@@ -31,9 +31,6 @@ import lombok.extern.log4j.Log4j2;
 @RequiredArgsConstructor
 public class JlibtorrentDownloader {
 
-    @Value("${spring.file_path.movies}")
-    private String movieDir;
-
     private final List<String> trackerUrls = List.of(
             "udp://93.158.213.92:1337/announce",
             "udp://23.137.251.46:6969/announce",
@@ -113,14 +110,11 @@ public class JlibtorrentDownloader {
                     }
                 }
             });
-
-            // s.start();
             String imdbId = movieDownDto.getImdbId();
-            File destDir = new File(movieDir + "/" + imdbId);
-            if (!destDir.exists()) {
-                destDir.mkdirs();
-            }
+            File destDir = videoFileManager.getMovieRootPath(imdbId);
 
+            // log.info("Trying to start session");
+            // s.start();
             // log.info("Trying to download torrent: " + magnetUrl);
             // s.download(magnetUrl, destDir);
             // log.info("Downloading torrent: " + magnetUrl);
@@ -130,7 +124,8 @@ public class JlibtorrentDownloader {
             // s.stop();
             // log.info("Session stopped");
 
-            VideoFile videoFile = videoFileManager.restructureFiles(imdbId, destDir);
+            VideoFile videoFile = videoFileManager.searchVideoFile(destDir);
+            videoFile.renameTo(new File(videoFile.getParent() + "/" + imdbId + ".mp4"));
             videoFileManager.convertVideoToHls(videoFile,
                     destDir.getPath());
         } catch (Exception e) {
