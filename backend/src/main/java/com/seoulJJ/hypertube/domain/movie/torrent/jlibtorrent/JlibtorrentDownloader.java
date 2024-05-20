@@ -7,9 +7,6 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.util.concurrent.CountDownLatch;
 import java.util.List;
-import java.io.IOException;
-import java.nio.file.StandardCopyOption;
-import java.nio.file.Files;
 
 import com.frostwire.jlibtorrent.AlertListener;
 import com.frostwire.jlibtorrent.LibTorrent;
@@ -28,10 +25,6 @@ import com.seoulJJ.hypertube.global.websocket.MovieDownloadSocket.MovieDownloadS
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 
 @Log4j2
 @Component
@@ -121,61 +114,27 @@ public class JlibtorrentDownloader {
                 }
             });
 
-            s.start();
+            // s.start();
             String imdbId = movieDownDto.getImdbId();
             File destDir = new File(movieDir + "/" + imdbId);
             if (!destDir.exists()) {
                 destDir.mkdirs();
             }
 
-            log.info("Trying to download torrent: " + magnetUrl);
-            s.download(magnetUrl, destDir);
-            log.info("Downloading torrent: " + magnetUrl);
-            signal.await();
+            // log.info("Trying to download torrent: " + magnetUrl);
+            // s.download(magnetUrl, destDir);
+            // log.info("Downloading torrent: " + magnetUrl);
+            // signal.await();
 
-            log.info("Trying to stop session");
-            s.stop();
-            log.info("Session stopped");
+            // log.info("Trying to stop session");
+            // s.stop();
+            // log.info("Session stopped");
 
-            VideoFile videoFile = restructureFiles(imdbId, destDir);
-
+            VideoFile videoFile = videoFileManager.restructureFiles(imdbId, destDir);
             videoFileManager.convertVideoToHls(videoFile,
                     destDir.getPath());
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private VideoFile restructureFiles(String imdbId, File rootDirectory) {
-
-        // 특정 숫자로 시작하는 파일 이름을 지정
-        String newFileName = imdbId + ".mp4";
-
-        if (rootDirectory.exists() && rootDirectory.isDirectory()) {
-            try {
-                Files.walkFileTree(rootDirectory.toPath(), new SimpleFileVisitor<Path>() {
-                    @Override
-                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                        log.info("Checking file: " + file.getFileName());
-                        if (file.toFile().isFile() && file.getFileName().toString().toLowerCase().endsWith(".mp4")) {
-                            log.info("Found .mp4 file: " + file.getFileName());
-                            try {
-                                // .mp4 파일을 특정 디렉터리로 복사하고 이름 변경
-                                Files.copy(file, new File(rootDirectory, newFileName).toPath(),
-                                        StandardCopyOption.REPLACE_EXISTING);
-                                return FileVisitResult.TERMINATE; // 하나의 .mp4 파일을 찾았으므로 종료
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        return FileVisitResult.CONTINUE;
-                    }
-                });
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return new VideoFile(rootDirectory, newFileName);
     }
 }
