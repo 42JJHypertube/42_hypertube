@@ -1,6 +1,10 @@
 import { getMovieDetail } from '@/lib/data'
 import { notFound } from 'next/navigation'
 import styles from './layout.module.scss'
+import Image from 'next/image'
+import { BsFillStarFill } from "react-icons/bs";
+import { FaRegThumbsUp } from "react-icons/fa";
+
 
 export default async function movieInfo({
   params,
@@ -15,11 +19,50 @@ export default async function movieInfo({
 
   return (
     <div className={styles.movieDetailContainer}>
-      <div className={styles.title}/>
+      <div className={styles.detail}>
+        <div className={styles.titleAndScore}>
+          <div className={styles.title}> 
+            <h2>{data.original_title}</h2>
+            <p>{data.release_date} · {data.runtime} min</p>
+          </div>
+          <div className={styles.score}>
+            <div className={styles.rating}>
+              Rating
+              <div>
+                <BsFillStarFill className={styles.star} color="yellow" />
+                <span>{data.vote_average}</span>
+              </div>
+            </div>
+            <div className={styles.popularity}>
+              Popularity
+              <div>
+                <FaRegThumbsUp color="red"/> 
+                <span> {data.popularity} </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className={styles.posterAndPlayer}>
+          <div className={styles.poster}>
+            <Image
+              src={`https://image.tmdb.org/t/p/w500${data.poster_path}`}
+              alt={data.original_title}
+              fill
+            />
+          </div>
+          <div className={styles.player}>
+          </div>      
+        </div>
+        <div className={styles.info}>
+          <div className={styles.genre}> 무엇인가 장르들 </div>
+          <div>
+            영화 사람 정보들
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
-
 // {
 //   "adult": false,
 //   "backdrop_path": "/kXfqcdQKsToO0OUXHcrrNCHDBzO.jpg",
