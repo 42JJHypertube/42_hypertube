@@ -116,10 +116,10 @@ public class JlibtorrentDownloader {
             progressDto.setStatus(MovieState.DOWNLOADING);
             movieDownloadSocketHandler.updateProgress(movieDownDto.getTorrentHash(), progressDto);
 
-            // s.start();
-            // s.download(magnetUrl, destDir);
-            // signal.await();
-            // s.stop();
+            s.start();
+            s.download(magnetUrl, destDir);
+            signal.await();
+            s.stop();
 
             movie.setMovieState(MovieState.CONVERTING);
             movieRepository.saveAndFlush(movie);

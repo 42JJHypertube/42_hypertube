@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
+import com.seoulJJ.hypertube.domain.movie.type.MovieState;
 import com.seoulJJ.hypertube.global.websocket.MovieDownloadSocket.dto.MovieDownloadProgressDto;
 
 public class ProgressBrodcastThread extends Thread {
@@ -36,6 +37,9 @@ public class ProgressBrodcastThread extends Thread {
                         e.printStackTrace();
                     }
                 }
+            }
+            if (progressDto.getStatus() == MovieState.AVAILABLE) {
+                break;
             }
 
             try {
