@@ -38,23 +38,7 @@ public class FFmpeg {
 
     public void convertVideoToHls(VideoFile videoFile, String outputPath) {
         try {
-            String resolution = videoFile.getWidth() + "x" + videoFile.getHeight();
-            // List<String> command = List.of(
-            // "ffmpeg",
-            // "-i", videoFile.getAbsolutePath(),
-            // "-profile:v", "baseline",
-            // "-level", "3.0",
-            // "-s", resolution,
-            // "-start_number", "0",
-            // "-hls_time", "10",
-            // "-hls_list_size", "0",
-            // "-f", "hls",
-            // outputPath + "/" + videoFile.getNameWithoutExtension() + "_"
-            // + videoFile.getResolution()
-            // + ".m3u8");
-
             List<String> command = makeConvertCommand(videoFile, outputPath);
-            log.info("EXCUTE COMMAND : " + String.join(" ", command));
             excuteCommand(command);
         } catch (Exception e) {
             e.printStackTrace();
