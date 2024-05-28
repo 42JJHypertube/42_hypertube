@@ -23,7 +23,7 @@ export default async function movieInfo({
         <div className={styles.titleAndScore}>
           <div className={styles.title}> 
             <h2>{data.original_title}</h2>
-            <p>{data.release_date} · {data.runtime} min</p>
+            <p className={styles.movieInfo}>{data.release_date} · {data.runtime} min</p>
           </div>
           <div className={styles.score}>
             <div className={styles.rating}>
@@ -54,9 +54,17 @@ export default async function movieInfo({
           </div>      
         </div>
         <div className={styles.info}>
-          <div className={styles.genre}> 무엇인가 장르들 </div>
-          <div>
-            영화 사람 정보들
+          <div className={styles.genreContainer}>
+            {data.genres.map((genre : {id: number, name: string}) => (
+              <div className={styles.genre}>
+                {genre.name}
+              </div>
+            ))
+            }
+          </div>
+          <div className={styles.div}/>
+          <div className={styles.overview}>
+            {data.overview}
           </div>
         </div>
       </div>
