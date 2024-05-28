@@ -8,6 +8,7 @@ import com.seoulJJ.hypertube.global.utils.FileManager.VideoFile;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.annotation.PostConstruct;
@@ -38,21 +39,25 @@ public class FFmpeg {
     public void convertVideoToHls(VideoFile videoFile, String outputPath) {
         try {
             String resolution = videoFile.getWidth() + "x" + videoFile.getHeight();
-            List<String> command = List.of(
-                    "ffmpeg",
-                    "-i", videoFile.getAbsolutePath(),
-                    "-profile:v", "baseline",
-                    "-level", "3.0",
-                    "-s", resolution,
-                    "-start_number", "0",
-                    "-hls_time", "10",
-                    "-hls_list_size", "0",
-                    "-f", "hls",
-                    outputPath + "/" + videoFile.getNameWithoutExtension() + "_"
-                            + videoFile.getResolution()
-                            + ".m3u8");
+            // List<String> command = List.of(
+            // "ffmpeg",
+            // "-i", videoFile.getAbsolutePath(),
+            // "-profile:v", "baseline",
+            // "-level", "3.0",
+            // "-s", resolution,
+            // "-start_number", "0",
+            // "-hls_time", "10",
+            // "-hls_list_size", "0",
+            // "-f", "hls",
+            // outputPath + "/" + videoFile.getNameWithoutExtension() + "_"
+            // + videoFile.getResolution()
+            // + ".m3u8");
+
+            List<String> command = makeConvertCommand(videoFile, outputPath);
+            log.info("EXCUTE COMMAND : " + String.join(" ", command));
             excuteCommand(command);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new FFmpegException("Video 변환중 에러 발생", ErrorCode.FFMPEG_ERR);
         }
     }
@@ -74,6 +79,49 @@ public class FFmpeg {
         } catch (Exception e) {
             throw new FFmpegException("비디오 정보 조회 중 에러 발생", ErrorCode.FFMPEG_ERR);
         }
+    }
+
+    private List<String> makeConvertCommand(VideoFile videoFile, String outputPath) {
+        final Integer height = videoFile.getHeight();
+        List<String> command = new ArrayList<>(); // Use mutable ArrayList instead of immutable List
+
+        command.addAll(List.of("ffmpeg", "-i", videoFile.getAbsolutePath(), "-preset", "veryfast", "-threads", "0"));
+
+        Integer numberOfVideos;
+        final List<String> destResolution = List.of("360", "720", "1080", "2080");
+        final List<String> destVideoBitrate = List.of("600k", "900k", "900k", "900k");
+        final List<String> destAudioBitrate = List.of("64k", "128k", "128k", "128k");
+        if (height <= 360) {
+            numberOfVideos = 1;
+        } else if (height <= 720) {
+            numberOfVideos = 2;
+        } else if (height <= 1080) {
+            numberOfVideos = 3;
+        } else {
+            numberOfVideos = 4;
+        }
+
+        String varStringMapArg = "";
+        List<String> destFillterCommand = new ArrayList<>();
+        for (int i = 0; i < numberOfVideos; i++) {
+            command.addAll(List.of("-map", "0:v:0", "-map", "0:a:0"));
+            destFillterCommand.addAll(List.of("-filter:v:" + i,
+                    "scale=-2:" + destResolution.get(i) + ":force_original_aspect_ratio=decrease", "-maxrate:v:" + i,
+                    destVideoBitrate.get(i), "-b:a:" + i, destAudioBitrate.get(i)));
+            varStringMapArg = varStringMapArg + "v:" + i + ",a:" + i + ",name:" + destResolution.get(i) + "p";
+            if (i != numberOfVideos - 1) {
+                varStringMapArg = varStringMapArg + " ";
+            }
+        }
+        // varStringMapArg = varStringMapArg + "\"";
+        command.addAll(List.of("-c:v", videoFile.getCodecName(), "-crf", "22", "-c:a", "copy"));
+        command.addAll(destFillterCommand);
+        command.addAll(List.of("-f", "hls", "-hls_time", "10", "-hls_playlist_type", "vod", "-hls_list_size", "0",
+                "-hls_flags", "independent_segments"));
+        command.addAll(List.of("-var_stream_map", varStringMapArg));
+        command.addAll(List.of("-master_pl_name", "master.m3u8", "-hls_segment_filename", outputPath + "/%v/%03d.ts",
+                outputPath + "/%v/index.m3u8"));
+        return command;
     }
 
     private String excuteCommand(List<String> command) {

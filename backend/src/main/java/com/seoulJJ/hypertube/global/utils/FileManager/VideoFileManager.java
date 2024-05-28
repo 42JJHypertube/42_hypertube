@@ -33,15 +33,19 @@ public class VideoFileManager {
     public void convertVideoToHls(VideoFile videoFile, String outputPath) {
         log.info("VideoFile 정보 : " + videoFile.toString());
 
-        File destDir = new File(outputPath + "/" + videoFile.getResolution());
+        File destDir = new File(outputPath);
         if (!destDir.exists()) {
             destDir.mkdirs();
         }
 
         log.info("HLS 변환 시작 " + videoFile.getPath() + " -> " + destDir);
         fFmpeg.convertVideoToHls(videoFile, destDir.getAbsolutePath());
+        log.info("HLS 변환 완료" + videoFile.getPath() + " -> " + destDir);
     }
 
+    /*
+     * .mp4확장자의 비디오파일을 찾아 VideoFile 객체로 반환
+     */
     public VideoFile searchVideoFile(File rootDirectory) {
 
         AtomicReference<VideoFile> videoFileRef = new AtomicReference<>(null);
@@ -50,9 +54,7 @@ public class VideoFileManager {
                 Files.walkFileTree(rootDirectory.toPath(), new SimpleFileVisitor<Path>() {
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                        log.info("Checking file: " + file.getFileName());
                         if (file.toFile().isFile() && file.getFileName().toString().toLowerCase().endsWith(".mp4")) {
-                            log.info("Found .mp4 file: " + file.getFileName());
                             videoFileRef.set(new VideoFile(file));
                             return FileVisitResult.TERMINATE;
                         }
