@@ -1,5 +1,10 @@
 import { getMovieDetail } from '@/lib/data'
 import { notFound } from 'next/navigation'
+import styles from './layout.module.scss'
+import Image from 'next/image'
+import { BsFillStarFill } from "react-icons/bs";
+import { FaRegThumbsUp } from "react-icons/fa";
+
 
 export default async function movieInfo({
   params,
@@ -13,17 +18,59 @@ export default async function movieInfo({
   const { data } = res
 
   return (
-    <>
-      <p> title: {data.original_title}</p>
-      <p> release_date: {data.release_date}</p>
-      <p> runtime: {data.runtime}</p>
-      <p> tagLine: {data.tagline}</p>
-      <p> vote_average: {data.vote_average}</p>
-      <p> vote_count: {data.vote_count}</p>
-    </>
+    <div className={styles.movieDetailContainer}>
+      <div className={styles.detail}>
+        <div className={styles.titleAndScore}>
+          <div className={styles.title}> 
+            <h2>{data.original_title}</h2>
+            <p className={styles.movieInfo}>{data.release_date} · {data.runtime} min</p>
+          </div>
+          <div className={styles.score}>
+            <div className={styles.rating}>
+              Rating
+              <div>
+                <BsFillStarFill className={styles.star} color="yellow" />
+                <span>{data.vote_average}</span>
+              </div>
+            </div>
+            <div className={styles.popularity}>
+              Popularity
+              <div>
+                <FaRegThumbsUp color="red"/> 
+                <span> {data.popularity} </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className={styles.posterAndPlayer}>
+          <div className={styles.poster}>
+            <Image
+              src={`https://image.tmdb.org/t/p/w500${data.poster_path}`}
+              alt={data.original_title}
+              fill
+            />
+          </div>
+          <div className={styles.player}>
+          </div>      
+        </div>
+        <div className={styles.info}>
+          <div className={styles.genreContainer}>
+            {data.genres.map((genre : {id: number, name: string}) => (
+              <div className={styles.genre}>
+                {genre.name}
+              </div>
+            ))
+            }
+          </div>
+          <div className={styles.div}/>
+          <div className={styles.overview}>
+            {data.overview}
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }
-
 // {
 //   "adult": false,
 //   "backdrop_path": "/kXfqcdQKsToO0OUXHcrrNCHDBzO.jpg",
