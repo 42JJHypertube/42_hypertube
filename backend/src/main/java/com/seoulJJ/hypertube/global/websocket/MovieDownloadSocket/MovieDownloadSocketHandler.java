@@ -1,8 +1,12 @@
 package com.seoulJJ.hypertube.global.websocket.MovieDownloadSocket;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
+
+import com.seoulJJ.hypertube.global.websocket.MovieDownloadSocket.dto.MovieDownloadProgressDto;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -16,8 +20,7 @@ import org.springframework.web.socket.WebSocketSession;
 @RequiredArgsConstructor
 public class MovieDownloadSocketHandler extends TextWebSocketHandler {
 
-    @Autowired
-    private final TorrentSessionSocketManager torrentSessionSocketManager;
+    private static final ConcurrentHashMap<String, ProgressBrodcastThread> progressThreads = new ConcurrentHashMap<String, ProgressBrodcastThread>();
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -31,15 +34,12 @@ public class MovieDownloadSocketHandler extends TextWebSocketHandler {
             session.close(CloseStatus.BAD_DATA);
             return;
         }
-        String torrentHash = (String) session.getAttributes().get("torrentHash");
-        if (!torrentSessionSocketManager.joinTorrent(torrentHash, session)) {
-            session.close(CloseStatus.BAD_DATA);
-        }
+        String torrentHash = session.getAttributes().get("torrentHash").toString();
+        progressThreads.get(torrentHash).addSession(session);
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        torrentSessionSocketManager.removeSession(session);
         session.close();
     }
 
@@ -47,29 +47,18 @@ public class MovieDownloadSocketHandler extends TextWebSocketHandler {
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
     }
 
-    public void sendMessage(String torrentHash, String message) {
-        torrentSessionSocketManager.getTorrentSessions(torrentHash).forEach(session -> {
-            try {
-                session.sendMessage(new TextMessage(message));
-            } catch (Exception e) {
-                log.error(e);
-            }
-        });
+    public void addProgressThread(String torrentHash, MovieDownloadProgressDto progressDto) {
+        ProgressBrodcastThread progressThread = new ProgressBrodcastThread(torrentHash, progressDto);
+        progressThreads.put(torrentHash, progressThread);
+        progressThread.start();
     }
 
-    public void addTorrent(String torrentHash) {
-        torrentSessionSocketManager.addTorrent(torrentHash);
+    public void updateProgress(String torrentHash, MovieDownloadProgressDto progressDto) {
+        progressThreads.get(torrentHash).updateProgress(progressDto);
     }
 
-    public void removeTorrent(String torrentHash) {
-        torrentSessionSocketManager.getTorrentSessions(torrentHash).forEach(session -> {
-            try {
-                if (session.isOpen())
-                    session.close();
-            } catch (Exception e) {
-                log.error(e);
-            }
-        });
-        torrentSessionSocketManager.removeTorrent(torrentHash);
+    public void removeProgressThread(String torrentHash) {
+        progressThreads.get(torrentHash).interrupt();
+        progressThreads.remove(torrentHash);
     }
 }
