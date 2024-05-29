@@ -1,5 +1,5 @@
-import Hype from './hype'
-import { Config } from './hype/type/client'
+import Hype from '.'
+import { Config } from './type/client'
 
 // change baseURL using .env file
 const defaultConfig: Config = {

@@ -2,9 +2,8 @@ import { getMovieDetail } from '@/lib/data'
 import { notFound } from 'next/navigation'
 import styles from './layout.module.scss'
 import Image from 'next/image'
-import { BsFillStarFill } from "react-icons/bs";
-import { FaRegThumbsUp } from "react-icons/fa";
-
+import { BsFillStarFill } from 'react-icons/bs'
+import { FaRegThumbsUp } from 'react-icons/fa'
 
 export default async function movieInfo({
   params,
@@ -21,9 +20,11 @@ export default async function movieInfo({
     <div className={styles.movieDetailContainer}>
       <div className={styles.detail}>
         <div className={styles.titleAndScore}>
-          <div className={styles.title}> 
+          <div className={styles.title}>
             <h2>{data.original_title}</h2>
-            <p className={styles.movieInfo}>{data.release_date} · {data.runtime} min</p>
+            <p className={styles.movieInfo}>
+              {data.release_date} · {data.runtime} min
+            </p>
           </div>
           <div className={styles.score}>
             <div className={styles.rating}>
@@ -36,7 +37,7 @@ export default async function movieInfo({
             <div className={styles.popularity}>
               Popularity
               <div>
-                <FaRegThumbsUp color="red"/> 
+                <FaRegThumbsUp color="red" />
                 <span> {data.popularity} </span>
               </div>
             </div>
@@ -50,22 +51,16 @@ export default async function movieInfo({
               fill
             />
           </div>
-          <div className={styles.player}>
-          </div>      
+          <div className={styles.player}></div>
         </div>
         <div className={styles.info}>
           <div className={styles.genreContainer}>
-            {data.genres.map((genre : {id: number, name: string}) => (
-              <div className={styles.genre}>
-                {genre.name}
-              </div>
-            ))
-            }
+            {data.genres.map((genre: { id: number; name: string }) => (
+              <div className={styles.genre}>{genre.name}</div>
+            ))}
           </div>
-          <div className={styles.div}/>
-          <div className={styles.overview}>
-            {data.overview}
-          </div>
+          <div className={styles.div} />
+          <div className={styles.overview}>{data.overview}</div>
         </div>
       </div>
     </div>

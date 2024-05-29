@@ -3,7 +3,7 @@
 import { cookies } from 'next/headers'
 import { revalidateTag } from 'next/cache'
 import { redirect } from 'next/navigation'
-import HypeClient from '../config'
+import HypeClient from '../hype/config'
 import { CustomHeaders } from '../hype/type/common'
 import getCookieOption from '../utill/cookieOption'
 
