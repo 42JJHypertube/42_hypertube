@@ -61,4 +61,10 @@ public class ProgressBrodcastThread extends Thread {
             sessions.add(session);
         }
     }
+
+    public void removeSession(WebSocketSession session) {
+        synchronized (sessions) {
+            sessions.remove(session);
+        }
+    }
 }
