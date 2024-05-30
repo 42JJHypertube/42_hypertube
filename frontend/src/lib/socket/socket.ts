@@ -2,47 +2,37 @@ import WebSocket from 'ws'
 
 class WebSocketClient {
   private static instance: WebSocketClient
-  private clients: Map<string, WebSocket>
+  private clients: WebSocket
 
-  private constructor() {
-    this.clients = new Map()
+  private constructor(url: string) {
+    this.clients = new WebSocket(url)
   }
 
   public static getInstance(): WebSocketClient {
     if (!WebSocketClient.instance) {
-      WebSocketClient.instance = new WebSocketClient()
+      WebSocketClient.instance = new WebSocketClient("ws://localhost/socket/movies/download/progress")
     }
     return WebSocketClient.instance
   }
 
-  public connect(url: string): WebSocket {
-    if (this.clients.has(url)) {
-      return this.clients.get(url)!
-    }
+  //   {
+  //     action: ('join' | 'detach'),
+  //     torrentHash: (토렌트 해시코드)
+  //   }
 
-    const ws = new WebSocket(url)
-    this.clients.set(url, ws)
-    
-    return ws
+  public connect(torrentHash: string) {
+    const message = JSON.stringify({ action: 'join', torrentHash: torrentHash });
+    this.clients.send(message)
   }
 
-  public send(url: string, message: string): void {
-    const ws = this.clients.get(url)
-    if (ws && ws.readyState === WebSocket.OPEN) {
-      ws.send(message)
-      console.log(`Sent to ${url}: ${message}`)
-    } else {
-      console.error(`WebSocket is not open for ${url}`)
-    }
+  public close(torrentHash: string): void {
+    const message = JSON.stringify({ action: 'detach', torrentHash: torrentHash});
+    this.clients.send(message)
+    this.clients.close()
   }
 
-  public close(url: string): void {
-    const ws = this.clients.get(url)
-    if (ws) {
-      ws.close()
-      this.clients.delete(url)
-      console.log(`Closed connection to ${url}`)
-    }
+  public getClients(): WebSocket {
+    return this.clients;
   }
 }
 
