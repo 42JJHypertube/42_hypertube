@@ -193,6 +193,13 @@ export async function getMovieDetail({ movie_id }: { movie_id: number }) {
     .catch((error) => error)
 }
 
+export async function getTorrentData({ imdb_id }: { imdb_id: number }) {
+  return HypeClient.torrent
+    .getTopCountDonwload(imdb_id)
+    .then((res) => res)
+    .catch((error) => error)
+}
+
 /**
  * Client에서 사용하는 ServerAction에만 Wrapping 한다.
  *

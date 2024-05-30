@@ -1,49 +1,67 @@
+import WebSocket from 'ws'
 
-// lib/SocketClient.ts
-import net from 'net';
+class WebSocketClient {
+  private static instance: WebSocketClient
+  private clients: Map<string, WebSocket>
 
-class SocketClient {
-    private static instance: SocketClient;
-    private client: net.Socket;
+  private constructor() {
+    this.clients = new Map()
+  }
 
-    constructor(host: string, port: number) {
-        this.client = new net.Socket();
-        this.client.connect(port, host, () => {
-            console.log(`Connected to ${host}:${port}`);
-        });
+  public static getInstance(): WebSocketClient {
+    if (!WebSocketClient.instance) {
+      WebSocketClient.instance = new WebSocketClient()
+    }
+    return WebSocketClient.instance
+  }
 
-        this.client.on('error', (err) => {
-            console.error(`Socket error: ${err}`);
-        });
-
-        this.client.on('close', () => {
-            console.log('Connection closed');
-        });
+  public connect(url: string): WebSocket {
+    if (this.clients.has(url)) {
+      return this.clients.get(url)!
     }
 
-    public static getInstance(host: string, port: number): SocketClient {
-        if (!SocketClient.instance) {
-            SocketClient.instance = new SocketClient(host, port);
-        }
-        return SocketClient.instance;
-    }
+    const ws = new WebSocket(url)
 
-    public send(message: string): void {
-        this.client.write(message);
-        console.log(`Sent: ${message}`);
-    }
+    ws.on('open', () => {
+      console.log(`Connected to ${url}`)
+    })
 
-    public receive(callback: (data: string) => void): void {
-        this.client.on('data', (data) => {
-            console.log(`Received: ${data}`);
-            callback(data.toString());
-        });
-    }
+    ws.on('error', (err) => {
+      console.error(`WebSocket error: ${err}`)
+    })
 
-    public close(): void {
-        this.client.destroy();
-        console.log('Socket closed');
+    ws.on('close', () => {
+      console.log(`Connection to ${url} closed`)
+      this.clients.delete(url)
+    })
+
+    ws.on('message', (data) => {
+      console.log(`Received from ${url}: ${data}`)
+    })
+
+    this.clients.set(url, ws)
+    return ws
+  }
+
+  public send(url: string, message: string): void {
+    const ws = this.clients.get(url)
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(message)
+      console.log(`Sent to ${url}: ${message}`)
+    } else {
+      console.error(`WebSocket is not open for ${url}`)
     }
+  }
+
+  public close(url: string): void {
+    const ws = this.clients.get(url)
+    if (ws) {
+      ws.close()
+      this.clients.delete(url)
+      console.log(`Closed connection to ${url}`)
+    }
+  }
 }
 
-export default SocketClient;
+const wsClient = WebSocketClient.getInstance()
+export default wsClient

@@ -1,9 +1,10 @@
-import { getMovieDetail } from '@/lib/data'
+import { getMovieDetail, getTorrentData } from '@/lib/data'
 import { notFound } from 'next/navigation'
 import styles from './layout.module.scss'
 import Image from 'next/image'
 import { BsFillStarFill } from 'react-icons/bs'
 import { FaRegThumbsUp } from 'react-icons/fa'
+import TorrentList from '@/modules/movie/torrentList'
 
 export default async function movieInfo({
   params,
@@ -11,10 +12,11 @@ export default async function movieInfo({
   params: { movie_id: number }
 }) {
   const res = await getMovieDetail(params)
-  console.log(res)
   if (res.response.status !== 200) return notFound()
 
   const { data } = res
+  const torrentData  = await getTorrentData({imdb_id: data.imdb_id})
+  // console.log(torrentData)
 
   return (
     <div className={styles.movieDetailContainer}>
@@ -63,6 +65,7 @@ export default async function movieInfo({
           <div className={styles.overview}>{data.overview}</div>
         </div>
       </div>
+      {torrentData.data?.data?.movie?.torrents && <TorrentList torrents={torrentData.data.data.movie.torrents}/>}
     </div>
   )
 }

@@ -3,9 +3,12 @@ import Client from './client'
 import AuthResource from './resources/auth'
 import MovieResource from './resources/movie'
 import UserResource from './resources/user'
+import TorrentResource from './resources/torrent'
 
 class Hype {
   public client: Client
+
+  public torrent: TorrentResource //
 
   public movie: MovieResource // movie API를 관리하기 위한 Client
 
@@ -20,6 +23,12 @@ class Hype {
     this.movie = new MovieResource(
       new Client({
         baseURL: `https://api.themoviedb.org/3`,
+        maxRetries: 3,
+      }),
+    )
+    this.torrent = new TorrentResource(
+      new Client({
+        baseURL: `https://yts.mx/api/v2`,
         maxRetries: 3,
       }),
     )
