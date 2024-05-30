@@ -21,25 +21,8 @@ class WebSocketClient {
     }
 
     const ws = new WebSocket(url)
-
-    ws.on('open', () => {
-      console.log(`Connected to ${url}`)
-    })
-
-    ws.on('error', (err) => {
-      console.error(`WebSocket error: ${err}`)
-    })
-
-    ws.on('close', () => {
-      console.log(`Connection to ${url} closed`)
-      this.clients.delete(url)
-    })
-
-    ws.on('message', (data) => {
-      console.log(`Received from ${url}: ${data}`)
-    })
-
     this.clients.set(url, ws)
+    
     return ws
   }
 

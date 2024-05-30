@@ -200,6 +200,20 @@ export async function getTorrentData({ imdb_id }: { imdb_id: number }) {
     .catch((error) => error)
 }
 
+export async function postTorrentDownload({
+  imdb_id,
+  magnetUrl,
+}: {
+  imdb_id: string
+  magnetUrl: string
+}) {
+  const newCustomHeaders = getCustomHeaders([])
+
+  return HypeClient.download
+    .postDownloadTorrent({ imdb_id, magnetUrl }, newCustomHeaders)
+    .then((res) => console.log(res))
+    .catch((error) => console.log(error))
+}
 /**
  * Client에서 사용하는 ServerAction에만 Wrapping 한다.
  *

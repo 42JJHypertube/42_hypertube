@@ -15,8 +15,7 @@ export default async function movieInfo({
   if (res.response.status !== 200) return notFound()
 
   const { data } = res
-  const torrentData  = await getTorrentData({imdb_id: data.imdb_id})
-  // console.log(torrentData)
+  const torrentData = await getTorrentData({ imdb_id: data.imdb_id })
 
   return (
     <div className={styles.movieDetailContainer}>
@@ -65,7 +64,12 @@ export default async function movieInfo({
           <div className={styles.overview}>{data.overview}</div>
         </div>
       </div>
-      {torrentData.data?.data?.movie?.torrents && <TorrentList torrents={torrentData.data.data.movie.torrents}/>}
+      {torrentData.data?.data?.movie?.torrents && (
+        <TorrentList
+          imdb_id={torrentData.data.data.movie.imdb_code}
+          torrents={torrentData.data.data.movie.torrents}
+        />
+      )}
     </div>
   )
 }
