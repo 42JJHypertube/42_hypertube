@@ -20,8 +20,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(movieDownloadSocketHandler, "/socket/movies/download")
-                .setAllowedOrigins("*")
-                .addInterceptors(new QueryParamInterceptor());
+        registry.addHandler(movieDownloadSocketHandler, "/socket/movies/download/progress")
+                .setAllowedOrigins("*");
     }
 }
