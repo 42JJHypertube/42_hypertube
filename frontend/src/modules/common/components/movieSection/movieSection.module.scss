@@ -1,18 +1,10 @@
-.main {
-  display: flex;
-  flex-direction: column;
-  padding: 6rem;
-  min-height: 100vh;
-}
-
-/* 화면 폭이 600px 미만인 경우: 2개의 열로 설정 */
-
 @media screen and (max-width: 599px) {
   .mainMovieCardContainer {
     grid-template-columns: repeat(1, 160px);
   }
 }
 
+/* 화면 폭이 600px 미만인 경우: 2개의 열로 설정 */
 @media screen and (min-width: 600px) and (max-width: 849px) {
   .mainMovieCardContainer {
     grid-template-columns: repeat(2, 160px);
@@ -43,7 +35,7 @@
     grid-area: movieCards;
     display: grid;
     width: 80vw;
-    max-height: 50vh;
+    max-height: 100%;
     justify-content: center;
     grid-auto-rows: 270px;
     gap: 10px;
@@ -51,7 +43,7 @@
     .last {
       // 새로운 행에 모든 열의 크기를 갖고있도록한다
       grid-column: 1 / -1;
-      height: 1rem;
+      height: 100%;
       text-align: center;
     }
   }

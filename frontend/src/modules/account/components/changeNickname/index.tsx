@@ -7,7 +7,6 @@ import ChangeInfo from '../changeInfo'
 
 export default function ChangeNickname({ nickname }: { nickname: string }) {
   const [curForm, action] = useFormState(() => ({}), {})
-  console.log(curForm) // 제거 필요
 
   return (
     <form action={action}>

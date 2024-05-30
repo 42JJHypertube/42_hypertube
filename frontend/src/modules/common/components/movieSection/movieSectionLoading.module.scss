@@ -1,0 +1,70 @@
+/* KEYFRAMES */
+
+@keyframes spin {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(359deg);
+  }
+}
+
+/* SOLAR SYSTEM */
+
+.spinnerBox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+}
+
+.solarSystem {
+  width: 250px;
+  height: 250px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.orbit {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #fafbfc;
+  border-radius: 50%;
+}
+
+.earthOrbit {
+  width: 165px;
+  height: 165px;
+  -webkit-animation: spin 6s linear 0s infinite;
+}
+
+.venusOrbit {
+  width: 120px;
+  height: 120px;
+  -webkit-animation: spin 3.7s linear 0s infinite;
+}
+
+.mercuryOrbit {
+  width: 90px;
+  height: 90px;
+  -webkit-animation: spin 1.5s linear 0s infinite;
+}
+
+.planet {
+  position: absolute;
+  top: -5px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #3ff9dc;
+}
+
+.sun {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background-color: #ffab91;
+}

@@ -7,8 +7,8 @@ export default async function Nav() {
   return (
     <header className={styles.stickyContainer}>
       <nav className={styles.navContainer}>
-        <Link className={styles.link} href="/">
-          Main
+        <Link className={styles.home} href="/">
+          HYPER TUBE
         </Link>
         <NavSearchBar />
         <NavLogin />
