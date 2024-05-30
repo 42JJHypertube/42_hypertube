@@ -1,11 +1,15 @@
 package com.seoulJJ.hypertube.global.websocket.MovieDownloadSocket;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import com.nimbusds.jose.shaded.gson.Gson;
+import com.seoulJJ.hypertube.global.websocket.MovieDownloadSocket.dto.ActionRequestDto;
+import com.seoulJJ.hypertube.global.websocket.MovieDownloadSocket.dto.ActionResponseDto;
 import com.seoulJJ.hypertube.global.websocket.MovieDownloadSocket.dto.MovieDownloadProgressDto;
 
 import lombok.RequiredArgsConstructor;
@@ -24,18 +28,9 @@ public class MovieDownloadSocketHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        ///// 쿼리 출력 /////
-        for (String key : session.getAttributes().keySet()) {
-            log.info(key + ": " + session.getAttributes().get(key));
-        }
-        //////////////////
-
-        if (!session.getAttributes().containsKey("torrentHash")) {
-            session.close(CloseStatus.BAD_DATA);
-            return;
-        }
-        String torrentHash = session.getAttributes().get("torrentHash").toString();
-        progressThreads.get(torrentHash).addSession(session);
+        List<String> keys = new ArrayList<>(progressThreads.keySet());
+        String jsonKeys = new Gson().toJson(keys);
+        session.sendMessage(new TextMessage(jsonKeys));
     }
 
     @Override
@@ -45,6 +40,34 @@ public class MovieDownloadSocketHandler extends TextWebSocketHandler {
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+        try {
+            ActionRequestDto req = parseActionRequest(message.getPayload());
+
+            if (req.getAction().equals("join")) {
+                ProgressBrodcastThread pbt = progressThreads.get(req.getTorrentHash());
+                if (pbt != null) {
+                    pbt.addSession(session);
+                    ActionResponseDto res = new ActionResponseDto(201, "Joined -> " + req.getTorrentHash());
+                    session.sendMessage(new TextMessage(res.toJsonString()));
+                } else {
+                    throw new RuntimeException("ProgressThread not found");
+                }
+            } else if (req.getAction().equals("detach")) {
+                ProgressBrodcastThread pbt = progressThreads.get(req.getTorrentHash());
+                if (pbt != null) {
+                    pbt.removeSession(session);
+                    ActionResponseDto res = new ActionResponseDto(201, "Detached -> " + req.getTorrentHash());
+                    session.sendMessage(new TextMessage(res.toJsonString()));
+                } else {
+                    throw new RuntimeException("Already thread detached");
+                }
+            } else {
+                throw new RuntimeException("Invalid action");
+            }
+        } catch (Exception e) {
+            ActionResponseDto res = new ActionResponseDto(400, e.getMessage());
+            session.sendMessage(new TextMessage(res.toJsonString()));
+        }
     }
 
     public void addProgressThread(String torrentHash, MovieDownloadProgressDto progressDto) {
@@ -60,5 +83,21 @@ public class MovieDownloadSocketHandler extends TextWebSocketHandler {
     public void removeProgressThread(String torrentHash) {
         progressThreads.get(torrentHash).interrupt();
         progressThreads.remove(torrentHash);
+    }
+
+    private ActionRequestDto parseActionRequest(String message) {
+        try {
+            ActionRequestDto req = new Gson().fromJson(message, ActionRequestDto.class);
+            if (req.getAction() == null || req.getTorrentHash() == null) {
+                throw new RuntimeException("Invalid request message");
+            }
+            if (req.getAction().equals("join") || req.getAction().equals("detach")) {
+                return req;
+            } else {
+                throw new RuntimeException("Invalid action");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to parse request message");
+        }
     }
 }
