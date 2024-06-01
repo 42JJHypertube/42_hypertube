@@ -55,6 +55,7 @@ public class VideoFileManager {
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                         if (file.toFile().isFile() && file.getFileName().toString().toLowerCase().endsWith(".mp4")) {
+                            System.out.println("비디오 파일 찾음 : " + file.toString());
                             videoFileRef.set(new VideoFile(file));
                             return FileVisitResult.TERMINATE;
                         }
@@ -63,6 +64,7 @@ public class VideoFileManager {
                 });
             } catch (IOException e) {
                 e.printStackTrace();
+                throw new RuntimeException("비디오 파일을 찾는 도중 에러 발생");
             }
         }
 

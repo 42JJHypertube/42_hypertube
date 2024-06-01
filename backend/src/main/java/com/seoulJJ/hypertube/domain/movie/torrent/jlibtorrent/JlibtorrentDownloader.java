@@ -19,6 +19,7 @@ import com.seoulJJ.hypertube.domain.movie.Movie;
 import com.seoulJJ.hypertube.domain.movie.MovieRepository;
 import com.seoulJJ.hypertube.domain.movie.MovieService;
 import com.seoulJJ.hypertube.domain.movie.dto.MovieDownDto;
+import com.seoulJJ.hypertube.domain.movie.exception.MovieDownLoadFailException;
 import com.seoulJJ.hypertube.domain.movie.type.MovieState;
 import com.seoulJJ.hypertube.global.utils.FileManager.VideoFile;
 import com.seoulJJ.hypertube.global.utils.FileManager.VideoFileManager;
@@ -64,6 +65,14 @@ public class JlibtorrentDownloader {
 
     // @Transactional //TODO: 트랜잭션 어노테이션을 달면 flush가 바로 되지 않는다. 이유 찾아서 블로깅 하기
     public void startDownloadWithMagnet(MovieDownDto movieDownDto) throws Throwable {
+        Movie movie = movieRepository.findByImdbId(movieDownDto.getImdbId()).orElseThrow(); // TODO : Exception
+        movie.setMovieState(MovieState.DOWNLOADING);
+
+        MovieDownloadProgressDto progressDto = new MovieDownloadProgressDto(movieDownDto.getImdbId(),
+                movieDownDto.getTorrentHash(), 0,
+                MovieState.DOWNLOADING);
+        movieDownloadSocketHandler.addProgressThread(movieDownDto.getTorrentHash(), progressDto);
+
         try {
             StringBuilder builder = new StringBuilder(movieDownDto.getMagnetUrl());
             trackerUrls.forEach(url -> builder.append("&tr=").append(url));
@@ -73,11 +82,6 @@ public class JlibtorrentDownloader {
 
             final SessionManager s = new SessionManager();
             final CountDownLatch signal = new CountDownLatch(1);
-            MovieDownloadProgressDto progressDto = new MovieDownloadProgressDto(movieDownDto.getImdbId(),
-                    movieDownDto.getTorrentHash(), 0,
-                    MovieState.DOWNLOADING);
-
-            movieDownloadSocketHandler.addProgressThread(movieDownDto.getTorrentHash(), progressDto);
 
             s.addListener(new AlertListener() {
                 @Override
@@ -110,16 +114,14 @@ public class JlibtorrentDownloader {
             String imdbId = movieDownDto.getImdbId();
             File destDir = videoFileManager.getMovieRootPath(imdbId);
 
-            Movie movie = movieRepository.findByImdbId(imdbId).orElseThrow(); // TODO : Exception
-            movie.setMovieState(MovieState.DOWNLOADING);
             movieRepository.saveAndFlush(movie);
             progressDto.setStatus(MovieState.DOWNLOADING);
             movieDownloadSocketHandler.updateProgress(movieDownDto.getTorrentHash(), progressDto);
 
-            s.start();
-            s.download(magnetUrl, destDir);
-            signal.await();
-            s.stop();
+            // s.start();
+            // s.download(magnetUrl, destDir);
+            // signal.await();
+            // s.stop();
 
             movie.setMovieState(MovieState.CONVERTING);
             movieRepository.saveAndFlush(movie);
@@ -128,9 +130,7 @@ public class JlibtorrentDownloader {
             movieDownloadSocketHandler.updateProgress(movieDownDto.getTorrentHash(), progressDto);
 
             VideoFile videoFile = videoFileManager.searchVideoFile(destDir);
-            videoFile.renameTo(new File(videoFile.getParent() + "/" + imdbId + ".mp4"));
-            videoFileManager.convertVideoToHls(videoFile,
-                    destDir.getPath());
+            videoFileManager.convertVideoToHls(videoFile, destDir.getPath());
 
             movie.setMovieState(MovieState.AVAILABLE);
             movieRepository.saveAndFlush(movie);
@@ -139,6 +139,8 @@ public class JlibtorrentDownloader {
             MovieService.downloadingTorrentHash.remove(movieDownDto.getImdbId());
         } catch (Exception e) {
             e.printStackTrace();
+            MovieService.downloadingTorrentHash.remove(movieDownDto.getImdbId());
+            throw new MovieDownLoadFailException("영화 다운로드에 실패했습니다.");
         }
     }
 }

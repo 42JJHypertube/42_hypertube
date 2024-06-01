@@ -13,5 +13,4 @@ ENV NODE_ENV production
 
 RUN npm run build
 
-# CMD ["sleep", "10000000"]
 CMD ["npm", "run", "start"]

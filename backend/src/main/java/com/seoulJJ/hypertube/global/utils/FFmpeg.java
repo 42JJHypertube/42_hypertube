@@ -75,14 +75,16 @@ public class FFmpeg {
         final List<String> destResolution = List.of("360", "720", "1080", "2080");
         final List<String> destVideoBitrate = List.of("600k", "900k", "900k", "900k");
         final List<String> destAudioBitrate = List.of("64k", "128k", "128k", "128k");
-        if (height <= 360) {
+        if (height >= 360 && height < 720) {
             numberOfVideos = 1;
-        } else if (height <= 720) {
+        } else if (height >= 720 && height < 1080) {
             numberOfVideos = 2;
-        } else if (height <= 1080) {
+        } else if (height >= 1080 && height < 2080) {
             numberOfVideos = 3;
-        } else {
+        } else if (height > 2080) {
             numberOfVideos = 4;
+        } else {
+            throw new FFmpegException("비디오 해상도가 너무 낮습니다.", ErrorCode.FFMPEG_ERR);
         }
 
         String varStringMapArg = "";
