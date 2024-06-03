@@ -6,15 +6,20 @@ import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javax.swing.text.html.Option;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.seoulJJ.hypertube.domain.movie.dto.MovieDownDto;
+import com.seoulJJ.hypertube.domain.movie.dto.MovieDto;
+import com.seoulJJ.hypertube.domain.movie.exception.MovieNotFoundException;
 import com.seoulJJ.hypertube.domain.movie.torrent.jlibtorrent.JlibtorrentDownloader;
 import com.seoulJJ.hypertube.domain.movie.type.MovieState;
+import com.seoulJJ.hypertube.domain.user.User;
+import com.seoulJJ.hypertube.domain.user.UserRepository;
+import com.seoulJJ.hypertube.domain.user.exception.UserNotFoundException;
+import com.seoulJJ.hypertube.domain.user.userMovie.UserMovie;
+import com.seoulJJ.hypertube.global.security.UserPrincipal;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,10 +27,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MovieService {
 
-    public static final List<String> downloadingTorrentHash = new ArrayList<>();
+    public static final List<String> downloadingMovies = new ArrayList<>();
 
     @Autowired
     private final JlibtorrentDownloader jlibtorrentDownloader;
+
+    @Autowired
+    private final UserRepository userRepository;
 
     @Autowired
     private final MovieRepository movieRepository;
@@ -37,15 +45,19 @@ public class MovieService {
         if (movieOpt.isPresent()) {
             movie = movieOpt.get();
             if (movieOpt.get().getMovieState() == MovieState.AVAILABLE
-                    || downloadingTorrentHash.contains(movie.getImdbId())) {
-                    return;
+                    || downloadingMovies.contains(movie.getImdbId())) {
+                return;
             }
         } else {
-            movie = new Movie(movieDownDto);
-            movieRepository.saveAndFlush(movie);
+            try {
+                movie = new Movie(movieDownDto);
+                movieRepository.saveAndFlush(movie);
+            } catch (Exception e) {
+                throw new MovieNotFoundException("Cannot find movie with imdbId: " + movieDownDto.getImdbId());
+            }
         }
 
-        downloadingTorrentHash.add(movieDownDto.getImdbId());
+        downloadingMovies.add(movieDownDto.getImdbId());
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
             try {
@@ -55,5 +67,12 @@ public class MovieService {
             }
         });
         executor.shutdown();
+    }
+
+    @Transactional(readOnly = true)
+    public MovieDto findMovieByImdbId(String imdbId) {
+        Movie movie = movieRepository.findByImdbId(imdbId)
+                .orElseThrow(() -> new MovieNotFoundException("Cannot find movie with imdbId: " + imdbId));
+        return MovieDto.from(movie);
     }
 }
