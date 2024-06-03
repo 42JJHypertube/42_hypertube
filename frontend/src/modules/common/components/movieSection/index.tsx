@@ -3,8 +3,9 @@
 import { useEffect, useRef, useState } from 'react'
 import UseIntersectionObserve from '@/lib/hooks/useIntersectionObserve'
 import { actionWrapper } from '@/lib/data'
-import styles from './main.module.scss'
+import styles from './movieSection.module.scss'
 import MovieCard from '../movieCard'
+import MovieSectionLoading from './loading'
 
 type LoadParams = {
   pages?: number
@@ -65,12 +66,10 @@ export default function MovieSection({
   UseIntersectionObserve({ target: last, threshold: 1.0, onIntersect })
 
   return (
-    <div className={styles.main}>
-      <h3>Most Popular Movies</h3>
+    <div>
       <div className={styles.InfiniteContainer}>
         <div className={styles.mainMovieCardContainer}>
-          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-          {Object.values(data).map((info: any) => (
+          {data.map((info: any) => (
             <MovieCard
               key={info.id as number}
               title={info.title as string}
@@ -79,7 +78,9 @@ export default function MovieSection({
             />
           ))}
           {isFetching ? (
-            <div className={styles.last}> loading .... </div>
+            <div className={styles.last}>
+              <MovieSectionLoading />
+            </div>
           ) : (
             <div ref={last} className={styles.last}>
               Last Page
