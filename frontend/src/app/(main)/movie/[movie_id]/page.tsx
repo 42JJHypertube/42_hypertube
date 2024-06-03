@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { BsFillStarFill } from 'react-icons/bs'
 import { FaRegThumbsUp } from 'react-icons/fa'
 import TorrentList from '@/modules/movie/torrentList'
+import TorrentProgress from '@/modules/common/components/torrentProgress'
 
 export default async function movieInfo({
   params,
@@ -70,6 +71,7 @@ export default async function movieInfo({
           torrents={torrentData.data.data.movie.torrents}
         />
       )}
+      <TorrentProgress imdb_id={torrentData.data.data.movie.imdb_code} />
     </div>
   )
 }
