@@ -1,24 +1,23 @@
-import WebSocket from 'ws'
-
-class WebSocketClient {
-  private static instance: WebSocketClient
-  private clients: WebSocket
-
-  private constructor(url: string) {
-    this.clients = new WebSocket(url)
-  }
-
-  public static getInstance(): WebSocketClient {
-    if (!WebSocketClient.instance) {
-      WebSocketClient.instance = new WebSocketClient("ws://localhost/socket/movies/download/progress")
-    }
-    return WebSocketClient.instance
-  }
+// import WebSocket from 'ws'
 
   //   {
   //     action: ('join' | 'detach'),
   //     torrentHash: (토렌트 해시코드)
   //   }
+  
+class WebSocketClient {
+  private clients: WebSocket
+
+  public constructor(url: string) {
+    this.clients = new WebSocket(url)
+  }
+
+  // public static getInstance(): WebSocketClient {
+  //   if (!WebSocketClient.instance) {
+  //     WebSocketClient.instance = new WebSocketClient("wss://localhost/socket/movies/download/progress")
+  //   }
+  //   return WebSocketClient.instance
+  // }
 
   public connect(torrentHash: string) {
     const message = JSON.stringify({ action: 'join', torrentHash: torrentHash });
@@ -36,5 +35,5 @@ class WebSocketClient {
   }
 }
 
-const wsClient = WebSocketClient.getInstance()
+const wsClient = new WebSocketClient("wss://localhost/socket/movies/download/progress")
 export default wsClient
