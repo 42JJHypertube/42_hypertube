@@ -2,7 +2,6 @@ package com.seoulJJ.hypertube.domain.movie.torrent.jlibtorrent;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.util.concurrent.CountDownLatch;
@@ -26,11 +25,6 @@ import com.seoulJJ.hypertube.global.utils.FileManager.VideoFileManager;
 import com.seoulJJ.hypertube.global.websocket.MovieDownloadSocket.MovieDownloadSocketHandler;
 import com.seoulJJ.hypertube.global.websocket.MovieDownloadSocket.dto.MovieDownloadProgressDto;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.PersistenceContextType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -133,13 +127,14 @@ public class JlibtorrentDownloader {
             videoFileManager.convertVideoToHls(videoFile, destDir.getPath());
 
             movie.setMovieState(MovieState.AVAILABLE);
+            movie.setHlsPlaylistPath(imdbId + "/master.m3u8");
             movieRepository.saveAndFlush(movie);
             progressDto.setStatus(MovieState.AVAILABLE);
             movieDownloadSocketHandler.updateProgress(movieDownDto.getTorrentHash(), progressDto);
-            MovieService.downloadingTorrentHash.remove(movieDownDto.getImdbId());
+            MovieService.downloadingMovies.remove(movieDownDto.getImdbId());
         } catch (Exception e) {
             e.printStackTrace();
-            MovieService.downloadingTorrentHash.remove(movieDownDto.getImdbId());
+            MovieService.downloadingMovies.remove(movieDownDto.getImdbId());
             throw new MovieDownLoadFailException("영화 다운로드에 실패했습니다.");
         }
     }
