@@ -2,7 +2,6 @@ package com.seoulJJ.hypertube.domain.movie.torrent.jlibtorrent;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.util.concurrent.CountDownLatch;
@@ -19,17 +18,13 @@ import com.seoulJJ.hypertube.domain.movie.Movie;
 import com.seoulJJ.hypertube.domain.movie.MovieRepository;
 import com.seoulJJ.hypertube.domain.movie.MovieService;
 import com.seoulJJ.hypertube.domain.movie.dto.MovieDownDto;
+import com.seoulJJ.hypertube.domain.movie.exception.MovieDownLoadFailException;
 import com.seoulJJ.hypertube.domain.movie.type.MovieState;
 import com.seoulJJ.hypertube.global.utils.FileManager.VideoFile;
 import com.seoulJJ.hypertube.global.utils.FileManager.VideoFileManager;
 import com.seoulJJ.hypertube.global.websocket.MovieDownloadSocket.MovieDownloadSocketHandler;
 import com.seoulJJ.hypertube.global.websocket.MovieDownloadSocket.dto.MovieDownloadProgressDto;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.PersistenceContextType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -64,6 +59,14 @@ public class JlibtorrentDownloader {
 
     // @Transactional //TODO: 트랜잭션 어노테이션을 달면 flush가 바로 되지 않는다. 이유 찾아서 블로깅 하기
     public void startDownloadWithMagnet(MovieDownDto movieDownDto) throws Throwable {
+        Movie movie = movieRepository.findByImdbId(movieDownDto.getImdbId()).orElseThrow(); // TODO : Exception
+        movie.setMovieState(MovieState.DOWNLOADING);
+
+        MovieDownloadProgressDto progressDto = new MovieDownloadProgressDto(movieDownDto.getImdbId(),
+                movieDownDto.getTorrentHash(), 0,
+                MovieState.DOWNLOADING);
+        movieDownloadSocketHandler.addProgressThread(movieDownDto.getTorrentHash(), progressDto);
+
         try {
             StringBuilder builder = new StringBuilder(movieDownDto.getMagnetUrl());
             trackerUrls.forEach(url -> builder.append("&tr=").append(url));
@@ -73,11 +76,6 @@ public class JlibtorrentDownloader {
 
             final SessionManager s = new SessionManager();
             final CountDownLatch signal = new CountDownLatch(1);
-            MovieDownloadProgressDto progressDto = new MovieDownloadProgressDto(movieDownDto.getImdbId(),
-                    movieDownDto.getTorrentHash(), 0,
-                    MovieState.DOWNLOADING);
-
-            movieDownloadSocketHandler.addProgressThread(movieDownDto.getTorrentHash(), progressDto);
 
             s.addListener(new AlertListener() {
                 @Override
@@ -110,8 +108,6 @@ public class JlibtorrentDownloader {
             String imdbId = movieDownDto.getImdbId();
             File destDir = videoFileManager.getMovieRootPath(imdbId);
 
-            Movie movie = movieRepository.findByImdbId(imdbId).orElseThrow(); // TODO : Exception
-            movie.setMovieState(MovieState.DOWNLOADING);
             movieRepository.saveAndFlush(movie);
             progressDto.setStatus(MovieState.DOWNLOADING);
             movieDownloadSocketHandler.updateProgress(movieDownDto.getTorrentHash(), progressDto);
@@ -128,17 +124,18 @@ public class JlibtorrentDownloader {
             movieDownloadSocketHandler.updateProgress(movieDownDto.getTorrentHash(), progressDto);
 
             VideoFile videoFile = videoFileManager.searchVideoFile(destDir);
-            videoFile.renameTo(new File(videoFile.getParent() + "/" + imdbId + ".mp4"));
-            videoFileManager.convertVideoToHls(videoFile,
-                    destDir.getPath());
+            videoFileManager.convertVideoToHls(videoFile, destDir.getPath());
 
             movie.setMovieState(MovieState.AVAILABLE);
+            movie.setHlsPlaylistPath(imdbId + "/master.m3u8");
             movieRepository.saveAndFlush(movie);
             progressDto.setStatus(MovieState.AVAILABLE);
             movieDownloadSocketHandler.updateProgress(movieDownDto.getTorrentHash(), progressDto);
-            MovieService.downloadingTorrentHash.remove(movieDownDto.getImdbId());
+            MovieService.downloadingMovies.remove(movieDownDto.getImdbId());
         } catch (Exception e) {
             e.printStackTrace();
+            MovieService.downloadingMovies.remove(movieDownDto.getImdbId());
+            throw new MovieDownLoadFailException("영화 다운로드에 실패했습니다.");
         }
     }
 }

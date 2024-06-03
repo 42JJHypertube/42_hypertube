@@ -2,19 +2,18 @@
   position: sticky;
   top: 0;
   width: 100%;
-  height: auto;
+  height: 10%;
   padding: 0.5rem 0;
-  background-color: rgba(0, 0, 0, 0.9);
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
 }
 
 .navContainer {
   position: relative;
   display: flex;
-  height: auto;
-  width: auto;
-  justify-content: center;
+  justify-content: space-between;
+  padding: 0.5rem 4%;
   align-items: center;
-  gap: 50px;
 }
 
 .menuContainer {
@@ -22,9 +21,13 @@
   display: flex;
 }
 
-.link {
-  color: white;
+.home {
+  font-size: 1.5rem;
+  color: red;
+  @media screen and (max-width: 400px) {
+    font-size: 1rem;
+  }
   &:hover {
-    color: red;
+    color: white;
   }
 }

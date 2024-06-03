@@ -5,16 +5,14 @@ import NavSearchBar from './navSearchBar'
 
 export default async function Nav() {
   return (
-    <div className={styles.stickyContainer}>
-      <header>
-        <nav className={styles.navContainer}>
-          <Link className={styles.link} href="/">
-            Main
-          </Link>
-          <NavSearchBar />
-          <NavLogin />
-        </nav>
-      </header>
-    </div>
+    <header className={styles.stickyContainer}>
+      <nav className={styles.navContainer}>
+        <Link className={styles.home} href="/">
+          HYPER TUBE
+        </Link>
+        <NavSearchBar />
+        <NavLogin />
+      </nav>
+    </header>
   )
 }
