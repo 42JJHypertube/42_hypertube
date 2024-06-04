@@ -13,13 +13,11 @@ import com.seoulJJ.hypertube.global.websocket.MovieDownloadSocket.dto.ActionResp
 import com.seoulJJ.hypertube.global.websocket.MovieDownloadSocket.dto.MovieDownloadProgressDto;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
-@Log4j2
 @Component
 @RequiredArgsConstructor
 public class MovieDownloadSocketHandler extends TextWebSocketHandler {
