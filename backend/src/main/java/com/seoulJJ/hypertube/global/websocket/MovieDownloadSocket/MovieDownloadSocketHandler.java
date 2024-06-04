@@ -15,7 +15,6 @@ import com.seoulJJ.hypertube.global.websocket.MovieDownloadSocket.testThread.Tes
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;

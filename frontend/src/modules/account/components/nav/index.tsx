@@ -23,14 +23,14 @@ function AccountNav() {
           />
         </Link>
         <Link
-          href="https://localhost/api/auth/oauth2/login/22"
+          href="https://localhost/api/auth/oauth2/login/42"
           prefetch={false}
         >
           <Image
             width="30"
             height="30"
-            src="/authImage/google.svg"
-            alt="google login"
+            src="/authImage/fortytwo.svg"
+            alt="fortytwo login"
           />
         </Link>
         <Link
@@ -40,8 +40,8 @@ function AccountNav() {
           <Image
             width="30"
             height="30"
-            src="/authImage/google.svg"
-            alt="google login"
+            src="/authImage/facebook.svg"
+            alt="facebook login"
           />
         </Link>
       </div>
