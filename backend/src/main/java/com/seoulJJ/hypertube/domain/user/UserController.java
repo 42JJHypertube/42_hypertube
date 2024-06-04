@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.seoulJJ.hypertube.domain.movie.dto.MovieDto;
+import com.seoulJJ.hypertube.domain.user.dto.ModifyNicknameReqDto;
 import com.seoulJJ.hypertube.domain.user.dto.RecentWatchedMoviesResDto;
 import com.seoulJJ.hypertube.domain.user.dto.UserDto;
 import com.seoulJJ.hypertube.global.security.UserPrincipal;
@@ -16,12 +17,16 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
+import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequiredArgsConstructor
@@ -44,6 +49,13 @@ public class UserController {
             @Parameter(hidden = true) @LoginPrincipal UserPrincipal userPrincipal,
             @RequestPart MultipartFile file) {
         userService.updateUserProfileImage(userPrincipal.getUsername(), file);
+        return ResponseEntity.status(201).body("Success");
+    }
+
+    @PutMapping("/me/nickname")
+    public ResponseEntity<String> putMethodName(@Parameter(hidden = true) @LoginPrincipal UserPrincipal userPrincipal,
+            @RequestBody ModifyNicknameReqDto modifyNicknameReqDto) {
+        userService.modifyNickname(userPrincipal, modifyNicknameReqDto.getNickname());
         return ResponseEntity.status(201).body("Success");
     }
 
