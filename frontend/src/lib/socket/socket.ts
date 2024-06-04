@@ -14,7 +14,7 @@ class WebSocketClient {
     this.hashFun = new Map<string, any>() // <torrentHash, action>
   }
 
-  public async init() {
+  public init() {
     if (this.clients) {
       console.warn('WebSocket is already initialized.')
       return
@@ -44,18 +44,22 @@ class WebSocketClient {
     }
   }
 
-  public connect(torrentHash: string) {
-    const message = JSON.stringify({ action: 'join', torrentHash: torrentHash })
+  public connect(transactionId: string, torrentHash: string) {
+    const message = JSON.stringify({
+      transactionId,
+      action: 'JOIN',
+      torrentHash,
+    })
     // { transactionId: `UUID-123`, action: 'join', torrentHash: torrentHash }
     // await //해당 트랜젝션 아이디로 응답이 올때까지
     // 응답 받아서 다음 진행
     // 만약 join에 실패했을경우 상황에 따라서 다음동작 결정
-    this.clients?.send(message)
+    if (this.clients?.readyState === 1) this.clients?.send(message)
   }
 
   public close(torrentHash: string): void {
     const message = JSON.stringify({
-      action: 'detach',
+      action: 'DETACH',
       torrentHash: torrentHash,
     })
     this.clients?.send(message)
@@ -72,6 +76,7 @@ class WebSocketClient {
 
     // 새로운 key 와 action 이 추가된 이벤트 등록
     if (this.clients) {
+      this.clients.onmessage = null
       this.clients.onmessage = (event: MessageEvent) => {
         this.hashFun.forEach((value, key) => {
           value(key, event)

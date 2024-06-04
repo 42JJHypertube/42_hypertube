@@ -11,6 +11,7 @@
     "lint-staged": "lint-staged"
   },
   "dependencies": {
+    "@types/uuid": "^9.0.8",
     "axios": "^1.6.7",
     "cross-env": "^7.0.3",
     "hls.js": "^1.5.8",
