@@ -40,11 +40,7 @@ function NavLogin() {
             className={styles.profileContainer}
           >
             <ProfileImage
-              imageUrl={
-                imageUrl
-                  ? imageUrl
-                  : 'https://avatars.githubusercontent.com/u/93255519?v=4'
-              }
+              imageUrl={imageUrl ? imageUrl : '/defaultProfile.jpeg'}
             />
           </div>
         </div>
