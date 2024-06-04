@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation'
 function NavLogin() {
   const [imageUrl, setImageUrl] = useState(null)
   const [isLogin, setIsLogin] = useState(false)
+  const [fetchData, setFetchData] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -19,6 +20,7 @@ function NavLogin() {
         const res = await actionWrapper({ action: getProfile })
         if (res?.response.status === 200) {
           setIsLogin(true)
+          setFetchData(true)
           setImageUrl(res.data.imageUrl)
         } else {
           setImageUrl(null)
@@ -33,22 +35,23 @@ function NavLogin() {
 
   return (
     <div>
-      {isLogin ? (
-        <div className={styles.container}>
-          <div
-            onClick={() => router.push('/account')}
-            className={styles.profileContainer}
-          >
-            <ProfileImage
-              imageUrl={imageUrl ? imageUrl : '/defaultProfile.jpeg'}
-            />
+      {fetchData &&
+        (isLogin ? (
+          <div className={styles.container}>
+            <div
+              onClick={() => router.push('/account')}
+              className={styles.profileContainer}
+            >
+              <ProfileImage
+                imageUrl={imageUrl ? imageUrl : '/defaultProfile.jpeg'}
+              />
+            </div>
           </div>
-        </div>
-      ) : (
-        <Link className={styles.link} href="/account">
-          LogIn
-        </Link>
-      )}
+        ) : (
+          <Link className={styles.link} href="/account">
+            LogIn
+          </Link>
+        ))}
     </div>
   )
 }
