@@ -23,10 +23,12 @@ function NavLogin() {
           setFetchData(true)
           setImageUrl(res.data.imageUrl)
         } else {
+          setFetchData(true)
           setImageUrl(null)
           setIsLogin(false)
         }
       } catch (e) {
+        setFetchData(true)
         setImageUrl(null)
       }
     }
