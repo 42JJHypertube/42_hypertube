@@ -11,7 +11,9 @@ import com.nimbusds.jose.shaded.gson.Gson;
 import com.seoulJJ.hypertube.global.websocket.MovieDownloadSocket.dto.ActionRequestDto;
 import com.seoulJJ.hypertube.global.websocket.MovieDownloadSocket.dto.ActionResponseDto;
 import com.seoulJJ.hypertube.global.websocket.MovieDownloadSocket.dto.MovieDownloadProgressDto;
+import com.seoulJJ.hypertube.global.websocket.MovieDownloadSocket.testThread.TestThread;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -19,12 +21,18 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
-@Log4j2
 @Component
 @RequiredArgsConstructor
 public class MovieDownloadSocketHandler extends TextWebSocketHandler {
 
     private static final ConcurrentHashMap<String, ProgressBrodcastThread> progressThreads = new ConcurrentHashMap<String, ProgressBrodcastThread>();
+
+    @PostConstruct
+    public void testThreadStart() {
+        TestThread progressThread = new TestThread();
+        progressThreads.put("TEST", progressThread);
+        progressThread.start();
+    }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -40,32 +48,31 @@ public class MovieDownloadSocketHandler extends TextWebSocketHandler {
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+        ActionRequestDto req = parseActionRequest(message.getPayload());
         try {
-            ActionRequestDto req = parseActionRequest(message.getPayload());
+            ProgressBrodcastThread pbt = progressThreads.get(req.getTorrentHash());
+            if (pbt == null)
+                throw new RuntimeException("ProgressThread not found");
 
-            if (req.getAction().equals("join")) {
-                ProgressBrodcastThread pbt = progressThreads.get(req.getTorrentHash());
-                if (pbt != null) {
+            ActionResponseDto res;
+            switch (req.getAction()) {
+                case JOIN:
                     pbt.addSession(session);
-                    ActionResponseDto res = new ActionResponseDto(201, "Joined -> " + req.getTorrentHash());
-                    session.sendMessage(new TextMessage(res.toJsonString()));
-                } else {
-                    throw new RuntimeException("ProgressThread not found");
-                }
-            } else if (req.getAction().equals("detach")) {
-                ProgressBrodcastThread pbt = progressThreads.get(req.getTorrentHash());
-                if (pbt != null) {
+                    res = new ActionResponseDto(req.getTransactionId(), 201,
+                            "Joined -> " + req.getTorrentHash());
+                    break;
+                case DETACH:
                     pbt.removeSession(session);
-                    ActionResponseDto res = new ActionResponseDto(201, "Detached -> " + req.getTorrentHash());
-                    session.sendMessage(new TextMessage(res.toJsonString()));
-                } else {
-                    throw new RuntimeException("Already thread detached");
-                }
-            } else {
-                throw new RuntimeException("Invalid action");
+                    res = new ActionResponseDto(req.getTransactionId(), 201,
+                            "Detached -> " + req.getTorrentHash());
+                    break;
+                default:
+                    throw new RuntimeException("Invalid action");
             }
+
+            session.sendMessage(new TextMessage(res.toJsonString()));
         } catch (Exception e) {
-            ActionResponseDto res = new ActionResponseDto(400, e.getMessage());
+            ActionResponseDto res = new ActionResponseDto(req.getTransactionId(), 400, e.getMessage());
             session.sendMessage(new TextMessage(res.toJsonString()));
         }
     }
@@ -88,16 +95,9 @@ public class MovieDownloadSocketHandler extends TextWebSocketHandler {
     private ActionRequestDto parseActionRequest(String message) {
         try {
             ActionRequestDto req = new Gson().fromJson(message, ActionRequestDto.class);
-            if (req.getAction() == null || req.getTorrentHash() == null) {
-                throw new RuntimeException("Invalid request message");
-            }
-            if (req.getAction().equals("join") || req.getAction().equals("detach")) {
-                return req;
-            } else {
-                throw new RuntimeException("Invalid action");
-            }
+            return req;
         } catch (Exception e) {
-            throw new RuntimeException("Failed to parse request message");
+            throw new RuntimeException("Invalid message format");
         }
     }
 }
