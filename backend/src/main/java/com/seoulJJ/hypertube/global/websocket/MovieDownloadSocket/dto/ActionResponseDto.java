@@ -1,7 +1,5 @@
 package com.seoulJJ.hypertube.global.websocket.MovieDownloadSocket.dto;
 
-import org.springframework.web.socket.TextMessage;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -9,17 +7,20 @@ import lombok.Getter;
 
 @Getter
 public class ActionResponseDto {
+    private String transactionId;
     private Integer statusCode;
     private String message;
 
-    public ActionResponseDto(Integer statusCode, String message) {
+    public ActionResponseDto(String transactionId, Integer statusCode, String message) {
+        this.transactionId = transactionId;
         this.statusCode = statusCode;
         this.message = message;
     }
 
     @Override
     public String toString() {
-        return "ActionResponseDto(statusCode=" + this.getStatusCode() + ", message=" + this.getMessage() + ")";
+        return "ActionResponseDto(transactionId=" + this.getTransactionId() + ", statusCode=" + this.getStatusCode()
+                + ", message=" + this.getMessage() + ")";
     }
 
     public String toJsonString() {
@@ -29,9 +30,5 @@ public class ActionResponseDto {
         } catch (JsonProcessingException e) {
             return "Error: " + e.getMessage();
         }
-    }
-
-    static TextMessage createTextMessage(Integer statusCode, String message) {
-        return new TextMessage(new ActionResponseDto(statusCode, message).toJsonString());
     }
 }

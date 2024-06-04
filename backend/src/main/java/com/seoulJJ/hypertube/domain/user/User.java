@@ -72,6 +72,10 @@ public class User extends BaseTimeEntity implements Serializable {
         this.imageUrl = imageUrl;
     }
 
+    public void updateNickname(String updateNickname) {
+        this.nickname = updateNickname;
+    }
+
     public void addUserMovie(UserMovie userMovie) {
         userMovies.add(userMovie);
     }

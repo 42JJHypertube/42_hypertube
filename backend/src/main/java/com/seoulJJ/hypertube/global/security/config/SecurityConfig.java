@@ -58,6 +58,7 @@ public class SecurityConfig {
 						.requestMatchers("/api/users/**").hasRole("USER")
 						.requestMatchers("/api/users/test/role-user").hasRole("USER") // USER 권한 테스트용 허용
 						.requestMatchers("/api/users/test/role-admin").hasRole("ADMIN") // ADMIN 권한 테스트용 허용
+						.requestMatchers("/api/movies/**").hasRole("USER")
 						.anyRequest().authenticated())
 				.exceptionHandling((exceptionHandling) -> exceptionHandling
 						.authenticationEntryPoint((request, response, authException) -> {
@@ -80,7 +81,6 @@ public class SecurityConfig {
 						.userInfoEndpoint((userInfoEndpoint) -> userInfoEndpoint
 								.userService(customOAuth2UserService))
 						.successHandler(oAuthAuthenticationSuccessHandler));
-		
 
 		return http.build();
 	}
