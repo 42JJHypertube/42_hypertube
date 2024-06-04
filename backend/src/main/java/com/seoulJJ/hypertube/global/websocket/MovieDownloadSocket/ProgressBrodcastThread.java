@@ -1,6 +1,5 @@
 package com.seoulJJ.hypertube.global.websocket.MovieDownloadSocket;
 
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.springframework.web.socket.TextMessage;
@@ -10,9 +9,9 @@ import com.seoulJJ.hypertube.domain.movie.type.MovieState;
 import com.seoulJJ.hypertube.global.websocket.MovieDownloadSocket.dto.MovieDownloadProgressDto;
 
 public class ProgressBrodcastThread extends Thread {
-    String torrentHash;
-    CopyOnWriteArraySet<WebSocketSession> sessions;
-    MovieDownloadProgressDto progressDto;
+    protected String torrentHash;
+    protected CopyOnWriteArraySet<WebSocketSession> sessions;
+    protected MovieDownloadProgressDto progressDto;
 
     public ProgressBrodcastThread(String torrentHash, MovieDownloadProgressDto progressDto) {
         this.sessions = new CopyOnWriteArraySet<>();

@@ -1,22 +1,33 @@
 package com.seoulJJ.hypertube.global.websocket.MovieDownloadSocket.dto;
 
+import com.seoulJJ.hypertube.global.websocket.MovieDownloadSocket.type.SocketActionType;
+
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
 @Getter
 public class ActionRequestDto {
 
-    private String action;
+    @NotNull(message = "transactionId is required")
+    private String transactionId;
+    @NotNull(message = "action is required")
+    private SocketActionType action;
+    @NotNull(message = "torrentHash is required")
     private String torrentHash;
 
     public ActionRequestDto() {
     }
 
-    public ActionRequestDto(String action, String torrentHash) {
+    public ActionRequestDto(String transactionId, SocketActionType action, String torrentHash) {
+        this.transactionId = transactionId;
         this.action = action;
         this.torrentHash = torrentHash;
     }
 
-    public String getAction() {
+    public SocketActionType getAction() {
+        if (action == null)
+            return SocketActionType.NONE;
+
         return action;
     }
 
@@ -26,6 +37,8 @@ public class ActionRequestDto {
 
     @Override
     public String toString() {
-        return "ActionRequestDto(action=" + this.getAction() + ", torrentHash=" + this.getTorrentHash() + ")";
+        return "ActionRequestDto(transactionId=" + this.getTransactionId() + ", action=" + this.getAction()
+                + ", torrentHash="
+                + this.getTorrentHash() + ")";
     }
 }
