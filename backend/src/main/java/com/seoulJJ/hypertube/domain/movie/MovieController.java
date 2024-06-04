@@ -31,7 +31,7 @@ public class MovieController {
     @Autowired
     private final UserService userService;
 
-    @GetMapping("/movies/info")
+    @GetMapping("/info")
     public ResponseEntity<?> getMovieInfo(@Parameter(hidden = true) @LoginPrincipal UserPrincipal userPrincipal,
             @RequestParam(required = true) String imdbId) {
         try {

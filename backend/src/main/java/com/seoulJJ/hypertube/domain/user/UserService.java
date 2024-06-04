@@ -95,6 +95,13 @@ public class UserService {
     }
 
     @Transactional
+    public void modifyNickname(UserPrincipal userPrincipal, String nickname) {
+        User user = userRepository.findById(userPrincipal.getId()).orElseThrow(() -> new UserNotFoundException());
+        user.updateNickname(nickname);
+        userRepository.save(user);
+    }
+
+    @Transactional
     public void modifyPassword(String email, String password) {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException());
         user.updatePassword(passwordEncoder.encode(password));
