@@ -1,5 +1,6 @@
 package com.seoulJJ.hypertube.domain.user.dto;
 
+import com.seoulJJ.hypertube.domain.user.User;
 import com.seoulJJ.hypertube.domain.user.type.RoleType;
 
 import jakarta.persistence.EnumType;
@@ -14,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class UserDto {
 
     private String nickname;
- 
+
     private String email;
 
     private String firstName;
@@ -35,5 +36,10 @@ public class UserDto {
                 ", imageUrl='" + imageUrl + '\'' +
                 ", roleType=" + roleType +
                 '}';
+    }
+
+    static public UserDto from(User user) {
+        return new UserDto(user.getNickname(), user.getEmail(), user.getFirstName(), user.getLastName(),
+                user.getImageUrl(), user.getRoleType());
     }
 }

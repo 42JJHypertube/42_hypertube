@@ -31,7 +31,7 @@ public class MovieController {
     @Autowired
     private final UserService userService;
 
-    @GetMapping("/info")
+    @GetMapping("/{movieId}/info")
     public ResponseEntity<?> getMovieInfo(@Parameter(hidden = true) @LoginPrincipal UserPrincipal userPrincipal,
             @RequestParam(required = true) String imdbId) {
         try {
@@ -43,6 +43,12 @@ public class MovieController {
             return ResponseEntity.noContent().build();
         }
     }
+
+    @GetMapping("/comments")
+    public String getMethodName(@RequestParam String param) {
+        return new String();
+    }
+    
 
     @PostMapping("/torrent/download")
     public String startDownloadTorrent(@RequestBody MovieDownReqDto reqDto) throws Throwable {
