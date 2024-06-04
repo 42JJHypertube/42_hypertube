@@ -54,14 +54,4 @@ public class UserController {
         RecentWatchedMoviesResDto res = new RecentWatchedMoviesResDto(movieDtos);
         return ResponseEntity.ok(res);
     }
-
-    @GetMapping("/test/role-user")
-    public String roleUserTest() {
-        return "Success! You are authorized user!";
-    }
-
-    @GetMapping("/test/role-admin")
-    public String roleAdminTest() {
-        return "Success! You are authorized admin!";
-    }
 }
