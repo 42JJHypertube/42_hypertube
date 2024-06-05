@@ -10,7 +10,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,20 +18,30 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Comment extends BaseTimeEntity{
+public class Comment extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @JoinColumn(name = "movie_id", nullable = false)
-    @OneToOne
+    @ManyToOne
     private Movie movie;
 
-    @JoinColumn(name = "user_id", nullable = false)
-    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false, unique = false)
+    @ManyToOne
     private User user;
 
     @Column(name = "content", nullable = false)
     private String content;
+
+    public Comment(Movie movie, User user, String content) {
+        this.movie = movie;
+        this.user = user;
+        this.content = content;
+    }
+
+    public void updateContent(String content) {
+        this.content = content;
+    }
 }
