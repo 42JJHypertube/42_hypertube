@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from 'react'
 import wsClient from '@/lib/socket/socket'
+import TorrentLoadingSpinner from '../spinner/torrentLoading'
 import styles from './index.module.scss'
 
 function TorrentProgress({ hash, test }: { hash: string; test: boolean }) {
-  const [progressPer, setProgress] = useState<number | null>(0)
+  const [progressPer, setProgress] = useState<number>(0)
   const [curSocket, setCursocket] = useState<WebSocket | any>(null)
 
   function updateProgress(hash: string, event: MessageEvent) {
@@ -36,20 +37,21 @@ function TorrentProgress({ hash, test }: { hash: string; test: boolean }) {
   }, [])
 
   return (
-    <div>
-      <div className={styles.container}>
-      </div>
+    <div className={styles.container}>
+      <TorrentLoadingSpinner per={progressPer} />
       {progressPer}%
-      <button
-        onClick={() => {
-          if (curSocket?.OPEN) {
-            wsClient.connect('asdfasdf', test ? 'TEST' : hash)
-            wsClient.setMessage(test ? 'TEST' : hash, updateProgress)
-          }
-        }}
-      >
-        connect
-      </button>
+      <div>
+        <button
+          onClick={() => {
+            if (curSocket?.OPEN) {
+              wsClient.connect('asdfasdf', test ? 'TEST' : hash)
+              wsClient.setMessage(test ? 'TEST' : hash, updateProgress)
+            }
+          }}
+        >
+          connect
+        </button>
+      </div>
     </div>
   )
 }

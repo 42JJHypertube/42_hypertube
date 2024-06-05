@@ -21,6 +21,12 @@ class DownloadResource extends BaseResource {
       customHeaders,
     )
   }
+
+  getDownloadMovieInfo({ imdb_id }: { imdb_id: string }, customHeaders: any) {
+    const path = `/movies/info?imdbId=${imdb_id}`
+
+    return this.client.request('GET', path, {}, {}, customHeaders)
+  }
 }
 
 export default DownloadResource
