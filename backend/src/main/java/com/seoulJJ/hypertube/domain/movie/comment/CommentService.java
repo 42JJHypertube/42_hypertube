@@ -7,13 +7,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.seoulJJ.hypertube.domain.movie.Movie;
 import com.seoulJJ.hypertube.domain.movie.MovieRepository;
 import com.seoulJJ.hypertube.domain.movie.comment.dto.CommentDto;
-import com.seoulJJ.hypertube.domain.movie.comment.dto.CreateCommentReqDto;
 import com.seoulJJ.hypertube.domain.movie.comment.exception.CommentForbiddenException;
 import com.seoulJJ.hypertube.domain.movie.comment.exception.CommentNotFoundException;
 import com.seoulJJ.hypertube.domain.user.User;
 import com.seoulJJ.hypertube.domain.user.UserRepository;
-import com.seoulJJ.hypertube.global.exception.ErrorCode;
-import com.seoulJJ.hypertube.global.exception.custom.ForbiddenException;
 import com.seoulJJ.hypertube.global.security.UserPrincipal;
 
 import java.util.List;
