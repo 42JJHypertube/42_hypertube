@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import { getProfile, actionWrapper } from '@/lib/data'
 import Link from 'next/link'
 import ProfileImage from '@/modules/common/components/profileImage'
-import NavLogOut from './navLogOut'
 import styles from './navLogin.module.scss'
 import { useRouter } from 'next/navigation'
 

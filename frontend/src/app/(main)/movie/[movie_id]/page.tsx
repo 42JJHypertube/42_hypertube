@@ -63,7 +63,7 @@ export default async function movieInfo({
           <div className={styles.div} />
           <div className={styles.overview}>{data.overview}</div>
         </div>
-        <CommentSection movieId={28} />
+        <CommentSection movieId={1} /> {/* movieId should be changed */}
       </div>
     </div>
   )
