@@ -62,6 +62,7 @@ class WebSocketClient {
       action: 'DETACH',
       torrentHash: torrentHash,
     })
+    this.hashFun.delete(torrentHash)
     this.clients?.send(message)
     this.clients?.close()
   }

@@ -215,11 +215,11 @@ export async function postTorrentDownload({
     .catch((error) => console.log(error))
 }
 
-export async function getMovieInfo({imdb_id} : {imdb_id: string}){
+export async function getMovieInfo({ imdb_id }: { imdb_id: string }) {
   const newCustomHeaders = getCustomHeaders([])
-  
+
   return HypeClient.download
-    .getDownloadMovieInfo({ imdb_id}, newCustomHeaders)
+    .getDownloadMovieInfo({ imdb_id }, newCustomHeaders)
     .then((res) => res)
     .catch((error) => error)
 }

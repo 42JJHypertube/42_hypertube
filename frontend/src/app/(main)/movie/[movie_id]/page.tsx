@@ -4,7 +4,7 @@ import styles from './layout.module.scss'
 import Image from 'next/image'
 import { BsFillStarFill } from 'react-icons/bs'
 import { FaRegThumbsUp } from 'react-icons/fa'
-import TorrentList from '@/modules/movie/components/torrentList'
+import VideoPlayer from '@/modules/common/components/videoPlayer'
 
 export default async function movieInfo({
   params,
@@ -14,19 +14,27 @@ export default async function movieInfo({
   const res = await getMovieDetail(params)
   if (res.response.status !== 200) return notFound()
 
-  const { data } = res
-  const torrentData = await getTorrentData({ imdb_id: data.imdb_id })
-  const movieData = await getMovieInfo({imdb_id: data.imdb_id})
-  
+  const {
+    imdb_id,
+    original_title,
+    release_date,
+    runtime,
+    vote_average,
+    popularity,
+    genres,
+    overview,
+    poster_path,
+  } = res.data
+  const movieData = await getMovieInfo({ imdb_id })
 
   return (
     <div className={styles.movieDetailContainer}>
       <div className={styles.detail}>
         <div className={styles.titleAndScore}>
           <div className={styles.title}>
-            <h2>{data.original_title}</h2>
+            <h2>{original_title}</h2>
             <p className={styles.movieInfo}>
-              {data.release_date} · {data.runtime} min
+              {release_date} · {runtime} min
             </p>
           </div>
           <div className={styles.score}>
@@ -34,14 +42,14 @@ export default async function movieInfo({
               Rating
               <div>
                 <BsFillStarFill className={styles.star} color="yellow" />
-                <span>{data.vote_average}</span>
+                <span>{vote_average}</span>
               </div>
             </div>
             <div className={styles.popularity}>
               Popularity
               <div>
                 <FaRegThumbsUp color="red" />
-                <span> {data.popularity} </span>
+                <span> {popularity} </span>
               </div>
             </div>
           </div>
@@ -49,29 +57,31 @@ export default async function movieInfo({
         <div className={styles.posterAndPlayer}>
           <div className={styles.poster}>
             <Image
-              src={`https://image.tmdb.org/t/p/w500${data.poster_path}`}
-              alt={data.original_title}
+              src={`https://image.tmdb.org/t/p/w500${poster_path}`}
+              alt={original_title}
               fill
             />
           </div>
-          <div className={styles.player}/>
+          <div className={styles.player}>
+            <VideoPlayer
+              status={movieData.response?.status}
+              hlsPlaylistPath={movieData.data?.hlsPlaylistPath}
+              movieState={movieData.data?.movieState}
+              torrentHash={movieData.data?.torrentHash}
+              imdb_id={imdb_id}
+            />
+          </div>
         </div>
         <div className={styles.info}>
           <div className={styles.genreContainer}>
-            {data.genres.map((genre: { id: number; name: string }) => (
+            {genres.map((genre: { id: number; name: string }) => (
               <div className={styles.genre}>{genre.name}</div>
             ))}
           </div>
           <div className={styles.div} />
-          <div className={styles.overview}>{data.overview}</div>
+          <div className={styles.overview}>{overview}</div>
         </div>
       </div>
-      {torrentData.data?.data?.movie?.torrents && (
-        <TorrentList
-          imdb_id={torrentData.data.data.movie.imdb_code}
-          torrents={torrentData.data.data.movie.torrents}
-        />
-      )}
     </div>
   )
 }

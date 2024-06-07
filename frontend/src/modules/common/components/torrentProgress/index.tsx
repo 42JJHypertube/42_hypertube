@@ -5,7 +5,7 @@ import wsClient from '@/lib/socket/socket'
 import TorrentLoadingSpinner from '../spinner/torrentLoading'
 import styles from './index.module.scss'
 
-function TorrentProgress({ hash, test }: { hash: string; test: boolean }) {
+function TorrentProgress({ hash, test }: { hash?: string; test?: boolean }) {
   const [progressPer, setProgress] = useState<number>(0)
   const [curSocket, setCursocket] = useState<WebSocket | any>(null)
 
@@ -44,8 +44,8 @@ function TorrentProgress({ hash, test }: { hash: string; test: boolean }) {
         <button
           onClick={() => {
             if (curSocket?.OPEN) {
-              wsClient.connect('asdfasdf', test ? 'TEST' : hash)
-              wsClient.setMessage(test ? 'TEST' : hash, updateProgress)
+              wsClient.connect('asdfasdf', test ? 'TEST' : hash!)
+              wsClient.setMessage(test ? 'TEST' : hash!, updateProgress)
             }
           }}
         >
