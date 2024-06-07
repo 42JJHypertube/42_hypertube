@@ -1,17 +1,18 @@
 .commnetList {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100%;
-    overflow-y: auto;
-    margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  margin-top: 1rem;
 }
 
 .comment {
   display: flex;
   flex-direction: row;
-  height: 12rem;
   margin-bottom: 1rem;
+  flex-wrap: wrap;
+  word-break: break-word;
 }
 
 .commentAvater {
@@ -20,8 +21,30 @@
 }
 
 .commentContent {
-    padding: 1rem;
-    width: 90%;
-    border-radius: 10px;
-    background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  padding: 0.3rem 0.5rem 0.5rem 0.5rem;
+  width: 90%;
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0.5);
+
+  .commentHead {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+
+    .commentAuthor {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+    
+    .commentDate {
+      // font-size: rem;
+      color: gray;
+      margin-top: auto;
+    }
+  }
+
+  .commentBody {
+  }
 }
