@@ -1,0 +1,27 @@
+.commnetList {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    margin-top: 1rem;
+}
+
+.comment {
+  display: flex;
+  flex-direction: row;
+  height: 12rem;
+  margin-bottom: 1rem;
+}
+
+.commentAvater {
+  width: 3rem;
+  height: 3rem;
+}
+
+.commentContent {
+    padding: 1rem;
+    width: 90%;
+    border-radius: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+}
