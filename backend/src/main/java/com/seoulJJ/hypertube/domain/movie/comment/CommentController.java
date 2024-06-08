@@ -2,8 +2,8 @@ package com.seoulJJ.hypertube.domain.movie.comment;
 
 import java.util.List;
 
-import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,6 +12,7 @@ import com.seoulJJ.hypertube.domain.movie.comment.dto.CommentDto;
 import com.seoulJJ.hypertube.domain.movie.comment.dto.CreateCommentReqDto;
 import com.seoulJJ.hypertube.domain.movie.comment.dto.UpdateCommentReqDto;
 import com.seoulJJ.hypertube.domain.movie.dto.MovieCommentsResDto;
+import com.seoulJJ.hypertube.domain.movie.exception.MovieNotFoundException;
 import com.seoulJJ.hypertube.global.security.UserPrincipal;
 import com.seoulJJ.hypertube.global.utils.argumentresolver.LoginPrincipal;
 
@@ -35,9 +36,13 @@ public class CommentController {
 
     @GetMapping("/movies/{movieId}")
     public ResponseEntity<?> getMovieComments(@PathVariable Long movieId) {
-        List<CommentDto> commentDtos = commentService.findCommentsByMovieId(movieId);
-        MovieCommentsResDto resDto = new MovieCommentsResDto(commentDtos);
-        return ResponseEntity.ok(resDto);
+        try {
+            List<CommentDto> commentDtos = commentService.findCommentsByMovieId(movieId);
+            MovieCommentsResDto resDto = new MovieCommentsResDto(commentDtos);
+            return ResponseEntity.ok(resDto);
+        } catch (MovieNotFoundException e) {
+            return ResponseEntity.noContent().build();
+        }
     }
 
     @PostMapping("/movies/{movieId}")
@@ -45,7 +50,7 @@ public class CommentController {
             @Parameter(hidden = true) @LoginPrincipal UserPrincipal userPrincipal,
             @PathVariable Long movieId, @RequestBody CreateCommentReqDto reqDto) {
         commentService.createComment(userPrincipal.getId(), movieId, reqDto.getContent());
-        return ResponseEntity.ok("Success");
+        return ResponseEntity.status(HttpStatus.CREATED).body("Success");
     }
 
     @PutMapping("/{commentId}")
@@ -53,13 +58,13 @@ public class CommentController {
             @RequestBody UpdateCommentReqDto reqDto,
             @PathVariable Long commentId) {
         commentService.updateComment(userPrincipal, commentId, reqDto.getContent());
-        return ResponseEntity.ok("Success");
+        return ResponseEntity.status(HttpStatus.CREATED).body("Success");
     }
 
     @DeleteMapping("/{commentId}")
     public ResponseEntity<String> deleteComment(@Parameter(hidden = true) @LoginPrincipal UserPrincipal userPrincipal,
             @PathVariable Long commentId) {
         commentService.deleteComment(userPrincipal, commentId);
-        return ResponseEntity.ok("Success");
+        return ResponseEntity.status(204).body("Success");
     }
 }

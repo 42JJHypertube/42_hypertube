@@ -9,8 +9,10 @@ import com.seoulJJ.hypertube.domain.movie.MovieRepository;
 import com.seoulJJ.hypertube.domain.movie.comment.dto.CommentDto;
 import com.seoulJJ.hypertube.domain.movie.comment.exception.CommentForbiddenException;
 import com.seoulJJ.hypertube.domain.movie.comment.exception.CommentNotFoundException;
+import com.seoulJJ.hypertube.domain.movie.exception.MovieNotFoundException;
 import com.seoulJJ.hypertube.domain.user.User;
 import com.seoulJJ.hypertube.domain.user.UserRepository;
+import com.seoulJJ.hypertube.domain.user.exception.UserNotFoundException;
 import com.seoulJJ.hypertube.global.security.UserPrincipal;
 
 import java.util.List;
@@ -29,16 +31,17 @@ public class CommentService {
     private MovieRepository movieRepository;
 
     @Transactional(readOnly = true)
-    public List<CommentDto> findCommentsByMovieId(Long movieId) {
-        List<Comment> comments = commentRepository.findByMovieId(movieId);
+    public List<CommentDto> findCommentsByMovieId(Long movieId) throws MovieNotFoundException{
+        movieRepository.findById(movieId).orElseThrow(() -> new MovieNotFoundException());
+        List<Comment> comments = commentRepository.findByMovieIdOrderByModifiedAtDesc(movieId);
         return comments.stream().map(CommentDto::from).collect(Collectors.toList());
     }
 
     @Transactional
     public void createComment(Long userId, Long movieId, String content) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
         Movie movie = movieRepository.findById(movieId)
-                .orElseThrow(() -> new IllegalArgumentException("Movie not found"));
+                .orElseThrow(() -> new MovieNotFoundException());
         Comment comment = new Comment(movie, user, content);
         commentRepository.save(comment);
     }

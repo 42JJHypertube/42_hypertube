@@ -5,4 +5,5 @@ export type Comment = {
   movie: MovieInfo
   user: UserInfo
   content: string
+  commentedAt: Date
 }

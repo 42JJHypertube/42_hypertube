@@ -1,27 +1,15 @@
 'use client'
 
-import { actionWrapper, createComment } from '@/lib/data'
-import styles from './commentInput.module.scss'
+import styles from './commentInputForm.module.scss'
 import Image from 'next/image'
 
-export default function CommentInput({ movieId }: { movieId: number }) {
-  const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    const input = e.currentTarget.querySelector('input')
-    if (!input) return
-
-    const content = input.value
-    if (!content || content.length === 0) return
-
-    const res = actionWrapper({
-      action: createComment,
-      param: { movieId, payload: { content } },
-    })
-    console.log(res) //TODO : Handle error
-  }
-
+export default function CommentInputForm({
+  onSubmit,
+}: {
+  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void
+}) {
   return (
-    <form onSubmit={onSubmitHandler} className={styles.form}>
+    <form onSubmit={onSubmit} className={styles.form}>
       <div className={styles.inputContainer}>
         <input
           type="text"

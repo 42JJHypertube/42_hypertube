@@ -23,25 +23,59 @@
 .commentContent {
   display: flex;
   flex-direction: column;
-  padding: 0.3rem 0.5rem 0.5rem 0.5rem;
+  padding: 0.5rem 0.5rem 0.5rem 0.5rem;
   width: 90%;
   border-radius: 10px;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.7);
 
   .commentHead {
     display: flex;
     flex-direction: row;
-    gap: 0.5rem;
+    justify-content: space-between;
 
-    .commentAuthor {
-      font-size: 1.2rem;
-      font-weight: bold;
+    .commentAuthorWrapper {
+      display: flex;
+      flex-direction: row;
+      gap: 0.5rem;
+
+      .commentAuthor {
+        font-weight: bold;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 50%;
+      }
+
+      .commentDate {
+        font-size: 0.7rem;
+        color: gray;
+        margin-top: auto;
+      }
     }
-    
-    .commentDate {
-      // font-size: rem;
-      color: gray;
-      margin-top: auto;
+
+    .commentButtonGroup {
+      display: flex;
+      flex-direction: row;
+      width: 5rem;
+      button {
+        background-color: transparent;
+        border: none;
+        color: white;
+        font-size: 0.7rem;
+        cursor: pointer;
+        margin-left: 0.5rem;
+      }
+
+      .editButton {
+        &:hover {
+          color: blue;
+        }
+      }
+      .deleteButton {
+        &:hover {
+          color: red;
+        }
+      }
     }
   }
 

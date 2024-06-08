@@ -212,7 +212,9 @@ export async function createComment({
   const customHeaders = getCustomHeaders([])
   return HypeClient.comment
     .postComment(movieId, payload, customHeaders)
-    .then((res) => {return {data: res.data, response: res.response.status}})
+    .then((res) => {
+      return { data: res.data, response: res.response.status }
+    })
     .catch((error) => error)
 }
 
@@ -230,7 +232,7 @@ export async function updateComment({
     .catch((error) => error)
 }
 
-export async function deleteComment({ commentId }: { commentId: number }) {
+export async function deleteComment(commentId: number) {
   const customHeaders = getCustomHeaders([])
   return HypeClient.comment
     .deleteComment(commentId, customHeaders)

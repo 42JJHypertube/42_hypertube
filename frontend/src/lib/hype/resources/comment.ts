@@ -1,6 +1,5 @@
 import BaseResource from './base'
 import { ResponsePromise, CustomHeaders } from '../type/common'
-import { ResGetProfile } from '../type/user'
 import { ResGetCommentList } from '../type/comment'
 
 class CommentResource extends BaseResource {
