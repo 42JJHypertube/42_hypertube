@@ -23,7 +23,7 @@ class DownloadResource extends BaseResource {
   }
 
   getDownloadMovieInfo({ imdb_id }: { imdb_id: string }, customHeaders: any) {
-    const path = `/movies/info?imdbId=${imdb_id}`
+    const path = `/movies/${imdb_id}/info`
 
     return this.client.request('GET', path, {}, {}, customHeaders)
   }

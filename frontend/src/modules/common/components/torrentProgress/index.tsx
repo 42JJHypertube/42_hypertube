@@ -1,12 +1,18 @@
 'use client'
-
-import { useEffect, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import wsClient from '@/lib/socket/socket'
 import TorrentLoadingSpinner from '../spinner/torrentLoading'
 import styles from './index.module.scss'
 
-function TorrentProgress({ hash, test }: { hash?: string; test?: boolean }) {
+function TorrentProgress({
+  hash,
+  setMovieState,
+}: {
+  hash: string
+  setMovieState: Dispatch<SetStateAction<string>>
+}) {
   const [progressPer, setProgress] = useState<number>(0)
+  const [curState, setCurState] = useState<string>('')
   const [curSocket, setCursocket] = useState<WebSocket | any>(null)
 
   function updateProgress(hash: string, event: MessageEvent) {
@@ -16,6 +22,10 @@ function TorrentProgress({ hash, test }: { hash?: string; test?: boolean }) {
       const { imdbId, torrentHash, progress, status } = res
       if (hash === torrentHash) {
         if (progress != progressPer) setProgress(progress)
+        if (curState != status) {
+          setCurState(status)
+          setMovieState(status)
+        }
       }
     } catch (error) {
       console.error('Failed to parse message data as JSON:', error)
@@ -36,22 +46,19 @@ function TorrentProgress({ hash, test }: { hash?: string; test?: boolean }) {
     }
   }, [])
 
+  useEffect(() => {
+    console.log("setSocket")
+    if (curSocket.readyState === WebSocket.OPEN) {
+      console.log("openSocket")
+      wsClient.connect('asdfasdf', hash)
+      wsClient.setMessage(hash, updateProgress)
+    }
+  }, [curSocket])
+
   return (
     <div className={styles.container}>
       <TorrentLoadingSpinner per={progressPer} />
-      {progressPer}%
-      <div>
-        <button
-          onClick={() => {
-            if (curSocket?.OPEN) {
-              wsClient.connect('asdfasdf', test ? 'TEST' : hash!)
-              wsClient.setMessage(test ? 'TEST' : hash!, updateProgress)
-            }
-          }}
-        >
-          connect
-        </button>
-      </div>
+      {progressPer}%<div> {curState}... </div>
     </div>
   )
 }

@@ -63,13 +63,7 @@ export default async function movieInfo({
             />
           </div>
           <div className={styles.player}>
-            <VideoPlayer
-              status={movieData.response?.status}
-              hlsPlaylistPath={movieData.data?.hlsPlaylistPath}
-              movieState={movieData.data?.movieState}
-              torrentHash={movieData.data?.torrentHash}
-              imdb_id={imdb_id}
-            />
+            <VideoPlayer imdb_id={imdb_id} />
           </div>
         </div>
         <div className={styles.info}>
@@ -81,7 +75,8 @@ export default async function movieInfo({
           <div className={styles.div} />
           <div className={styles.overview}>{overview}</div>
         </div>
-        <CommentSection movieId={1} /> {/* movieId should be changed */}
+        <CommentSection movieId={movieData.data.id} />{' '}
+        {/* movieId should be changed */}
       </div>
     </div>
   )
