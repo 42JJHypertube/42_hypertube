@@ -61,11 +61,12 @@ public class JlibtorrentDownloader {
     public void startDownloadWithMagnet(MovieDownDto movieDownDto) throws Throwable {
         Movie movie = movieRepository.findByImdbId(movieDownDto.getImdbId()).orElseThrow(); // TODO : Exception
         movie.setMovieState(MovieState.DOWNLOADING);
+        movieRepository.saveAndFlush(movie);
 
         MovieDownloadProgressDto progressDto = new MovieDownloadProgressDto(movieDownDto.getImdbId(),
                 movieDownDto.getTorrentHash(), 0,
                 MovieState.DOWNLOADING);
-        movieDownloadSocketHandler.addProgressThread(movieDownDto.getTorrentHash(), progressDto);
+        movieDownloadSocketHandler.addProgressBroadcastThread(movieDownDto.getTorrentHash(), progressDto);
 
         try {
             StringBuilder builder = new StringBuilder(movieDownDto.getMagnetUrl());
@@ -108,10 +109,6 @@ public class JlibtorrentDownloader {
             String imdbId = movieDownDto.getImdbId();
             File destDir = videoFileManager.getMovieRootPath(imdbId);
 
-            movieRepository.saveAndFlush(movie);
-            progressDto.setStatus(MovieState.DOWNLOADING);
-            movieDownloadSocketHandler.updateProgress(movieDownDto.getTorrentHash(), progressDto);
-
             s.start();
             s.download(magnetUrl, destDir);
             signal.await();
@@ -131,11 +128,14 @@ public class JlibtorrentDownloader {
             movieRepository.saveAndFlush(movie);
             progressDto.setStatus(MovieState.AVAILABLE);
             movieDownloadSocketHandler.updateProgress(movieDownDto.getTorrentHash(), progressDto);
-            MovieService.downloadingMovies.remove(movieDownDto.getImdbId());
         } catch (Exception e) {
             e.printStackTrace();
-            MovieService.downloadingMovies.remove(movieDownDto.getImdbId());
+            movie.setMovieState(MovieState.ERROR);
+            movieRepository.saveAndFlush(movie);
             throw new MovieDownLoadFailException("영화 다운로드에 실패했습니다.");
+        } finally {
+            movieDownloadSocketHandler.removeProgressBroadcastThread(movieDownDto.getTorrentHash());
+            MovieService.downloadingMovies.remove(movieDownDto.getImdbId());
         }
     }
 }
