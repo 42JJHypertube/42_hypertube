@@ -15,11 +15,7 @@ import com.seoulJJ.hypertube.domain.movie.dto.MovieDto;
 import com.seoulJJ.hypertube.domain.movie.exception.MovieNotFoundException;
 import com.seoulJJ.hypertube.domain.movie.torrent.jlibtorrent.JlibtorrentDownloader;
 import com.seoulJJ.hypertube.domain.movie.type.MovieState;
-import com.seoulJJ.hypertube.domain.user.User;
 import com.seoulJJ.hypertube.domain.user.UserRepository;
-import com.seoulJJ.hypertube.domain.user.exception.UserNotFoundException;
-import com.seoulJJ.hypertube.domain.user.userMovie.UserMovie;
-import com.seoulJJ.hypertube.global.security.UserPrincipal;
 
 import lombok.RequiredArgsConstructor;
 
@@ -53,7 +49,7 @@ public class MovieService {
                 movie = new Movie(movieDownDto);
                 movieRepository.saveAndFlush(movie);
             } catch (Exception e) {
-                throw new MovieNotFoundException("Cannot find movie with imdbId: " + movieDownDto.getImdbId());
+                throw new MovieNotFoundException();
             }
         }
 
@@ -72,7 +68,7 @@ public class MovieService {
     @Transactional(readOnly = true)
     public MovieDto findMovieByImdbId(String imdbId) {
         Movie movie = movieRepository.findByImdbId(imdbId)
-                .orElseThrow(() -> new MovieNotFoundException("Cannot find movie with imdbId: " + imdbId));
+                .orElseThrow(() -> new MovieNotFoundException());
         return MovieDto.from(movie);
     }
 }

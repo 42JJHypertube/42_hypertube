@@ -129,7 +129,7 @@ public class UserService {
                 .orElse(null);
         if (userMovie == null) {
             Movie movie = movieRepository.findById(movieDto.getId())
-                    .orElseThrow(() -> new MovieNotFoundException("Cannot find movie with id: " + movieDto.getId()));
+                    .orElseThrow(() -> new MovieNotFoundException());
             userMovie = new UserMovie(user, movie);
         }
         userMovie.updateWatchedAtToNow();

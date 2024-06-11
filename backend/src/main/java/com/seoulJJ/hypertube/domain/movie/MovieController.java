@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.seoulJJ.hypertube.domain.movie.comment.CommentService;
+import com.seoulJJ.hypertube.domain.movie.comment.dto.CommentDto;
+import com.seoulJJ.hypertube.domain.movie.dto.MovieCommentsResDto;
 import com.seoulJJ.hypertube.domain.movie.dto.MovieDownDto;
 import com.seoulJJ.hypertube.domain.movie.dto.MovieDownReqDto;
 import com.seoulJJ.hypertube.domain.movie.dto.MovieDto;
@@ -19,6 +22,9 @@ import com.seoulJJ.hypertube.global.utils.argumentresolver.LoginPrincipal;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,9 +37,9 @@ public class MovieController {
     @Autowired
     private final UserService userService;
 
-    @GetMapping("/info")
+    @GetMapping("/{imdbId}/info")
     public ResponseEntity<?> getMovieInfo(@Parameter(hidden = true) @LoginPrincipal UserPrincipal userPrincipal,
-            @RequestParam(required = true) String imdbId) {
+            @PathVariable String imdbId) {
         try {
             MovieDto movieDto = movieService.findMovieByImdbId(imdbId);
             userService.updateRecentWatchedMovies(userPrincipal, movieDto);
