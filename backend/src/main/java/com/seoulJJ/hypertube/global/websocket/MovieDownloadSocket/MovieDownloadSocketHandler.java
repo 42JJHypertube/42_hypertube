@@ -76,7 +76,7 @@ public class MovieDownloadSocketHandler extends TextWebSocketHandler {
         }
     }
 
-    public void addProgressThread(String torrentHash, MovieDownloadProgressDto progressDto) {
+    public void addProgressBroadcastThread(String torrentHash, MovieDownloadProgressDto progressDto) {
         ProgressBrodcastThread progressThread = new ProgressBrodcastThread(torrentHash, progressDto);
         progressThreads.put(torrentHash, progressThread);
         progressThread.start();
@@ -86,7 +86,7 @@ public class MovieDownloadSocketHandler extends TextWebSocketHandler {
         progressThreads.get(torrentHash).updateProgress(progressDto);
     }
 
-    public void removeProgressThread(String torrentHash) {
+    public void removeProgressBroadcastThread(String torrentHash) {
         progressThreads.get(torrentHash).interrupt();
         progressThreads.remove(torrentHash);
     }
