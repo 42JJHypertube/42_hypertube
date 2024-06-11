@@ -29,20 +29,17 @@ public class MovieService {
     private final JlibtorrentDownloader jlibtorrentDownloader;
 
     @Autowired
-    private final UserRepository userRepository;
-
-    @Autowired
     private final MovieRepository movieRepository;
 
     @Transactional
-    public void downLoadMovie(MovieDownDto movieDownDto) {
+    public MovieDto downloadMovie(MovieDownDto movieDownDto) {
         Movie movie;
         Optional<Movie> movieOpt = movieRepository.findByImdbId(movieDownDto.getImdbId());
         if (movieOpt.isPresent()) {
             movie = movieOpt.get();
             if (movieOpt.get().getMovieState() == MovieState.AVAILABLE
                     || downloadingMovies.contains(movie.getImdbId())) {
-                return;
+                return MovieDto.from(movie);
             }
         } else {
             try {
@@ -63,6 +60,8 @@ public class MovieService {
             }
         });
         executor.shutdown();
+        return MovieDto.from(movie);
+
     }
 
     @Transactional(readOnly = true)
