@@ -39,6 +39,7 @@ public class MovieService {
             movie = movieOpt.get();
             if (movieOpt.get().getMovieState() == MovieState.AVAILABLE
                     || downloadingMovies.contains(movie.getImdbId())) {
+                System.out.println("DownLoading Movies => " + downloadingMovies);
                 return MovieDto.from(movie);
             }
         } else {
@@ -51,6 +52,7 @@ public class MovieService {
         }
 
         downloadingMovies.add(movieDownDto.getImdbId());
+        System.out.println("DownLoading Movies => " + downloadingMovies);
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
             try {
