@@ -8,4 +8,4 @@ export interface RequestOptions {
   numberOfRetries?: number // 몇회까지 반복할지 설정
 }
 
-export type RequestMethod = 'DELETE' | 'POST' | 'GET'
+export type RequestMethod = 'DELETE' | 'POST' | 'GET' | 'PUT'

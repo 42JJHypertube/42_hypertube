@@ -3,6 +3,7 @@ import Client from './client'
 import AuthResource from './resources/auth'
 import MovieResource from './resources/movie'
 import UserResource from './resources/user'
+import CommentResource from './resources/comment'
 
 class Hype {
   public client: Client
@@ -13,10 +14,13 @@ class Hype {
 
   public user: UserResource // 유저정보 관리를 위한 api들
 
+  public comment: CommentResource // 댓글 관리를 위한 api들
+
   constructor(config: Config) {
     this.client = new Client(config)
     this.auth = new AuthResource(this.client)
     this.user = new UserResource(this.client)
+    this.comment = new CommentResource(this.client)
     this.movie = new MovieResource(
       new Client({
         baseURL: `https://api.themoviedb.org/3`,

@@ -1,12 +1,15 @@
 'use client'
 
-import FormButton from '@/modules/common/components/formButton'
-import styles from './commentInput.module.scss'
+import styles from './commentInputForm.module.scss'
 import Image from 'next/image'
 
-export default function CommentInput() {
+export default function CommentInputForm({
+  onSubmit,
+}: {
+  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void
+}) {
   return (
-    <form className={styles.form}>
+    <form onSubmit={onSubmit} className={styles.form}>
       <div className={styles.inputContainer}>
         <input
           type="text"
