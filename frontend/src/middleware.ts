@@ -82,7 +82,6 @@ async function refreshToken(request: NextRequest, allCookies: TypeCookie[]) {
 }
 
 export async function middleware(request: NextRequest) {
-  console.log('run middleware')
   if (
     request.cookies.has('refresh_token') &&
     request.cookies.has('access_token')

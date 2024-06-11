@@ -26,7 +26,6 @@ export default async function movieInfo({
     poster_path,
   } = res.data
   const movieData = await getMovieInfo({ imdb_id })
-
   return (
     <div className={styles.movieDetailContainer}>
       <div className={styles.detail}>

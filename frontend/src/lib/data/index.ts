@@ -211,8 +211,8 @@ export async function postTorrentDownload({
 
   return HypeClient.download
     .postDownloadTorrent({ imdb_id, magnetUrl }, newCustomHeaders)
-    .then((res) => console.log(res))
-    .catch((error) => console.log(error))
+    .then((res) => res)
+    .catch((error) => error)
 }
 
 export async function getMovieInfo({ imdb_id }: { imdb_id: string }) {
