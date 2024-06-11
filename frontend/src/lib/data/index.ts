@@ -305,6 +305,9 @@ export async function actionWrapper({
     }
 
     const res = await action(param)
+    if (res.response.status === 400) {
+      console.log(res);
+    }
     return { data: res.data, response: { status: res.response?.status } }
   }
 

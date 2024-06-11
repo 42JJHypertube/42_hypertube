@@ -26,7 +26,7 @@ class CommentResource extends BaseResource {
     customHeaders?: CustomHeaders,
   ) {
     const path = `/comments/${commentId}`
-    return this.client.request('POST', path, payload, {}, customHeaders)
+    return this.client.request('PUT', path, payload, {}, customHeaders)
   }
 
   deleteComment(commentId: number, customHeaders?: CustomHeaders) {

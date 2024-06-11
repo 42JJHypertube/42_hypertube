@@ -81,4 +81,32 @@
 
   .commentBody {
   }
+
+  .editInput {
+    width: 100%;
+    height: 3rem;
+    font-size: 1rem;
+    padding: 0 1rem;
+    padding-right: 40px;
+    box-sizing: border-box;
+
+    background: black;
+    color: white;
+    appearance: none;
+    border: 1px solid #808080;
+    outline: none;
+    border-radius: 20px;
+    pointer-events: all;
+
+    &:focus {
+      border: 2px solid red;
+    }
+  }
+
+  .commentEditButtonGroup {
+    display: flex;
+    flex-direction: row;
+    width: 3rem;
+    margin: 0.5rem auto;
+  }
 }
