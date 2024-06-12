@@ -11,6 +11,7 @@ import {
 } from '@/lib/data'
 import getSortedTorrent from '@/lib/utill/getSortedTorrent'
 import { TorrentInfo } from '@/lib/utill/getSortedTorrent'
+import HLSplayer from '@/modules/movie/components/HLSPlayer'
 
 type MovieState = 'NOFILE' | 'DOWNLOADING' | 'CONVERTING' | 'AVAILABLE'
 
@@ -28,10 +29,13 @@ async function clickPlay(
       action: postTorrentDownload,
       param: { imdb_id, magnetUrl },
     })
-    console.log(movieStatus)
+    console.log('MovieStatus : ', movieStatus)
     if (movieStatus.response.status === 201) {
       setCurState(movieStatus.data.movieState)
-      if (movieStatus.data.movieState === 'DOWNLOADING' || movieStatus.data.movieState === "CONVERTING"){
+      if (
+        movieStatus.data.movieState === 'DOWNLOADING' ||
+        movieStatus.data.movieState === 'CONVERTING'
+      ) {
       }
       setPlay(true)
     }
@@ -75,7 +79,7 @@ function VideoPlayer({ imdb_id }: { imdb_id: number }) {
         (movieState === 'DOWNLOADING' || movieState === 'CONVERTING' ? (
           <TorrentProgress hash={hash!} setMovieState={setMovieState} />
         ) : movieState === 'AVAILABLE' ? (
-          <div> VideoPlayer </div>
+          <div> <HLSplayer hlsPlaylistPath={'tt0063350/master.m3u8'}/> </div>
         ) : null)}
     </div>
   )

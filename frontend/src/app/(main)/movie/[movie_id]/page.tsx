@@ -26,7 +26,15 @@ export default async function movieInfo({
     overview,
     poster_path,
   } = res.data
+
+  if (!imdb_id) {
+    // imdb_id가 undefined인 경우 처리
+    console.error('IMDB ID가 없습니다.')
+    return notFound()
+  }
+
   const movieData = await getMovieInfo({ imdb_id })
+
   return (
     <div className={styles.movieDetailContainer}>
       <div className={styles.detail}>

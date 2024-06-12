@@ -339,6 +339,7 @@ export async function actionWrapper({
     if (res.response.status === 400) {
       console.log(res)
     }
+    console.log(res.response)
     return { data: res.data, response: { status: res.response?.status } }
   }
 
