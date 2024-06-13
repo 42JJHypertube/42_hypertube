@@ -110,10 +110,10 @@ public class JlibtorrentDownloader {
             String imdbId = movieDownDto.getImdbId();
             File destDir = videoFileManager.getMovieRootPath(imdbId);
 
-            // s.start();
-            // s.download(magnetUrl, destDir);
-            // signal.await();
-            // s.stop();
+            s.start();
+            s.download(magnetUrl, destDir);
+            signal.await();
+            s.stop();
 
             movie.setMovieState(MovieState.CONVERTING);
             movieRepository.saveAndFlush(movie);
