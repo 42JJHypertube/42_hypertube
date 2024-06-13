@@ -81,10 +81,18 @@ public class VideoFile extends File {
             } else if (key.equals("height"))
                 this.height = Integer.valueOf(value);
             else if (key.equals("duration"))
-                this.duration = Double.valueOf(value);
-            else if (key.equals("bit_rate"))
-                this.bitRate = Long.valueOf(value);
-            else if (key.equals("codec_name"))
+                try {
+                    this.duration = Double.valueOf(value);
+                } catch (NumberFormatException e) {
+                    this.duration = null;
+                }
+            else if (key.equals("bit_rate")) {
+                try {
+                    this.bitRate = Long.valueOf(value);
+                } catch (NumberFormatException e) {
+                    this.bitRate = null;
+                }
+            } else if (key.equals("codec_name"))
                 this.codecName = value;
         }
     }

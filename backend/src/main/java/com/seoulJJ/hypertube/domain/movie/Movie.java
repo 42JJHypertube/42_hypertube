@@ -49,7 +49,7 @@ public class Movie extends BaseTimeEntity {
     public Movie(MovieDownDto movieDownDto) {
         this.imdbId = movieDownDto.getImdbId();
         this.torrentHash = movieDownDto.getTorrentHash();
-        this.movieState = MovieState.NO_FILE;
+        this.movieState = MovieState.DOWNLOADING;
     }
 
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
