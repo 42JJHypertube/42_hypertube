@@ -39,6 +39,7 @@ public class FFmpeg {
     public void convertVideoToHls(VideoFile videoFile, String outputPath) {
         try {
             List<String> command = makeConvertCommand(videoFile, outputPath);
+            log.info("Maden excute command : " + String.join(" ", command));
             excuteCommand(command);
         } catch (Exception e) {
             e.printStackTrace();
@@ -72,16 +73,16 @@ public class FFmpeg {
         command.addAll(List.of("ffmpeg", "-i", videoFile.getAbsolutePath(), "-preset", "veryfast", "-threads", "0"));
 
         Integer numberOfVideos;
-        final List<String> destResolution = List.of("360", "720", "1080", "2080");
+        final List<String> destResolution = List.of("360", "720", "1080", "2160");
         final List<String> destVideoBitrate = List.of("600k", "900k", "900k", "900k");
         final List<String> destAudioBitrate = List.of("64k", "128k", "128k", "128k");
         if (height >= 360 && height < 720) {
             numberOfVideos = 1;
         } else if (height >= 720 && height < 1080) {
             numberOfVideos = 2;
-        } else if (height >= 1080 && height < 2080) {
+        } else if (height >= 1080 && height < 2160) {
             numberOfVideos = 3;
-        } else if (height > 2080) {
+        } else if (height >= 2160) {
             numberOfVideos = 4;
         } else {
             throw new FFmpegException("비디오 해상도가 너무 낮습니다.", ErrorCode.FFMPEG_ERR);
@@ -92,15 +93,15 @@ public class FFmpeg {
         for (int i = 0; i < numberOfVideos; i++) {
             command.addAll(List.of("-map", "0:v:0", "-map", "0:a:0"));
             destFillterCommand.addAll(List.of("-filter:v:" + i,
-                    "scale=-2:" + destResolution.get(i) + ":force_original_aspect_ratio=decrease", "-maxrate:v:" + i,
+                    "scale=-2:" + destResolution.get(i) + ":force_original_aspect_ratio=decrease,pad=ceil(iw/2)*2:ceil(ih/2)*2", "-maxrate:v:" + i,
                     destVideoBitrate.get(i), "-b:a:" + i, destAudioBitrate.get(i)));
             varStringMapArg = varStringMapArg + "v:" + i + ",a:" + i + ",name:" + destResolution.get(i) + "p";
             if (i != numberOfVideos - 1) {
                 varStringMapArg = varStringMapArg + " ";
             }
         }
-        // varStringMapArg = varStringMapArg + "\"";
-        command.addAll(List.of("-c:v", videoFile.getCodecName(), "-crf", "22", "-c:a", "copy"));
+        
+        command.addAll(List.of("-c:v", "libx264", "-crf", "22", "-c:a", "copy"));
         command.addAll(destFillterCommand);
         command.addAll(List.of("-f", "hls", "-hls_time", "10", "-hls_playlist_type", "vod", "-hls_list_size", "0",
                 "-hls_flags", "independent_segments"));

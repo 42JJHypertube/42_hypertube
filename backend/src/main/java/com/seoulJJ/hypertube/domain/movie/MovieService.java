@@ -15,7 +15,6 @@ import com.seoulJJ.hypertube.domain.movie.dto.MovieDto;
 import com.seoulJJ.hypertube.domain.movie.exception.MovieNotFoundException;
 import com.seoulJJ.hypertube.domain.movie.torrent.jlibtorrent.JlibtorrentDownloader;
 import com.seoulJJ.hypertube.domain.movie.type.MovieState;
-import com.seoulJJ.hypertube.domain.user.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,7 +30,6 @@ public class MovieService {
     @Autowired
     private final MovieRepository movieRepository;
 
-    @Transactional
     public MovieDto downloadMovie(MovieDownDto movieDownDto) {
         Movie movie;
         Optional<Movie> movieOpt = movieRepository.findByImdbId(movieDownDto.getImdbId());

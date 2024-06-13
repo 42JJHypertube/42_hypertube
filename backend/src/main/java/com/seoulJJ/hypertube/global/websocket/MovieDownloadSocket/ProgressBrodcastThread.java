@@ -37,7 +37,8 @@ public class ProgressBrodcastThread extends Thread {
                     }
                 }
             }
-            if (progressDto.getStatus() == MovieState.AVAILABLE) {
+
+            if (progressDto.getStatus() == MovieState.AVAILABLE || progressDto.getStatus() == MovieState.ERROR) {
                 break;
             }
 
@@ -50,14 +51,14 @@ public class ProgressBrodcastThread extends Thread {
     }
 
     public void updateProgress(MovieDownloadProgressDto progressDto) {
-            this.progressDto = progressDto;
+        this.progressDto = progressDto;
     }
-    
+
     public void addSession(WebSocketSession session) {
-            sessions.add(session);
+        sessions.add(session);
     }
 
     public void removeSession(WebSocketSession session) {
-            sessions.remove(session);
+        sessions.remove(session);
     }
 }
