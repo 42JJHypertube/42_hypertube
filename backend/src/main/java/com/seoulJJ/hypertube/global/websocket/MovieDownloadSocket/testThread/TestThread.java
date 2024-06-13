@@ -1,16 +1,13 @@
 package com.seoulJJ.hypertube.global.websocket.MovieDownloadSocket.testThread;
 
-import java.util.concurrent.CopyOnWriteArraySet;
-
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
-import com.seoulJJ.hypertube.domain.movie.Movie;
 import com.seoulJJ.hypertube.domain.movie.type.MovieState;
-import com.seoulJJ.hypertube.global.websocket.MovieDownloadSocket.ProgressBrodcastThread;
+import com.seoulJJ.hypertube.global.websocket.MovieDownloadSocket.ProgressBroadcastThread;
 import com.seoulJJ.hypertube.global.websocket.MovieDownloadSocket.dto.MovieDownloadProgressDto;
 
-public class TestThread extends ProgressBrodcastThread {
+public class TestThread extends ProgressBroadcastThread {
     private Integer convertingCnt = 0;
     private Integer availableCnt = 0;
 

@@ -19,6 +19,7 @@ import com.seoulJJ.hypertube.domain.movie.MovieRepository;
 import com.seoulJJ.hypertube.domain.movie.MovieService;
 import com.seoulJJ.hypertube.domain.movie.dto.MovieDownDto;
 import com.seoulJJ.hypertube.domain.movie.exception.MovieDownLoadFailException;
+import com.seoulJJ.hypertube.domain.movie.exception.MovieNotFoundException;
 import com.seoulJJ.hypertube.domain.movie.type.MovieState;
 import com.seoulJJ.hypertube.global.utils.FileManager.VideoFile;
 import com.seoulJJ.hypertube.global.utils.FileManager.VideoFileManager;
@@ -59,14 +60,14 @@ public class JlibtorrentDownloader {
 
     // @Transactional //TODO: 트랜잭션 어노테이션을 달면 flush가 바로 되지 않는다. 이유 찾아서 블로깅 하기
     public void startDownloadWithMagnet(MovieDownDto movieDownDto) throws Throwable {
-        Movie movie = movieRepository.findByImdbId(movieDownDto.getImdbId()).orElseThrow(); // TODO : Exception
+        Movie movie = movieRepository.findByImdbId(movieDownDto.getImdbId())
+                .orElseThrow(() -> new MovieNotFoundException());
         movie.setMovieState(MovieState.DOWNLOADING);
         movieRepository.saveAndFlush(movie);
 
-        MovieDownloadProgressDto progressDto = new MovieDownloadProgressDto(movieDownDto.getImdbId(),
-                movieDownDto.getTorrentHash(), 0,
-                MovieState.DOWNLOADING);
-        movieDownloadSocketHandler.addProgressBroadcastThread(movieDownDto.getTorrentHash(), progressDto);
+        MovieDownloadProgressDto progressDto = movieDownloadSocketHandler.getProgress(movieDownDto.getTorrentHash());
+        if (progressDto == null)
+            throw new RuntimeException("Can not find broadcast thread.");
 
         try {
             StringBuilder builder = new StringBuilder(movieDownDto.getMagnetUrl());
@@ -132,10 +133,13 @@ public class JlibtorrentDownloader {
             e.printStackTrace();
             movie.setMovieState(MovieState.ERROR);
             movieRepository.saveAndFlush(movie);
+            progressDto.setStatus(MovieState.ERROR);
+            movieDownloadSocketHandler.updateProgress(movieDownDto.getTorrentHash(), progressDto);
             throw new MovieDownLoadFailException("영화 다운로드에 실패했습니다.");
         } finally {
-            movieDownloadSocketHandler.removeProgressBroadcastThread(movieDownDto.getTorrentHash());
             MovieService.downloadingMovies.remove(movieDownDto.getImdbId());
+            System.out.println("Remove DownLoading Movie(" + movieDownDto.getImdbId() + ")" + " => "
+                    + MovieService.downloadingMovies);
         }
     }
 }

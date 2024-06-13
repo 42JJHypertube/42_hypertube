@@ -24,7 +24,7 @@ import org.springframework.web.socket.WebSocketSession;
 @RequiredArgsConstructor
 public class MovieDownloadSocketHandler extends TextWebSocketHandler {
 
-    private static final ConcurrentHashMap<String, ProgressBrodcastThread> progressThreads = new ConcurrentHashMap<String, ProgressBrodcastThread>();
+    private static final ConcurrentHashMap<String, ProgressBroadcastThread> progressThreads = new ConcurrentHashMap<String, ProgressBroadcastThread>();
 
     @PostConstruct
     public void testThreadStart() {
@@ -49,7 +49,7 @@ public class MovieDownloadSocketHandler extends TextWebSocketHandler {
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         ActionRequestDto req = parseActionRequest(message.getPayload());
         try {
-            ProgressBrodcastThread pbt = progressThreads.get(req.getTorrentHash());
+            ProgressBroadcastThread pbt = progressThreads.get(req.getTorrentHash());
             if (pbt == null)
                 throw new RuntimeException("ProgressThread not found");
 
@@ -77,9 +77,9 @@ public class MovieDownloadSocketHandler extends TextWebSocketHandler {
     }
 
     public void addProgressBroadcastThread(String torrentHash, MovieDownloadProgressDto progressDto) {
-        ProgressBrodcastThread progressThread = new ProgressBrodcastThread(torrentHash, progressDto);
-        progressThreads.put(torrentHash, progressThread);
-        progressThread.start();
+        ProgressBroadcastThread pbt = new ProgressBroadcastThread(torrentHash, progressDto);
+        progressThreads.put(torrentHash, pbt);
+        pbt.start();
     }
 
     public void updateProgress(String torrentHash, MovieDownloadProgressDto progressDto) {
@@ -87,8 +87,18 @@ public class MovieDownloadSocketHandler extends TextWebSocketHandler {
     }
 
     public void removeProgressBroadcastThread(String torrentHash) {
-        progressThreads.get(torrentHash).interrupt();
+        ProgressBroadcastThread pbt = progressThreads.get(torrentHash);
+        if (pbt == null)
+            return;
+        pbt.interrupt();
         progressThreads.remove(torrentHash);
+    }
+
+    public MovieDownloadProgressDto getProgress(String torrentHash) {
+        ProgressBroadcastThread pbt = progressThreads.get(torrentHash);
+        if (pbt == null)
+            return null;
+        return pbt.getProgress();
     }
 
     private ActionRequestDto parseActionRequest(String message) {

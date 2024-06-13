@@ -6,7 +6,6 @@ import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
-import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -23,6 +22,8 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @RequiredArgsConstructor
 public class VideoFileManager {
+
+    private static final String[] VIDEO_EXTENSIONS = { "mp4", "mkv", "avi", "mov", "wmv" };
 
     @Value("${spring.file_path.movies}")
     private String movieDir;
@@ -54,7 +55,7 @@ public class VideoFileManager {
                 Files.walkFileTree(rootDirectory.toPath(), new SimpleFileVisitor<Path>() {
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                        if (file.toFile().isFile() && file.getFileName().toString().toLowerCase().endsWith(".mp4")) {
+                        if (file.toFile().isFile() && isVideoFile(file)) {
                             System.out.println("비디오 파일 찾음 : " + file.toString());
                             videoFileRef.set(new VideoFile(file));
                             return FileVisitResult.TERMINATE;
@@ -68,6 +69,9 @@ public class VideoFileManager {
             }
         }
 
+        VideoFile videoFile = videoFileRef.get();
+        if (videoFile == null)
+            throw new RuntimeException("영상 미디어 파일을 찾을수 없습니다.");
         return videoFileRef.get();
     }
 
@@ -77,5 +81,15 @@ public class VideoFileManager {
             movieRootPath.mkdirs();
         }
         return movieRootPath;
+    }
+
+    private static boolean isVideoFile(Path file) {
+        String fileName = file.getFileName().toString().toLowerCase();
+        for (String extension : VIDEO_EXTENSIONS) {
+            if (fileName.endsWith("." + extension)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
