@@ -65,10 +65,9 @@ public class JlibtorrentDownloader {
         movie.setMovieState(MovieState.DOWNLOADING);
         movieRepository.saveAndFlush(movie);
 
-        MovieDownloadProgressDto progressDto = new MovieDownloadProgressDto(movieDownDto.getImdbId(),
-                movieDownDto.getTorrentHash(), 0,
-                MovieState.DOWNLOADING);
-        movieDownloadSocketHandler.addProgressBroadcastThread(movieDownDto.getTorrentHash(), progressDto);
+        MovieDownloadProgressDto progressDto = movieDownloadSocketHandler.getProgress(movieDownDto.getTorrentHash());
+        if (progressDto == null)
+            throw new RuntimeException("Can not find broadcast thread.");
 
         try {
             StringBuilder builder = new StringBuilder(movieDownDto.getMagnetUrl());
@@ -139,6 +138,8 @@ public class JlibtorrentDownloader {
             throw new MovieDownLoadFailException("영화 다운로드에 실패했습니다.");
         } finally {
             MovieService.downloadingMovies.remove(movieDownDto.getImdbId());
+            System.out.println("Remove DownLoading Movie(" + movieDownDto.getImdbId() + ")" + " => "
+                    + MovieService.downloadingMovies);
         }
     }
 }

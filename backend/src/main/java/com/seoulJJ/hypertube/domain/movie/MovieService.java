@@ -15,6 +15,8 @@ import com.seoulJJ.hypertube.domain.movie.dto.MovieDto;
 import com.seoulJJ.hypertube.domain.movie.exception.MovieNotFoundException;
 import com.seoulJJ.hypertube.domain.movie.torrent.jlibtorrent.JlibtorrentDownloader;
 import com.seoulJJ.hypertube.domain.movie.type.MovieState;
+import com.seoulJJ.hypertube.global.websocket.MovieDownloadSocket.MovieDownloadSocketHandler;
+import com.seoulJJ.hypertube.global.websocket.MovieDownloadSocket.dto.MovieDownloadProgressDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,6 +31,9 @@ public class MovieService {
 
     @Autowired
     private final MovieRepository movieRepository;
+
+    @Autowired
+    private final MovieDownloadSocketHandler movieDownloadSocketHandler;
 
     public MovieDto downloadMovie(MovieDownDto movieDownDto) {
         Movie movie;
@@ -51,6 +56,12 @@ public class MovieService {
 
         downloadingMovies.add(movieDownDto.getImdbId());
         System.out.println("DownLoading Movies => " + downloadingMovies);
+
+        MovieDownloadProgressDto progressDto = new MovieDownloadProgressDto(movieDownDto.getImdbId(),
+                movieDownDto.getTorrentHash(), 0,
+                MovieState.DOWNLOADING);
+        movieDownloadSocketHandler.addProgressBroadcastThread(movieDownDto.getTorrentHash(), progressDto);
+        
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
             try {

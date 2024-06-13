@@ -8,12 +8,12 @@ import org.springframework.web.socket.WebSocketSession;
 import com.seoulJJ.hypertube.domain.movie.type.MovieState;
 import com.seoulJJ.hypertube.global.websocket.MovieDownloadSocket.dto.MovieDownloadProgressDto;
 
-public class ProgressBrodcastThread extends Thread {
+public class ProgressBroadcastThread extends Thread {
     protected String torrentHash;
     protected CopyOnWriteArraySet<WebSocketSession> sessions;
     protected MovieDownloadProgressDto progressDto;
 
-    public ProgressBrodcastThread(String torrentHash, MovieDownloadProgressDto progressDto) {
+    public ProgressBroadcastThread(String torrentHash, MovieDownloadProgressDto progressDto) {
         this.sessions = new CopyOnWriteArraySet<>();
         this.torrentHash = torrentHash;
         this.progressDto = progressDto;
@@ -60,5 +60,9 @@ public class ProgressBrodcastThread extends Thread {
 
     public void removeSession(WebSocketSession session) {
         sessions.remove(session);
+    }
+
+    public MovieDownloadProgressDto getProgress() {
+        return this.progressDto;
     }
 }
