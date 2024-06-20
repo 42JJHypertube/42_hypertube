@@ -1,9 +1,11 @@
-import { getProfile } from '@/lib/data'
+import { getProfile, logOut } from '@/lib/data'
 import { notFound } from 'next/navigation'
 import ChangePassword from '@/modules/account/components/changePassword'
 import ChangeImage from '@/modules/account/components/changeImage'
 import ChangeNickname from '@/modules/account/components/changeNickname'
 import styles from './useInfo.module.scss'
+import LogoutButton from '@/modules/common/components/logoutButton'
+import Button from '@/modules/common/components/button'
 
 export default async function UserInfo() {
   const { data, response } = await getProfile()
@@ -21,6 +23,7 @@ export default async function UserInfo() {
       <ChangeImage imageUrl={imageUrl} />
       <ChangeNickname nickname={nickname} />
       <ChangePassword email={email} />
+      <LogoutButton />
     </div>
   )
 }

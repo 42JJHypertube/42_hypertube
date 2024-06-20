@@ -1,0 +1,122 @@
+.movieDetailContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.detail {
+  @media (max-width: 959px) {
+    width: 480px;
+    height: auto;
+  }
+
+  // 중간 화면 (예: 태블릿)
+  @media (min-width: 960px) {
+    width: 960px;
+    height: auto;
+  }
+}
+
+.titleAndScore {
+  display: flex;
+  flex-direction: row;
+  padding: 1rem 1rem 1rem 0;
+  justify-content: space-between;
+  .title {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    .movieInfo {
+      font-size: 0.8rem;
+    }
+  }
+}
+
+.posterAndPlayer {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: auto;
+
+  .poster {
+    position: relative;
+    width: 30%;
+
+    @media (min-width: 960px) {
+      height: 540px; // 16:9 비율
+    }
+
+    @media (max-width: 959px) {
+      height: 270px; // 16:9 비율
+    }
+  }
+  .player {
+    position: relaitve;
+    width: 70%;
+    height: auto;
+    background-color: black;
+  }
+}
+
+.score {
+  display: flex;
+  flex-direction: row;
+  text-align: center;
+  gap: 1rem;
+  font-size: 0.8rem;
+  .rating {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    .star {
+      margin-right: 5px; // 아이콘과 텍스트 간의 간격 조정
+    }
+    span {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+  }
+  .popularity {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    .star {
+      margin-right: 5px; // 아이콘과 텍스트 간의 간격 조정
+    }
+    span {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+  }
+}
+
+.genreContainer {
+  display: grid;
+  padding-top: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(auto, 100px));
+  gap: 1rem; /* 요소들 사이의 간격 */
+
+  .genre {
+    font-size: 0.5rem;
+    text-align: center;
+    padding: 0.2rem 0.2rem;
+    border: 1px solid rgb(241, 140, 76); /* 검은색 테두리 */
+    border-radius: 1rem;
+  }
+}
+
+.div {
+  width: 100%;
+  height: 1px;
+  background-color: rgb(145, 145, 145);
+  margin: 1rem 0;
+}
+
+.overview {
+  font-size: 0.8rem;
+  line-height: 1.5rem;
+}

@@ -13,6 +13,10 @@ import { AiFillSound } from 'react-icons/ai' // 사운드 설정 버튼
 
 import styles from './index.module.scss'
 
+const url =
+  'https://bitdash-a.akamaihd.net/content/MI201109210084_1/m3u8s/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.m3u8'
+// const url =  'https://10.18.229.2/movies/tt2113625/master.m3u8'
+
 export default function TestPage() {
   const videoRef = useRef<HTMLVideoElement>(null)
   const outSideRef = useRef<HTMLDivElement>(null)
@@ -100,8 +104,7 @@ export default function TestPage() {
         hls.destroy()
       }
     } else if (videoElement?.canPlayType('application/vnd.apple.mpegurl')) {
-      videoElement.src =
-        'https://bitdash-a.akamaihd.net/content/MI201109210084_1/m3u8s/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.m3u8'
+      videoElement.src = url
     } else {
       console.error('Your browser does not support HLS streaming.')
     }

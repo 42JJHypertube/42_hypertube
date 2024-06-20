@@ -3,7 +3,7 @@
 import { cookies } from 'next/headers'
 import { revalidateTag } from 'next/cache'
 import { redirect } from 'next/navigation'
-import HypeClient from '../config'
+import HypeClient from '../hype/config'
 import { CustomHeaders } from '../hype/type/common'
 import getCookieOption from '../utill/cookieOption'
 
@@ -193,6 +193,84 @@ export async function getMovieDetail({ movie_id }: { movie_id: number }) {
     .catch((error) => error)
 }
 
+export async function getTorrentData({ imdb_id }: { imdb_id: number }) {
+  return HypeClient.torrent
+    .getTopCountDonwload(imdb_id)
+    .then((res) => res)
+    .catch((error) => error)
+}
+
+export async function getCommentList(movieId: number) {
+  const customHeaders = getCustomHeaders([])
+
+  return HypeClient.comment
+    .getCommentList(movieId, customHeaders)
+    .then((res) => res)
+    .catch((error) => error)
+}
+
+export async function postTorrentDownload({
+  imdb_id,
+  magnetUrl,
+}: {
+  imdb_id: string
+  magnetUrl: string
+}) {
+  const newCustomHeaders = getCustomHeaders([])
+
+  return HypeClient.download
+    .postDownloadTorrent({ imdb_id, magnetUrl }, newCustomHeaders)
+    .then((res) => res)
+    .catch((error) => error)
+}
+
+export async function createComment({
+  movieId,
+  payload,
+}: {
+  movieId: number
+  payload: { content: string }
+}) {
+  const customHeaders = getCustomHeaders([])
+  return HypeClient.comment
+    .postComment(movieId, payload, customHeaders)
+    .then((res) => {
+      return { data: res.data, response: res.response.status }
+    })
+    .catch((error) => error)
+}
+
+export async function updateComment({
+  commentId,
+  payload,
+}: {
+  commentId: number
+  payload: { content: string }
+}) {
+  const customHeaders = getCustomHeaders([])
+  return HypeClient.comment
+    .putComment(commentId, payload, customHeaders)
+    .then((res) => res)
+    .catch((error) => error)
+}
+
+export async function getMovieInfo({ imdb_id }: { imdb_id: string }) {
+  const newCustomHeaders = getCustomHeaders([])
+
+  return HypeClient.download
+    .getDownloadMovieInfo({ imdb_id }, newCustomHeaders)
+    .then((res) => res)
+    .catch((error) => error)
+}
+
+export async function deleteComment(commentId: number) {
+  const customHeaders = getCustomHeaders([])
+  return HypeClient.comment
+    .deleteComment(commentId, customHeaders)
+    .then((res) => res)
+    .catch((error) => error)
+}
+
 /**
  * Client에서 사용하는 ServerAction에만 Wrapping 한다.
  *
@@ -258,6 +336,8 @@ export async function actionWrapper({
     }
 
     const res = await action(param)
+    if (res.response.status === 400) {
+    }
     return { data: res.data, response: { status: res.response?.status } }
   }
 

@@ -3,7 +3,6 @@ import { getProfile, getToken } from '@/lib/data'
 import { NextResponse } from 'next/server'
 
 export async function POST() {
-  console.log('route handler')
   const cookieStore = cookies()
   const accessToken = cookieStore.get('access_token')?.value
   const refreshToken = cookieStore.get('refresh_token')?.value

@@ -10,7 +10,7 @@ class AuthResource extends BaseResource {
    */
   sendCode(
     payload: Record<string, string | null>,
-    customHeaders?: Record<string, string | null>,
+    customHeaders?: CustomHeaders,
   ): ResponsePromise<ResSendCode> {
     const path = '/auth/2fa/send-code'
     return this.client.request('POST', path, payload, {}, customHeaders)
@@ -18,7 +18,7 @@ class AuthResource extends BaseResource {
 
   checkEmail(
     payload: Record<string, string | null>,
-    customHeaders?: Record<string, string | null>,
+    customHeaders?: CustomHeaders,
   ): ResponsePromise<ResCheckEmail> {
     const path = `/auth/email-check?email=${payload.email}`
     return this.client.request('GET', path, {}, {}, customHeaders)
@@ -26,7 +26,7 @@ class AuthResource extends BaseResource {
 
   loginEmailToken(
     payload: Record<string, string | null>,
-    customHeaders?: Record<string, string | null>,
+    customHeaders?: CustomHeaders,
   ): ResponsePromise<ResCheckEmail> {
     const path = '/auth/sign-in/email-token'
     return this.client.request('POST', path, payload, {}, customHeaders)
@@ -34,7 +34,7 @@ class AuthResource extends BaseResource {
 
   loginPassword(
     payload: Record<string, string | null>,
-    customHeaders?: Record<string, string | null>,
+    customHeaders?: CustomHeaders,
   ): ResponsePromise<ResCheckEmail> {
     const path = '/auth/sign-in/password'
     return this.client.request('POST', path, payload, {}, customHeaders)
@@ -47,7 +47,7 @@ class AuthResource extends BaseResource {
    */
   verifyCode(
     payload: Record<string, string | null>,
-    customHeaders?: Record<string, string | null>,
+    customHeaders?: CustomHeaders,
   ) {
     const path = `/auth/2fa/verify-code?email=${payload.email}&code=${payload.code}`
     return this.client.request('GET', path, payload, {}, customHeaders)
@@ -55,7 +55,7 @@ class AuthResource extends BaseResource {
 
   signIn(
     payload: Record<string, string | null>,
-    customHeaders?: Record<string, string | null>,
+    customHeaders?: CustomHeaders,
   ): ResponsePromise<ResSignIn> {
     const path = '/auth/sign-in'
     return this.client.request('POST', path, payload, {}, customHeaders)
