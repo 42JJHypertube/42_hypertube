@@ -54,8 +54,8 @@ export default function CommentSection({ movieId }: { movieId: number }) {
   return (
     <div className={styles.container}>
       <h1> Comments </h1>
-        <CommentInputForm onSubmit={handleCommentSubmit} />
-        <CommentList comments={comments} fetchComments={fetchComments} />
+      <CommentInputForm onSubmit={handleCommentSubmit} />
+      <CommentList comments={comments} fetchComments={fetchComments} />
     </div>
   )
 }

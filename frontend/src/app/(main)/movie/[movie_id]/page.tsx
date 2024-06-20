@@ -1,9 +1,10 @@
-import { getMovieDetail } from '@/lib/data'
+import { getMovieDetail, getMovieInfo, getTorrentData } from '@/lib/data'
 import { notFound } from 'next/navigation'
 import styles from './layout.module.scss'
 import Image from 'next/image'
 import { BsFillStarFill } from 'react-icons/bs'
 import { FaRegThumbsUp } from 'react-icons/fa'
+import VideoPlayer from '@/modules/common/components/videoPlayer'
 import CommentSection from '@/modules/movie/components/commentSection'
 
 export default async function movieInfo({
@@ -12,19 +13,36 @@ export default async function movieInfo({
   params: { movie_id: number }
 }) {
   const res = await getMovieDetail(params)
-  console.log(res)
   if (res.response.status !== 200) return notFound()
 
-  const { data } = res
+  const {
+    imdb_id,
+    original_title,
+    release_date,
+    runtime,
+    vote_average,
+    popularity,
+    genres,
+    overview,
+    poster_path,
+  } = res.data
+
+  if (!imdb_id) {
+    // imdb_id가 undefined인 경우 처리
+    console.error('IMDB ID가 없습니다.')
+    return notFound()
+  }
+
+  const movieData = await getMovieInfo({ imdb_id })
 
   return (
     <div className={styles.movieDetailContainer}>
       <div className={styles.detail}>
         <div className={styles.titleAndScore}>
           <div className={styles.title}>
-            <h2>{data.original_title}</h2>
+            <h2>{original_title}</h2>
             <p className={styles.movieInfo}>
-              {data.release_date} · {data.runtime} min
+              {release_date} · {runtime} min
             </p>
           </div>
           <div className={styles.score}>
@@ -32,14 +50,14 @@ export default async function movieInfo({
               Rating
               <div>
                 <BsFillStarFill className={styles.star} color="yellow" />
-                <span>{data.vote_average}</span>
+                <span>{vote_average}</span>
               </div>
             </div>
             <div className={styles.popularity}>
               Popularity
               <div>
                 <FaRegThumbsUp color="red" />
-                <span> {data.popularity} </span>
+                <span> {popularity} </span>
               </div>
             </div>
           </div>
@@ -47,23 +65,26 @@ export default async function movieInfo({
         <div className={styles.posterAndPlayer}>
           <div className={styles.poster}>
             <Image
-              src={`https://image.tmdb.org/t/p/w500${data.poster_path}`}
-              alt={data.original_title}
+              src={`https://image.tmdb.org/t/p/w500${poster_path}`}
+              alt={original_title}
               fill
             />
           </div>
-          <div className={styles.player}></div>
+          <div className={styles.player}>
+            <VideoPlayer imdb_id={imdb_id} />
+          </div>
         </div>
         <div className={styles.info}>
           <div className={styles.genreContainer}>
-            {data.genres.map((genre: { id: number; name: string }) => (
+            {genres.map((genre: { id: number; name: string }) => (
               <div className={styles.genre}>{genre.name}</div>
             ))}
           </div>
           <div className={styles.div} />
-          <div className={styles.overview}>{data.overview}</div>
+          <div className={styles.overview}>{overview}</div>
         </div>
-        <CommentSection movieId={1} /> {/* movieId should be changed */}
+        <CommentSection movieId={movieData.data.id} />{' '}
+        {/* movieId should be changed */}
       </div>
     </div>
   )

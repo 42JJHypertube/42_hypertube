@@ -3,7 +3,7 @@
 import { cookies } from 'next/headers'
 import { revalidateTag } from 'next/cache'
 import { redirect } from 'next/navigation'
-import HypeClient from '../config'
+import HypeClient from '../hype/config'
 import { CustomHeaders } from '../hype/type/common'
 import getCookieOption from '../utill/cookieOption'
 
@@ -193,11 +193,33 @@ export async function getMovieDetail({ movie_id }: { movie_id: number }) {
     .catch((error) => error)
 }
 
+export async function getTorrentData({ imdb_id }: { imdb_id: number }) {
+  return HypeClient.torrent
+    .getTopCountDonwload(imdb_id)
+    .then((res) => res)
+    .catch((error) => error)
+}
+
 export async function getCommentList(movieId: number) {
   const customHeaders = getCustomHeaders([])
 
   return HypeClient.comment
     .getCommentList(movieId, customHeaders)
+    .then((res) => res)
+    .catch((error) => error)
+}
+
+export async function postTorrentDownload({
+  imdb_id,
+  magnetUrl,
+}: {
+  imdb_id: string
+  magnetUrl: string
+}) {
+  const newCustomHeaders = getCustomHeaders([])
+
+  return HypeClient.download
+    .postDownloadTorrent({ imdb_id, magnetUrl }, newCustomHeaders)
     .then((res) => res)
     .catch((error) => error)
 }
@@ -228,6 +250,15 @@ export async function updateComment({
   const customHeaders = getCustomHeaders([])
   return HypeClient.comment
     .putComment(commentId, payload, customHeaders)
+    .then((res) => res)
+    .catch((error) => error)
+}
+
+export async function getMovieInfo({ imdb_id }: { imdb_id: string }) {
+  const newCustomHeaders = getCustomHeaders([])
+
+  return HypeClient.download
+    .getDownloadMovieInfo({ imdb_id }, newCustomHeaders)
     .then((res) => res)
     .catch((error) => error)
 }
@@ -306,7 +337,6 @@ export async function actionWrapper({
 
     const res = await action(param)
     if (res.response.status === 400) {
-      console.log(res);
     }
     return { data: res.data, response: { status: res.response?.status } }
   }

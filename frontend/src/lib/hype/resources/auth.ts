@@ -26,7 +26,7 @@ class AuthResource extends BaseResource {
 
   loginEmailToken(
     payload: Record<string, string | null>,
-    customHeaders?: CustomHeaders
+    customHeaders?: CustomHeaders,
   ): ResponsePromise<ResCheckEmail> {
     const path = '/auth/sign-in/email-token'
     return this.client.request('POST', path, payload, {}, customHeaders)
@@ -34,7 +34,7 @@ class AuthResource extends BaseResource {
 
   loginPassword(
     payload: Record<string, string | null>,
-    customHeaders?: CustomHeaders
+    customHeaders?: CustomHeaders,
   ): ResponsePromise<ResCheckEmail> {
     const path = '/auth/sign-in/password'
     return this.client.request('POST', path, payload, {}, customHeaders)
