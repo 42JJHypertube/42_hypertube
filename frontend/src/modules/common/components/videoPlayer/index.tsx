@@ -53,6 +53,7 @@ function VideoPlayer({ imdb_id }: { imdb_id: number }) {
         action: getTorrentData,
         param: { imdb_id },
       })
+      console.log("torrentData: ", torrentData.data)
       if (torrentData.response.status === 200) {
         const torrent = getSortedTorrent({
           torrents: torrentData.data?.data?.movie?.torrents,
@@ -65,12 +66,13 @@ function VideoPlayer({ imdb_id }: { imdb_id: number }) {
 
   return (
     <div className={styles.container}>
+      {hash ? 
+      (<>
       {!play && (
         <button
           onClick={() => {
             clickPlay(movieState, hash, imdb_id, setPlay, setMovieState)
           }}
-          disabled={hash ? false : true}
         >
           Play
         </button>
@@ -81,6 +83,8 @@ function VideoPlayer({ imdb_id }: { imdb_id: number }) {
         ) : movieState === 'AVAILABLE' ? (
           <div> <HLSplayer hlsPlaylistPath={'tt0063350/master.m3u8'}/> </div>
         ) : null)}
+      </>) : (<div> No Torrent Data </div>)
+    }
     </div>
   )
 }
