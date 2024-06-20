@@ -1,5 +1,3 @@
-// import WebSocket from 'ws'
-
 //   {
 //     action: ('join' | 'detach'),
 //     torrentHash: (토렌트 해시코드)
@@ -64,7 +62,9 @@ class WebSocketClient {
     })
     this.hashFun.delete(torrentHash)
     this.clients?.send(message)
-    this.clients?.close()
+    if (this.hashFun.size == 0) {
+      this.clients?.close()
+    }
   }
 
   public getSocket() {

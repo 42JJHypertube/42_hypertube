@@ -3,9 +3,13 @@
 import React, { useEffect } from 'react'
 import Hls from 'hls.js' // Hls.js 라이브러리 import
 
-export default function HLSplayer({hlsPlaylistPath} : {hlsPlaylistPath: string}) {
-    const url =  `https://localhost/movies/${hlsPlaylistPath}`
-    useEffect(() => {
+export default function HLSplayer({
+  hlsPlaylistPath,
+}: {
+  hlsPlaylistPath: string
+}) {
+  const url = `https://localhost/movies/${hlsPlaylistPath}`
+  useEffect(() => {
     const videoElement = document.getElementById(
       'video-player',
     ) as HTMLVideoElement

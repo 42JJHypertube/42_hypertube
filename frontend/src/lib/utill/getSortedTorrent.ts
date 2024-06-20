@@ -21,15 +21,14 @@ function parseQuality(quality: string): number {
 }
 
 /**
- * 
- * @param {torrents : torrentInfo[]} : 토렌트 데이터가 들어있는 배열 
+ *
+ * @param {torrents : torrentInfo[]} : 토렌트 데이터가 들어있는 배열
  * @returns {TorrentInfo | undefined} 만약 토렌트 배열이 존재한다면, 2160보다 낮은 화질중 가장 높은 화질을 반환, 토렌트 배열이 존재하지않는다면 undefined 반환
  */
 
 function getSortedTorrent({ torrents }: { torrents: TorrentInfo[] }) {
   // torrent 파일이 존재하지 않는 경우 undefined 반환
-  if (!torrents)
-    return undefined
+  if (!torrents) return undefined
   const filteredTorrents = torrents.filter(
     (info) => parseQuality(info.quality) < 2160,
   )

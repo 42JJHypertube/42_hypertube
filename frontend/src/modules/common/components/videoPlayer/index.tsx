@@ -10,7 +10,6 @@ import {
   postTorrentDownload,
 } from '@/lib/data'
 import getSortedTorrent from '@/lib/utill/getSortedTorrent'
-import { TorrentInfo } from '@/lib/utill/getSortedTorrent'
 import HLSplayer from '@/modules/movie/components/HLSPlayer'
 
 type MovieState = 'NOFILE' | 'DOWNLOADING' | 'CONVERTING' | 'AVAILABLE'
@@ -53,7 +52,6 @@ function VideoPlayer({ imdb_id }: { imdb_id: number }) {
         action: getTorrentData,
         param: { imdb_id },
       })
-      console.log("torrentData: ", torrentData.data)
       if (torrentData.response.status === 200) {
         const torrent = getSortedTorrent({
           torrents: torrentData.data?.data?.movie?.torrents,
@@ -66,25 +64,30 @@ function VideoPlayer({ imdb_id }: { imdb_id: number }) {
 
   return (
     <div className={styles.container}>
-      {hash ? 
-      (<>
-      {!play && (
-        <button
-          onClick={() => {
-            clickPlay(movieState, hash, imdb_id, setPlay, setMovieState)
-          }}
-        >
-          Play
-        </button>
+      {hash ? (
+        <>
+          {!play && (
+            <button
+              onClick={() => {
+                clickPlay(movieState, hash, imdb_id, setPlay, setMovieState)
+              }}
+            >
+              Play
+            </button>
+          )}
+          {play &&
+            (movieState === 'DOWNLOADING' || movieState === 'CONVERTING' ? (
+              <TorrentProgress hash={hash!} setMovieState={setMovieState} />
+            ) : movieState === 'AVAILABLE' ? (
+              <div>
+                {' '}
+                <HLSplayer hlsPlaylistPath={'tt0063350/master.m3u8'} />{' '}
+              </div>
+            ) : null)}
+        </>
+      ) : (
+        <div> No Torrent Data </div>
       )}
-      {play &&
-        (movieState === 'DOWNLOADING' || movieState === 'CONVERTING' ? (
-          <TorrentProgress hash={hash!} setMovieState={setMovieState} />
-        ) : movieState === 'AVAILABLE' ? (
-          <div> <HLSplayer hlsPlaylistPath={'tt0063350/master.m3u8'}/> </div>
-        ) : null)}
-      </>) : (<div> No Torrent Data </div>)
-    }
     </div>
   )
 }

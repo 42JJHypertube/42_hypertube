@@ -14,7 +14,7 @@ function TorrentProgress({
 }) {
   const [progressPer, setProgress] = useState<number>(0)
   const [curState, setCurState] = useState<string>('')
-  const {socket, readyState} = useSocket()
+  const { socket, readyState } = useSocket()
 
   function updateProgress(hash: string, event: MessageEvent) {
     try {

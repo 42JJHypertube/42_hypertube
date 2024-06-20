@@ -20,23 +20,23 @@ const useSocket = () => {
       socket.addEventListener('close', () => {
         updateReadyState()
         setSocket(null)
-    })
+      })
       socket.addEventListener('error', updateReadyState)
     }
 
     return () => {
-        if (socket) {
-          socket.removeEventListener('open', updateReadyState);
-          socket.removeEventListener('close', () => {
-            updateReadyState();
-            setSocket(null);
-          });
-          socket.removeEventListener('error', updateReadyState);
-        }
-    };
+      if (socket) {
+        socket.removeEventListener('open', updateReadyState)
+        socket.removeEventListener('close', () => {
+          updateReadyState()
+          setSocket(null)
+        })
+        socket.removeEventListener('error', updateReadyState)
+      }
+    }
   }, [socket])
 
-  return {socket, readyState}
+  return { socket, readyState }
 }
 
 export default useSocket
