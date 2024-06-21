@@ -75,15 +75,15 @@ function VideoPlayer({ imdb_id }: { imdb_id: number }) {
               Play
             </button>
           )}
-          {play &&
+          {/* {play &&
             (movieState === 'DOWNLOADING' || movieState === 'CONVERTING' ? (
               <TorrentProgress hash={hash!} setMovieState={setMovieState} />
             ) : movieState === 'AVAILABLE' ? (
               <div>
-                {' '}
-                <HLSplayer hlsPlaylistPath={'tt0063350/master.m3u8'} />{' '}
+                <HLSplayer hlsPlaylistPath={'tt0063350/master.m3u8'} />
               </div>
-            ) : null)}
+            ) : null)} */}
+          {play && <div><HLSplayer hlsPlaylistPath={'tt0063350/master.m3u8'}/></div>}
         </>
       ) : (
         <div> No Torrent Data </div>

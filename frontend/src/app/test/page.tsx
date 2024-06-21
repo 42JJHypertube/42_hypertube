@@ -36,29 +36,32 @@ export default function TestPage() {
   }
 
   const handleEscape = () => {
-    if (!document.fullscreenElement){
+    if (!document.fullscreenElement) {
       setIsFullScreen(false)
     }
   }
 
   const toggleFullScreen = () => {
-    const videoElement = videoRef.current?.parentNode as HTMLDivElement;
-    if (!isFullScreen){
+    const videoElement = videoRef.current?.parentNode as HTMLDivElement
+    if (!isFullScreen) {
       if (videoElement) {
         if (videoElement.requestFullscreen) {
-          videoElement.requestFullscreen(); // 전체화면 모드 활성화
-        // } else if (videoElement.webkitRequestFullscreen) {
-        //   videoElement.webkitRequestFullscreen(); // 웹킷 브라우저 호환성
-        // } else if (videoElement.mozRequestFullScreen) {
-        //   videoElement.mozRequestFullScreen(); // 파이어폭스 호환성
-        // } else if (videoElement.msRequestFullscreen) {
-        //   videoElement.msRequestFullscreen(); // IE/Edge 호환성
-        // }
-          }
+          videoElement.requestFullscreen() // 전체화면 모드 활성화
+          // } else if (videoElement.webkitRequestFullscreen) {
+          //   videoElement.webkitRequestFullscreen(); // 웹킷 브라우저 호환성
+          // } else if (videoElement.mozRequestFullScreen) {
+          //   videoElement.mozRequestFullScreen(); // 파이어폭스 호환성
+          // } else if (videoElement.msRequestFullscreen) {
+          //   videoElement.msRequestFullscreen(); // IE/Edge 호환성
+          // }
+        }
         setIsFullScreen(true)
       }
     } else {
-      document.exitFullscreen().then(() => console.log("exit full screen")).catch(() => console.log("error occured"))
+      document
+        .exitFullscreen()
+        .then(() => console.log('exit full screen'))
+        .catch(() => console.log('error occured'))
       setIsFullScreen(false)
     }
   }
@@ -93,7 +96,7 @@ export default function TestPage() {
           setShowController(false)
         })
       }
-      document.addEventListener('fullscreenchange', handleEscape);
+      document.addEventListener('fullscreenchange', handleEscape)
 
       return () => {
         videoElement.removeEventListener('mousemove', showVideoController)
@@ -113,19 +116,35 @@ export default function TestPage() {
   return (
     <div>
       <p>Test Page</p>
-      <div className={isFullScreen ? `${styles.videoContainer}  ${styles.fullScreen}` :  `${styles.videoContainer}`} ref={outSideRef}>
-        <video
-          className={styles.videoPlayer}
-          ref={videoRef}
-          id="video-player"
-        >
+      <div
+        className={
+          isFullScreen
+            ? `${styles.videoContainer}  ${styles.fullScreen}`
+            : `${styles.videoContainer}`
+        }
+        ref={outSideRef}
+      >
+        <video className={styles.videoPlayer} ref={videoRef} id="video-player">
           Your browser does not support the video tag.
         </video>
         {showController && (
           <div className={styles.videoController}>
             <div className={styles.leftController}>
-              <button className={styles.buttons} onClick={isPlay ? () => {setIsPlay(false);videoRef.current?.pause()} : () => {setIsPlay(true);videoRef.current?.play()}}>
-                {isPlay ? <FaRegStopCircle/> : <FaPlay />}
+              <button
+                className={styles.buttons}
+                onClick={
+                  isPlay
+                    ? () => {
+                        setIsPlay(false)
+                        videoRef.current?.pause()
+                      }
+                    : () => {
+                        setIsPlay(true)
+                        videoRef.current?.play()
+                      }
+                }
+              >
+                {isPlay ? <FaRegStopCircle /> : <FaPlay />}
               </button>
               <button className={styles.buttons}>
                 <AiFillSound />

@@ -44,11 +44,7 @@ export default function ChangeImage({ imageUrl }: { imageUrl: string }) {
             Choose File
           </label>
           <div className={styles.inputContainer}>
-            <Input
-              name="file"
-              type="file"
-              onChange={handleFileChange}
-            />
+            <Input name="file" type="file" onChange={handleFileChange} />
           </div>
           <span> {curForm.message ? curForm.message : null}</span>
           <FormButton type="submit" content="프로필 변경하기" positive />
