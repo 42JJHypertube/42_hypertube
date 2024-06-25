@@ -1,40 +1,3 @@
-// 'use client'
-
-// import React, { useEffect } from 'react'
-// import Hls from 'hls.js' // Hls.js 라이브러리 import
-
-// export default function HLSplayer({
-//   hlsPlaylistPath,
-// }: {
-//   hlsPlaylistPath: string
-// }) {
-//   const url = `https://localhost/movies/${hlsPlaylistPath}`
-//   useEffect(() => {
-//     const videoElement = document.getElementById(
-//       'video-player',
-//     ) as HTMLVideoElement
-
-//     if (Hls.isSupported()) {
-//       const hls = new Hls()
-//       hls.loadSource(url)
-//       if (videoElement) hls.attachMedia(videoElement)
-//     } else if (videoElement?.canPlayType('application/vnd.apple.mpegurl')) {
-//       videoElement.src = url
-//     } else {
-//       console.error('Your browser does not support HLS streaming.')
-//     }
-//   }, [])
-
-//   return (
-//     <div>
-//       <p>Test Page</p>
-//       <video id="video-player" controls height="300" width="400">
-//         Your browser does not support the video tag.
-//       </video>
-//     </div>
-//   )
-// }
-
 'use client'
 
 import React, { Ref, useEffect, useRef, useState } from 'react'
@@ -54,12 +17,18 @@ const url =
   'https://bitdash-a.akamaihd.net/content/MI201109210084_1/m3u8s/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.m3u8'
 // const url =  'https://10.18.229.2/movies/tt2113625/master.m3u8'
 
-export default function HLSplayer({hlsPlaylistPath} : {hlsPlaylistPath : string}) {
+export default function HLSplayer({
+  hlsPlaylistPath,
+}: {
+  hlsPlaylistPath: string
+}) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const outSideRef = useRef<HTMLDivElement>(null)
+  const hlsRef = useRef<any>(null)
   const [showController, setShowController] = useState<boolean>(false)
   const [isPlay, setIsPlay] = useState<boolean>(false)
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false)
+  const [showLevel, setShowLevel] = useState<boolean>(false)
   let hideControllerTimeout: NodeJS.Timeout // 컨트롤러 숨김을 위한 타이머
 
   const showVideoController = () => {
@@ -110,12 +79,16 @@ export default function HLSplayer({hlsPlaylistPath} : {hlsPlaylistPath : string}
 
     if (Hls.isSupported()) {
       const hls = new Hls()
+      hlsRef.current = hls
       hls.on(Hls.Events.MEDIA_ATTACHED, function () {
         console.log('video and hls.js are now bound together !')
       })
       hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
         console.log(
           'manifest loaded, found ' + data.levels.length + ' quality level',
+          data.levels.forEach((lv) => {
+            console.log(lv)
+          }),
         )
         console.log(data)
       })
@@ -142,6 +115,7 @@ export default function HLSplayer({hlsPlaylistPath} : {hlsPlaylistPath : string}
           setShowController(false)
         })
         hls.destroy()
+        hlsRef.current = null
       }
     } else if (videoElement?.canPlayType('application/vnd.apple.mpegurl')) {
       videoElement.src = url
@@ -164,38 +138,68 @@ export default function HLSplayer({hlsPlaylistPath} : {hlsPlaylistPath : string}
           Your browser does not support the video tag.
         </video>
         {showController && (
-          <div className={styles.videoController}>
-            <div className={styles.leftController}>
-              <button
-                className={styles.buttons}
-                onClick={
-                  isPlay
-                    ? () => {
-                        setIsPlay(false)
-                        videoRef.current?.pause()
-                      }
-                    : () => {
-                        setIsPlay(true)
-                        videoRef.current?.play()
-                      }
-                }
-              >
-                {isPlay ? <FaRegStopCircle /> : <FaPlay />}
-              </button>
-              <button className={styles.buttons}>
-                <AiFillSound />
-              </button>
-            </div>
-            <div className={styles.rightController}>
-              <button className={styles.buttons}>
-                <MdSubtitles />
-              </button>
-              <button className={styles.buttons}>
-                <MdSettings />
-              </button>
-              <button className={styles.buttons} onClick={toggleFullScreen}>
-                <MdFullscreen />
-              </button>
+          <div className={styles.container}>
+            <input
+              type="range"
+              id="seekbar"
+              min="0"
+              max="100"
+              value="0"
+              step="1"
+              className={styles.seekbar}
+            />
+            <div className={styles.videoController}>
+              <div className={styles.leftController}>
+                <button
+                  className={styles.buttons}
+                  onClick={
+                    isPlay
+                      ? () => {
+                          setIsPlay(false)
+                          videoRef.current?.pause()
+                        }
+                      : () => {
+                          setIsPlay(true)
+                          videoRef.current?.play()
+                        }
+                  }
+                >
+                  {isPlay ? <FaRegStopCircle /> : <FaPlay />}
+                </button>
+                <button className={styles.buttons}>
+                  <AiFillSound />
+                </button>
+              </div>
+              <div className={styles.rightController}>
+                <button className={styles.buttons}>
+                  <MdSubtitles />
+                </button>
+                <button
+                  className={styles.buttons}
+                  onClick={() => {
+                    setShowLevel(!showLevel)
+                  }}
+                >
+                  <MdSettings />
+                  {showLevel && hlsRef?.current ? (
+                    <ul>
+                      {hlsRef.current.levels.map((lv: any, index: number) => (
+                        <li
+                          key={index}
+                          onClick={() => {
+                            hlsRef.current.nextLevel = index
+                          }}
+                        >
+                          {index}, {lv.height}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+                </button>
+                <button className={styles.buttons} onClick={toggleFullScreen}>
+                  <MdFullscreen />
+                </button>
+              </div>
             </div>
           </div>
         )}

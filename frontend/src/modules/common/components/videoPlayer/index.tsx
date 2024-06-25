@@ -83,7 +83,11 @@ function VideoPlayer({ imdb_id }: { imdb_id: number }) {
                 <HLSplayer hlsPlaylistPath={'tt0063350/master.m3u8'} />
               </div>
             ) : null)} */}
-          {play && <div><HLSplayer hlsPlaylistPath={'tt0063350/master.m3u8'}/></div>}
+          {play && (
+            <div>
+              <HLSplayer hlsPlaylistPath={'tt0063350/master.m3u8'} />
+            </div>
+          )}
         </>
       ) : (
         <div> No Torrent Data </div>
