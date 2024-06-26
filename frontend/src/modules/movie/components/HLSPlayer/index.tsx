@@ -29,6 +29,9 @@ export default function HLSplayer({
   const [isPlay, setIsPlay] = useState<boolean>(false)
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false)
   const [showLevel, setShowLevel] = useState<boolean>(false)
+  const [toggleVolume, setToggleVolume] = useState<boolean>(false)
+  const [volume, setVolume] = useState<number>(50)
+  const [videoTime, setVideoTime] = useState<number>(0)
   let hideControllerTimeout: NodeJS.Timeout // 컨트롤러 숨김을 위한 타이머
 
   const showVideoController = () => {
@@ -39,6 +42,24 @@ export default function HLSplayer({
     hideControllerTimeout = setTimeout(() => {
       setShowController(false)
     }, 3000) // 3초 후 컨트롤러 숨김
+  }
+  
+  const toggleVolumeButton = () => {
+    setToggleVolume(!toggleVolume)
+  }
+  
+  const volumeController = (e : any) => {
+    if (videoRef?.current) {
+      setVolume(e.target.value)
+      videoRef.current.volume = e.target.value / 100
+    }
+  }
+
+  const videoTimeController = (e : any) => {
+    if (videoRef?.current) {
+      setVideoTime(e.target.value)
+      videoRef.current.currentTime = e.target.value
+    }
   }
 
   const handleEscape = () => {
@@ -93,7 +114,7 @@ export default function HLSplayer({
         console.log(data)
       })
       hls.loadSource(
-        'https://bitdash-a.akamaihd.net/content/MI201109210084_1/m3u8s/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.m3u8',
+        '/master.m3u8',
       )
 
       if (videoElement) {
@@ -107,6 +128,15 @@ export default function HLSplayer({
         })
       }
       document.addEventListener('fullscreenchange', handleEscape)
+      const handleTimeUpdate = () => {
+        if (videoRef.current)
+          setVideoTime(videoRef.current.currentTime);
+      };
+  
+      if (videoRef.current) {
+        videoRef.current.addEventListener('timeupdate', handleTimeUpdate);
+      }
+  
 
       return () => {
         videoElement.removeEventListener('mousemove', showVideoController)
@@ -116,6 +146,9 @@ export default function HLSplayer({
         })
         hls.destroy()
         hlsRef.current = null
+        if (videoRef.current) {
+          videoRef.current.removeEventListener('timeupdate', handleTimeUpdate);
+        }
       }
     } else if (videoElement?.canPlayType('application/vnd.apple.mpegurl')) {
       videoElement.src = url
@@ -136,6 +169,7 @@ export default function HLSplayer({
       >
         <video className={styles.videoPlayer} ref={videoRef} id="video-player">
           Your browser does not support the video tag.
+          <track src="/subtitle.vtt" kind="subtitles" label="English" default/>
         </video>
         {showController && (
           <div className={styles.container}>
@@ -143,9 +177,10 @@ export default function HLSplayer({
               type="range"
               id="seekbar"
               min="0"
-              max="100"
-              value="0"
-              step="1"
+              max={videoRef?.current ? videoRef.current.duration : 0}
+              value={videoTime}
+              step="0.1"
+              onChange={videoTimeController}
               className={styles.seekbar}
             />
             <div className={styles.videoController}>
@@ -167,7 +202,17 @@ export default function HLSplayer({
                   {isPlay ? <FaRegStopCircle /> : <FaPlay />}
                 </button>
                 <button className={styles.buttons}>
-                  <AiFillSound />
+                  <AiFillSound onClick={toggleVolumeButton}/>
+                  {toggleVolume ? <input
+                    type="range"
+                    id="seekbar"
+                    min="0"
+                    max="100"
+                    value={volume}
+                    step="1"
+                    className={styles.seekbar}
+                    onChange={volumeController}
+                  /> : null}
                 </button>
               </div>
               <div className={styles.rightController}>
