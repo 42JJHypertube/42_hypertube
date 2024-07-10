@@ -16,8 +16,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -52,14 +50,14 @@ public class Movie extends BaseTimeEntity {
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Subtitle> subtitleList;
 
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserMovie> userMovies;
+
     public Movie(MovieDownDto movieDownDto) {
         this.imdbId = movieDownDto.getImdbId();
         this.torrentHash = movieDownDto.getTorrentHash();
         this.movieState = MovieState.DOWNLOADING;
     }
-
-    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserMovie> userMovies;
 
     public void setMovieState(MovieState movieState) {
         this.movieState = movieState;

@@ -11,6 +11,7 @@ import com.seoulJJ.hypertube.domain.movie.Movie;
 import com.seoulJJ.hypertube.domain.movie.MovieRepository;
 import com.seoulJJ.hypertube.domain.movie.exception.MovieNotFoundException;
 import com.seoulJJ.hypertube.domain.movie_subtitle.dto.SubtitleDto;
+import com.seoulJJ.hypertube.domain.movie_subtitle.exception.SubtitleNotFoundException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,5 +31,11 @@ public class SubtitleService {
         List<Subtitle> subtitleList = movie.getSubtitleList();
         List<SubtitleDto> subtitleDtoList = subtitleList.stream().map(SubtitleDto::new).collect(Collectors.toList());
         return subtitleDtoList;
+    }
+
+    @Transactional(readOnly = true)
+    public SubtitleDto findSubtitleById(Long subtitleId) {
+        Subtitle subtitle = subtitleRepository.findById(subtitleId).orElseThrow(() -> new SubtitleNotFoundException());
+        return new SubtitleDto(subtitle);
     }
 }
