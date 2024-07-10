@@ -1,4 +1,4 @@
-package com.seoulJJ.hypertube.domain.movie.subtitle.type;
+package com.seoulJJ.hypertube.domain.movie_subtitle.type;
 
 import java.util.Locale;
 
