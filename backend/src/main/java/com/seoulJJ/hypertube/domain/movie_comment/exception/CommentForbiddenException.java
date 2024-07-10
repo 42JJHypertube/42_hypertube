@@ -1,4 +1,4 @@
-package com.seoulJJ.hypertube.domain.movie.comment.exception;
+package com.seoulJJ.hypertube.domain.movie_comment.exception;
 
 import com.seoulJJ.hypertube.global.exception.ErrorCode;
 import com.seoulJJ.hypertube.global.exception.custom.ForbiddenException;

@@ -1,4 +1,4 @@
-package com.seoulJJ.hypertube.domain.movie.comment;
+package com.seoulJJ.hypertube.domain.movie_comment;
 
 import com.seoulJJ.hypertube.domain.movie.Movie;
 import com.seoulJJ.hypertube.domain.user.User;

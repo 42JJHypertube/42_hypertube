@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.seoulJJ.hypertube.domain.movie.dto.MovieDownDto;
 import com.seoulJJ.hypertube.domain.movie.type.MovieState;
+import com.seoulJJ.hypertube.domain.movie_subtitle.Subtitle;
 import com.seoulJJ.hypertube.domain.user.userMovie.UserMovie;
 import com.seoulJJ.hypertube.global.utils.BaseTimeEntity;
 
@@ -15,6 +16,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -45,6 +48,9 @@ public class Movie extends BaseTimeEntity {
     @Column(name = "state")
     @Enumerated(value = jakarta.persistence.EnumType.STRING)
     private MovieState movieState;
+
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Subtitle> subtitleList;
 
     public Movie(MovieDownDto movieDownDto) {
         this.imdbId = movieDownDto.getImdbId();
