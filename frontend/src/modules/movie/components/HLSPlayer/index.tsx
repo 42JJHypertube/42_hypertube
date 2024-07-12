@@ -1,6 +1,6 @@
 'use client'
 
-import React, { Ref, useEffect, useRef, useState } from 'react'
+import React, { Ref, useCallback, useEffect, useRef, useState } from 'react'
 import Hls from 'hls.js' // Hls.js 라이브러리 import
 import { FaPlay, FaRegStopCircle } from 'react-icons/fa' // 실행, 일시정지
 import {
@@ -10,7 +10,7 @@ import {
   MdSettings,
 } from 'react-icons/md' // 화질 설정, 자막설정, 전체화면, 전체화면 탈출
 import { AiFillSound } from 'react-icons/ai' // 사운드 설정 버튼
-
+import PlayerButton from '../PlayerButtons'
 import styles from './index.module.scss'
 
 const url =
@@ -25,11 +25,13 @@ export default function HLSplayer({
   const videoRef = useRef<HTMLVideoElement>(null)
   const outSideRef = useRef<HTMLDivElement>(null)
   const hlsRef = useRef<any>(null)
+
   const [showController, setShowController] = useState<boolean>(false)
   const [isPlay, setIsPlay] = useState<boolean>(false)
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false)
   const [showLevel, setShowLevel] = useState<boolean>(false)
   const [toggleVolume, setToggleVolume] = useState<boolean>(false)
+  
   const [volume, setVolume] = useState<number>(50)
   const [videoTime, setVideoTime] = useState<number>(0)
   let hideControllerTimeout: NodeJS.Timeout // 컨트롤러 숨김을 위한 타이머
@@ -43,19 +45,19 @@ export default function HLSplayer({
       setShowController(false)
     }, 3000) // 3초 후 컨트롤러 숨김
   }
-  
+
   const toggleVolumeButton = () => {
     setToggleVolume(!toggleVolume)
   }
-  
-  const volumeController = (e : any) => {
+
+  const volumeController = (e: any) => {
     if (videoRef?.current) {
       setVolume(e.target.value)
       videoRef.current.volume = e.target.value / 100
     }
   }
 
-  const videoTimeController = (e : any) => {
+  const videoTimeController = (e: any) => {
     if (videoRef?.current) {
       setVideoTime(e.target.value)
       videoRef.current.currentTime = e.target.value
@@ -113,9 +115,7 @@ export default function HLSplayer({
         )
         console.log(data)
       })
-      hls.loadSource(
-        '/master.m3u8',
-      )
+      hls.loadSource(url)
 
       if (videoElement) {
         videoElement.addEventListener('mousemove', showVideoController)
@@ -129,14 +129,12 @@ export default function HLSplayer({
       }
       document.addEventListener('fullscreenchange', handleEscape)
       const handleTimeUpdate = () => {
-        if (videoRef.current)
-          setVideoTime(videoRef.current.currentTime);
-      };
-  
-      if (videoRef.current) {
-        videoRef.current.addEventListener('timeupdate', handleTimeUpdate);
+        if (videoRef.current) setVideoTime(videoRef.current.currentTime)
       }
-  
+
+      if (videoRef.current) {
+        videoRef.current.addEventListener('timeupdate', handleTimeUpdate)
+      }
 
       return () => {
         videoElement.removeEventListener('mousemove', showVideoController)
@@ -147,7 +145,7 @@ export default function HLSplayer({
         hls.destroy()
         hlsRef.current = null
         if (videoRef.current) {
-          videoRef.current.removeEventListener('timeupdate', handleTimeUpdate);
+          videoRef.current.removeEventListener('timeupdate', handleTimeUpdate)
         }
       }
     } else if (videoElement?.canPlayType('application/vnd.apple.mpegurl')) {
@@ -156,6 +154,66 @@ export default function HLSplayer({
       console.error('Your browser does not support HLS streaming.')
     }
   }, [])
+
+  useEffect(() => {
+    if (isPlay) videoRef.current?.play()
+    else videoRef.current?.pause()
+  }, [isPlay])
+
+  useEffect(() => {
+    if (videoRef.current){
+      if (toggleVolume) videoRef.current.muted = true
+      else videoRef.current.muted = false
+    }
+  }, [toggleVolume])
+
+  useEffect(() => {
+    const videoElement = videoRef.current?.parentNode as HTMLDivElement
+    if (isFullScreen) {
+      if (videoElement) {
+        if (videoElement.requestFullscreen) {
+          videoElement.requestFullscreen() 
+        }
+        setIsFullScreen(true)
+      }
+    } else {
+      document
+        .exitFullscreen()
+        .then(() => console.log('exit full screen'))
+        .catch(() => console.log('error occured'))
+      setIsFullScreen(false)
+    }
+  }, [isFullScreen])
+
+  const fullScreenAction = useCallback((b: boolean) => {
+    const videoElement = videoRef.current?.parentNode as HTMLDivElement
+    if (b) {
+      if (videoElement) {
+        if (videoElement.requestFullscreen) {
+          videoElement.requestFullscreen() 
+        }
+        setIsFullScreen(true)
+      }
+    } else {
+      document
+        .exitFullscreen()
+        .then(() => console.log('exit full screen'))
+        .catch(() => console.log('error occured'))
+      setIsFullScreen(false)
+    }
+  }, [videoRef])
+
+  const volumeAction = useCallback((b: boolean) => {
+    if (videoRef.current){
+      if (b) videoRef.current.muted = true
+      else videoRef.current.muted = false
+    }
+  }, [videoRef])
+
+  const playAction = useCallback((b : boolean) => {
+    if (b) videoRef.current?.play()
+    else videoRef.current?.pause()
+  }, [videoRef])
 
   return (
     <div>
@@ -169,9 +227,9 @@ export default function HLSplayer({
       >
         <video className={styles.videoPlayer} ref={videoRef} id="video-player">
           Your browser does not support the video tag.
-          <track src="/subtitle.vtt" kind="subtitles" label="English" default/>
+          <track src="/subtitle.vtt" kind="subtitles" label="English" default />
         </video>
-        {showController && (
+        {/* {showController && ( */}
           <div className={styles.container}>
             <input
               type="range"
@@ -185,52 +243,33 @@ export default function HLSplayer({
             />
             <div className={styles.videoController}>
               <div className={styles.leftController}>
-                <button
-                  className={styles.buttons}
-                  onClick={
-                    isPlay
-                      ? () => {
-                          setIsPlay(false)
-                          videoRef.current?.pause()
-                        }
-                      : () => {
-                          setIsPlay(true)
-                          videoRef.current?.play()
-                        }
-                  }
-                >
-                  {isPlay ? <FaRegStopCircle /> : <FaPlay />}
-                </button>
-                <button className={styles.buttons}>
-                  <AiFillSound onClick={toggleVolumeButton}/>
-                  {toggleVolume ? <input
-                    type="range"
-                    id="seekbar"
-                    min="0"
-                    max="100"
-                    value={volume}
-                    step="1"
-                    className={styles.seekbar}
-                    onChange={volumeController}
-                  /> : null}
-                </button>
+                {/* <PlayerButton setToggle={setIsPlay} icon={isPlay ? <FaRegStopCircle /> : <FaPlay />}/> */}
+                <PlayerButton type='play' action={playAction}/>
+                {/* <PlayerButton setToggle={setToggleVolume} icon={<AiFillSound/>}/> */}
+                <input
+                  type="range"
+                  id="seekbar"
+                  min="0"
+                  max="100"
+                  value={volume}
+                  step="1"
+                  className={styles.seekbar}
+                  onChange={volumeController}
+                />
               </div>
               <div className={styles.rightController}>
                 <button className={styles.buttons}>
                   <MdSubtitles />
                 </button>
-                <button
-                  className={styles.buttons}
-                  onClick={() => {
-                    setShowLevel(!showLevel)
-                  }}
-                >
+                <label className={styles.buttons} htmlFor="setting">
                   <MdSettings />
-                  {showLevel && hlsRef?.current ? (
-                    <ul>
+                </label>
+                  <input id="setting" className={styles.checkboxInput} type="checkbox" />
+                  {/* {hlsRef?.current ? (
+                    <ul id="bandwith-level">
                       {hlsRef.current.levels.map((lv: any, index: number) => (
                         <li
-                          key={index}
+                          key={lv}
                           onClick={() => {
                             hlsRef.current.nextLevel = index
                           }}
@@ -239,11 +278,8 @@ export default function HLSplayer({
                         </li>
                       ))}
                     </ul>
-                  ) : null}
-                </button>
-                <button className={styles.buttons} onClick={toggleFullScreen}>
-                  <MdFullscreen />
-                </button>
+                  ) : null} */}
+                {/* <PlayerButton icon={<MdFullscreen />} setToggle={setIsFullScreen}/> */}
               </div>
             </div>
           </div>
