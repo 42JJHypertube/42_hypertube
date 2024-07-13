@@ -1,0 +1,42 @@
+.container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.buttonWrapper {
+  display: inline-flex; /* 버튼과 레이블을 인라인으로 배치 */
+  align-items: center; /* 아이콘을 세로 중앙 정렬 */
+  justify-content: center; /* 아이콘을 가로 중앙 정렬 */
+  background-color: transparent; /* 배경을 투명하게 */
+}
+
+.upperContent {
+  position: absolute;
+  bottom: 100%; /* 상위 컨테이너의 상단에 정확히 위치하도록 합니다. */
+  left: 0; /* 좌측 정렬 */
+  width: 100%; /* 전체 너비를 차지하도록 설정 */
+  height: auto;
+  background-color: transparent; /* 예시로 배경색 추가 */
+  border: none; /* 예시로 테두리 추가 */
+  padding: 10px; /* 내용물 주위에 여백 추가 */
+}
+
+.button {
+  padding: 0.2rem; /* 버튼 내부의 여백 설정 */
+  border: none; /* 버튼의 테두리 없앰 */
+  cursor: pointer; /* 커서를 포인터로 변경 */
+  background-color: transparent; /* 배경을 투명하게 */
+  > svg {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+.on {
+  visibility: visible;
+}
+
+.off {
+  visibility: hidden;
+}

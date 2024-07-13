@@ -1,16 +1,8 @@
 'use client'
 
-import React, { Ref, useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import Hls from 'hls.js' // Hls.js 라이브러리 import
-import { FaPlay, FaRegStopCircle } from 'react-icons/fa' // 실행, 일시정지
-import {
-  MdSubtitles,
-  MdFullscreen,
-  MdFullscreenExit,
-  MdSettings,
-} from 'react-icons/md' // 화질 설정, 자막설정, 전체화면, 전체화면 탈출
-import { AiFillSound } from 'react-icons/ai' // 사운드 설정 버튼
-import PlayerButton from '../PlayerButtons'
+import PlayerController from '../playerController'
 import styles from './index.module.scss'
 
 const url =
@@ -27,13 +19,6 @@ export default function HLSplayer({
   const hlsRef = useRef<any>(null)
 
   const [showController, setShowController] = useState<boolean>(false)
-  const [isPlay, setIsPlay] = useState<boolean>(false)
-  const [isFullScreen, setIsFullScreen] = useState<boolean>(false)
-  const [showLevel, setShowLevel] = useState<boolean>(false)
-  const [toggleVolume, setToggleVolume] = useState<boolean>(false)
-  
-  const [volume, setVolume] = useState<number>(50)
-  const [videoTime, setVideoTime] = useState<number>(0)
   let hideControllerTimeout: NodeJS.Timeout // 컨트롤러 숨김을 위한 타이머
 
   const showVideoController = () => {
@@ -44,55 +29,6 @@ export default function HLSplayer({
     hideControllerTimeout = setTimeout(() => {
       setShowController(false)
     }, 3000) // 3초 후 컨트롤러 숨김
-  }
-
-  const toggleVolumeButton = () => {
-    setToggleVolume(!toggleVolume)
-  }
-
-  const volumeController = (e: any) => {
-    if (videoRef?.current) {
-      setVolume(e.target.value)
-      videoRef.current.volume = e.target.value / 100
-    }
-  }
-
-  const videoTimeController = (e: any) => {
-    if (videoRef?.current) {
-      setVideoTime(e.target.value)
-      videoRef.current.currentTime = e.target.value
-    }
-  }
-
-  const handleEscape = () => {
-    if (!document.fullscreenElement) {
-      setIsFullScreen(false)
-    }
-  }
-
-  const toggleFullScreen = () => {
-    const videoElement = videoRef.current?.parentNode as HTMLDivElement
-    if (!isFullScreen) {
-      if (videoElement) {
-        if (videoElement.requestFullscreen) {
-          videoElement.requestFullscreen() // 전체화면 모드 활성화
-          // } else if (videoElement.webkitRequestFullscreen) {
-          //   videoElement.webkitRequestFullscreen(); // 웹킷 브라우저 호환성
-          // } else if (videoElement.mozRequestFullScreen) {
-          //   videoElement.mozRequestFullScreen(); // 파이어폭스 호환성
-          // } else if (videoElement.msRequestFullscreen) {
-          //   videoElement.msRequestFullscreen(); // IE/Edge 호환성
-          // }
-        }
-        setIsFullScreen(true)
-      }
-    } else {
-      document
-        .exitFullscreen()
-        .then(() => console.log('exit full screen'))
-        .catch(() => console.log('error occured'))
-      setIsFullScreen(false)
-    }
   }
 
   useEffect(() => {
@@ -127,14 +63,6 @@ export default function HLSplayer({
           setShowController(false)
         })
       }
-      document.addEventListener('fullscreenchange', handleEscape)
-      const handleTimeUpdate = () => {
-        if (videoRef.current) setVideoTime(videoRef.current.currentTime)
-      }
-
-      if (videoRef.current) {
-        videoRef.current.addEventListener('timeupdate', handleTimeUpdate)
-      }
 
       return () => {
         videoElement.removeEventListener('mousemove', showVideoController)
@@ -144,9 +72,6 @@ export default function HLSplayer({
         })
         hls.destroy()
         hlsRef.current = null
-        if (videoRef.current) {
-          videoRef.current.removeEventListener('timeupdate', handleTimeUpdate)
-        }
       }
     } else if (videoElement?.canPlayType('application/vnd.apple.mpegurl')) {
       videoElement.src = url
@@ -155,135 +80,14 @@ export default function HLSplayer({
     }
   }, [])
 
-  useEffect(() => {
-    if (isPlay) videoRef.current?.play()
-    else videoRef.current?.pause()
-  }, [isPlay])
-
-  useEffect(() => {
-    if (videoRef.current){
-      if (toggleVolume) videoRef.current.muted = true
-      else videoRef.current.muted = false
-    }
-  }, [toggleVolume])
-
-  useEffect(() => {
-    const videoElement = videoRef.current?.parentNode as HTMLDivElement
-    if (isFullScreen) {
-      if (videoElement) {
-        if (videoElement.requestFullscreen) {
-          videoElement.requestFullscreen() 
-        }
-        setIsFullScreen(true)
-      }
-    } else {
-      document
-        .exitFullscreen()
-        .then(() => console.log('exit full screen'))
-        .catch(() => console.log('error occured'))
-      setIsFullScreen(false)
-    }
-  }, [isFullScreen])
-
-  const fullScreenAction = useCallback((b: boolean) => {
-    const videoElement = videoRef.current?.parentNode as HTMLDivElement
-    if (b) {
-      if (videoElement) {
-        if (videoElement.requestFullscreen) {
-          videoElement.requestFullscreen() 
-        }
-        setIsFullScreen(true)
-      }
-    } else {
-      document
-        .exitFullscreen()
-        .then(() => console.log('exit full screen'))
-        .catch(() => console.log('error occured'))
-      setIsFullScreen(false)
-    }
-  }, [videoRef])
-
-  const volumeAction = useCallback((b: boolean) => {
-    if (videoRef.current){
-      if (b) videoRef.current.muted = true
-      else videoRef.current.muted = false
-    }
-  }, [videoRef])
-
-  const playAction = useCallback((b : boolean) => {
-    if (b) videoRef.current?.play()
-    else videoRef.current?.pause()
-  }, [videoRef])
-
   return (
-    <div>
-      <div
-        className={
-          isFullScreen
-            ? `${styles.videoContainer}  ${styles.fullScreen}`
-            : `${styles.videoContainer}`
-        }
-        ref={outSideRef}
-      >
-        <video className={styles.videoPlayer} ref={videoRef} id="video-player">
-          Your browser does not support the video tag.
-          <track src="/subtitle.vtt" kind="subtitles" label="English" default />
-        </video>
-        {/* {showController && ( */}
-          <div className={styles.container}>
-            <input
-              type="range"
-              id="seekbar"
-              min="0"
-              max={videoRef?.current ? videoRef.current.duration : 0}
-              value={videoTime}
-              step="0.1"
-              onChange={videoTimeController}
-              className={styles.seekbar}
-            />
-            <div className={styles.videoController}>
-              <div className={styles.leftController}>
-                {/* <PlayerButton setToggle={setIsPlay} icon={isPlay ? <FaRegStopCircle /> : <FaPlay />}/> */}
-                <PlayerButton type='play' action={playAction}/>
-                {/* <PlayerButton setToggle={setToggleVolume} icon={<AiFillSound/>}/> */}
-                <input
-                  type="range"
-                  id="seekbar"
-                  min="0"
-                  max="100"
-                  value={volume}
-                  step="1"
-                  className={styles.seekbar}
-                  onChange={volumeController}
-                />
-              </div>
-              <div className={styles.rightController}>
-                <button className={styles.buttons}>
-                  <MdSubtitles />
-                </button>
-                <label className={styles.buttons} htmlFor="setting">
-                  <MdSettings />
-                </label>
-                  <input id="setting" className={styles.checkboxInput} type="checkbox" />
-                  {/* {hlsRef?.current ? (
-                    <ul id="bandwith-level">
-                      {hlsRef.current.levels.map((lv: any, index: number) => (
-                        <li
-                          key={lv}
-                          onClick={() => {
-                            hlsRef.current.nextLevel = index
-                          }}
-                        >
-                          {index}, {lv.height}
-                        </li>
-                      ))}
-                    </ul>
-                  ) : null} */}
-                {/* <PlayerButton icon={<MdFullscreen />} setToggle={setIsFullScreen}/> */}
-              </div>
-            </div>
-          </div>
-        )}
+    <div className={styles.videoContainer} ref={outSideRef}>
+      <video className={styles.videoPlayer} ref={videoRef} id="video-player">
+        Your browser does not support the video tag.
+        <track src="/subtitle.vtt" kind="subtitles" label="English" default />
+      </video>
+      <div className={showController ? `${styles.controllerOn}` : `${styles.controllerOff}`} >
+        <PlayerController hlsRef={hlsRef.current} videoRef={videoRef.current} outSideRef={outSideRef.current}/>
       </div>
     </div>
   )
