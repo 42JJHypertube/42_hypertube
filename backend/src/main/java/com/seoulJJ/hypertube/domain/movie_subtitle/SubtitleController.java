@@ -25,9 +25,10 @@ public class SubtitleController {
 
     @GetMapping("/search")
     public ResponseEntity<OpenSubtitleListResDto> searchOpenSubtitleList(@RequestParam String imdbId,
-            @RequestParam(required = false) String language) {
+            @RequestParam(required = false) String language,
+            @RequestParam(required = false) String page) {
         OpenSubtitleListResDto openSubtitleListResDto = openSubtitleAPIService.getSubtitleListByImdbId(imdbId,
-                language);
+                language, page);
         return ResponseEntity.ok().body(openSubtitleListResDto);
     }
 }

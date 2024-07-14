@@ -14,7 +14,7 @@ public class OpenSubtitleAPIService {
     @Autowired
     private final OpenSubtitleAPIClient openSubtitleAPIClient;
 
-    public OpenSubtitleListResDto getSubtitleListByImdbId(String imdbId, String language) {
-        return openSubtitleAPIClient.getSubtitleListByImdbId(imdbId, language);
+    public OpenSubtitleListResDto getSubtitleListByImdbId(String imdbId, String language, String page) {
+        return openSubtitleAPIClient.getSubtitleListByImdbId(imdbId, language, page);
     } // TODO : 피드백 질문하기
 }

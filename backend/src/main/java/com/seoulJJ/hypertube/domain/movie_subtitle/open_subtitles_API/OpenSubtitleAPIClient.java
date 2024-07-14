@@ -28,7 +28,7 @@ public class OpenSubtitleAPIClient {
                 .addHeader("Api-Key", key);
     }
 
-    public OpenSubtitleListResDto getSubtitleListByImdbId(String imdbId, String language) {
+    public OpenSubtitleListResDto getSubtitleListByImdbId(String imdbId, String language, String page) {
         HttpUrl.Builder urlBuilder = HttpUrl.parse(endpoint + "/subtitles").newBuilder();
         urlBuilder.addQueryParameter("imdb_id", imdbId);
         urlBuilder.addQueryParameter("ai_translated", "false");
@@ -36,6 +36,9 @@ public class OpenSubtitleAPIClient {
 
         if (language != null) {
             urlBuilder.addQueryParameter("languages", language);
+        }
+        if (page != null) {
+            urlBuilder.addQueryParameter("page", page);
         }
         HttpUrl httpUrl = urlBuilder.build();
         Request request = requestBuilder
