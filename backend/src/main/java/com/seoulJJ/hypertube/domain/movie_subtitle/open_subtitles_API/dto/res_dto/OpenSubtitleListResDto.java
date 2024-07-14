@@ -30,9 +30,9 @@ public class OpenSubtitleListResDto {
         Gson gson = new Gson();
         JsonObject rootObject = gson.fromJson(jsonString, JsonObject.class);
 
-        this.totalPages = rootObject.get("totalPages").getAsInt();
-        this.totalCount = rootObject.get("totalCount").getAsInt();
-        this.perPage = rootObject.get("perPage").getAsInt();
+        this.totalPages = rootObject.get("total_pages").getAsInt();
+        this.totalCount = rootObject.get("total_count").getAsInt();
+        this.perPage = rootObject.get("per_page").getAsInt();
         this.page = rootObject.get("page").getAsInt();
 
         JsonArray dataArray = rootObject.getAsJsonArray("data");
