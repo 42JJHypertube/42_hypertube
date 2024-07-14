@@ -11,7 +11,6 @@ import com.seoulJJ.hypertube.domain.movie_subtitle.open_subtitles_API.dto.res_dt
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,6 +26,7 @@ public class SubtitleController {
     @GetMapping("/search")
     public ResponseEntity<OpenSubtitleListResDto> searchOpenSubtitleList(@RequestParam String imdbId,
             @RequestParam(required = false) String language) {
+        System.out.println("imdbId: " + imdbId + "\nlanguage: " + language);
         OpenSubtitleListResDto openSubtitleListResDto = openSubtitleAPIService.getSubtitleListByImdbId(imdbId,
                 language);
         return ResponseEntity.ok().body(openSubtitleListResDto);

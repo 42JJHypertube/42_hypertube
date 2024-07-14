@@ -7,24 +7,17 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.seoulJJ.hypertube.domain.movie_subtitle.dto.SubtitleDto;
 import com.seoulJJ.hypertube.domain.movie_subtitle.open_subtitles_API.dto.OpenSubtitleDataDto;
 
+import lombok.Getter;
+
+@Getter
 public class OpenSubtitleListResDto {
     private Integer totalPages;
     private Integer totalCount;
     private Integer perPage;
     private Integer page;
     private List<OpenSubtitleDataDto> data;
-
-
-    public OpenSubtitleListResDto(int totalPages, int totalCount, int perPage, int page, List<OpenSubtitleDataDto> data) {
-        this.totalPages = totalPages;
-        this.totalCount = totalCount;
-        this.perPage = perPage;
-        this.page = page;
-        this.data = data;
-    }
 
     public OpenSubtitleListResDto(String jsonString) {
         Gson gson = new Gson();
@@ -36,10 +29,10 @@ public class OpenSubtitleListResDto {
         this.page = rootObject.get("page").getAsInt();
 
         JsonArray dataArray = rootObject.getAsJsonArray("data");
-        List<OpenSubtitleDataDto> openSubtitleDataDtoList = new ArrayList<>();
+        this.data = new ArrayList<>();
 
         for (JsonElement element : dataArray) {
-            openSubtitleDataDtoList.add(new OpenSubtitleDataDto(element));
+            this.data.add(new OpenSubtitleDataDto(element));
         }
     }
 
