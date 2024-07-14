@@ -26,7 +26,6 @@ public class SubtitleController {
     @GetMapping("/search")
     public ResponseEntity<OpenSubtitleListResDto> searchOpenSubtitleList(@RequestParam String imdbId,
             @RequestParam(required = false) String language) {
-        System.out.println("imdbId: " + imdbId + "\nlanguage: " + language);
         OpenSubtitleListResDto openSubtitleListResDto = openSubtitleAPIService.getSubtitleListByImdbId(imdbId,
                 language);
         return ResponseEntity.ok().body(openSubtitleListResDto);
