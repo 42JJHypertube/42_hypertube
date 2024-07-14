@@ -78,6 +78,12 @@ dependencies {
 
 	// jlibtorrent
 	implementation files('libs/jlibtorrent/jlibtorrent-1.2.19.0.jar');
+
+	// okhttp
+	implementation 'com.squareup.okhttp3:okhttp:4.9.2'
+
+	//gson
+	implementation 'com.google.code.gson:gson:2.8.8'
 }
 
 tasks.named('bootBuildImage') {
