@@ -11,7 +11,7 @@ import lombok.Getter;
 @Getter
 public class OpenSubtitleDataDto {
     private Long openSubtitleId; // OpenSubtitle의 Id
-    private Long language; // 자막 언어
+    private String language; // 자막 언어
     private Long fileId; // OpenSubtitle의 자막 파일 Id, 추후 다운로드 요청시 사용
     private String fileName; // 자막 파일 이름
 
@@ -20,7 +20,7 @@ public class OpenSubtitleDataDto {
         this.openSubtitleId = node.get("id").getAsLong();
 
         JsonObject attributes = node.getAsJsonObject("attributes");
-        this.language = attributes.get("language").getAsLong();
+        this.language = attributes.get("language").getAsString();
 
         JsonArray filesArray = attributes.getAsJsonArray("files");
         for (JsonElement fileElement : filesArray) {
