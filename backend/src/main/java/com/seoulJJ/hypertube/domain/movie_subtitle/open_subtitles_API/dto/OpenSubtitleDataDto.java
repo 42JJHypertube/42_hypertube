@@ -11,6 +11,7 @@ import lombok.Getter;
 @Getter
 public class OpenSubtitleDataDto {
     private Long openSubtitleId; // OpenSubtitle의 Id
+    private String imdbId;
     private String language; // 자막 언어
     private Long fileId; // OpenSubtitle의 자막 파일 Id, 추후 다운로드 요청시 사용
     private String fileName; // 자막 파일 이름
