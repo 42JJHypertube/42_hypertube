@@ -1,15 +1,7 @@
 package com.seoulJJ.hypertube.domain.movie_subtitle.dto;
 
-import com.seoulJJ.hypertube.domain.movie.Movie;
 import com.seoulJJ.hypertube.domain.movie_subtitle.Subtitle;
-import com.seoulJJ.hypertube.domain.movie_subtitle.type.LanguageType;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -17,23 +9,22 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SubtitleDto {
 
-    private Long id;
+    private Long openSubtitleId;
 
     private Long movieId;
 
     private String path;
 
-    private LanguageType language;
+    private String language;
 
-    public SubtitleDto(Long id, Long movieId, String path, LanguageType language) {
-        this.id = id;
+    public SubtitleDto(Long openSubtitleId, Long movieId, String path, String language) {
         this.movieId = movieId;
         this.path = path;
         this.language = language;
     }
 
     public SubtitleDto(Subtitle subtitle) {
-        this.id = subtitle.getId();
+        this.openSubtitleId = subtitle.getOpenSubtitleId();
         this.movieId = subtitle.getMovie().getId();
         this.path = subtitle.getPath();
         this.language = subtitle.getLanguage();
@@ -44,7 +35,7 @@ public class SubtitleDto {
     }
 
     public String toString() {
-        return "SubtitleDto(id=" + this.getId() + ", movie_id=" + this.getMovieId() + ", path=" + this.getPath()
-                + ", language=" + this.getLanguage() + ")";
+        return "openSubtitleId: " + openSubtitleId + ", movieId: " + movieId + ", path: " + path + ", language: "
+                + language;
     }
 }

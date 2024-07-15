@@ -1,6 +1,7 @@
 package com.seoulJJ.hypertube.domain.movie;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import com.seoulJJ.hypertube.domain.movie.dto.MovieDownDto;
 import com.seoulJJ.hypertube.domain.movie.type.MovieState;
@@ -48,10 +49,10 @@ public class Movie extends BaseTimeEntity {
     private MovieState movieState;
 
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Subtitle> subtitleList;
+    private List<Subtitle> subtitleList = new ArrayList<>();
 
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserMovie> userMovies;
+    private List<UserMovie> userMovies = new ArrayList<>();;
 
     public Movie(MovieDownDto movieDownDto) {
         this.imdbId = movieDownDto.getImdbId();
