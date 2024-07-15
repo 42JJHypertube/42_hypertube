@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.seoulJJ.hypertube.domain.movie_subtitle.dto.SubtitleDto;
 import com.seoulJJ.hypertube.domain.movie_subtitle.dto.SubtitleListResDto;
+import com.seoulJJ.hypertube.domain.movie_subtitle.exception.SubtitleNotFoundException;
 import com.seoulJJ.hypertube.domain.movie_subtitle.open_subtitles_API.OpenSubtitleAPIClient;
 import com.seoulJJ.hypertube.domain.movie_subtitle.open_subtitles_API.dto.OpenSubtitleDataDto;
 import com.seoulJJ.hypertube.domain.movie_subtitle.open_subtitles_API.dto.res_dto.OpenSubtitleListResDto;
@@ -48,8 +49,14 @@ public class SubtitleController {
     @PostMapping("/download/movies/{imdbId}")
     public ResponseEntity<SubtitleDto> getSubtitleByFileId(@RequestBody OpenSubtitleDataDto openSubtitleDataDto,
             @RequestParam String imdbId) {
-        SubtitleDto subtitleDto = subtitleService.downLoadOpenSubtitle(openSubtitleDataDto, imdbId);
-        return ResponseEntity.ok().body(subtitleDto);
+        try {
+            SubtitleDto subtitleDto = subtitleService
+                    .findSubtitleByOpenSubtitleId(openSubtitleDataDto.getOpenSubtitleId());
+            return ResponseEntity.ok().body(subtitleDto);
+        } catch (SubtitleNotFoundException e) {
+            SubtitleDto subtitleDto = subtitleService.downLoadOpenSubtitle(openSubtitleDataDto, imdbId);
+            return ResponseEntity.ok().body(subtitleDto);
+        }
     }
 
     @GetMapping("/search")
