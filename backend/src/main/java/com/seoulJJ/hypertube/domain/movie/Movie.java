@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.seoulJJ.hypertube.domain.movie.dto.MovieDownDto;
 import com.seoulJJ.hypertube.domain.movie.type.MovieState;
+import com.seoulJJ.hypertube.domain.movie_subtitle.Subtitle;
 import com.seoulJJ.hypertube.domain.user.userMovie.UserMovie;
 import com.seoulJJ.hypertube.global.utils.BaseTimeEntity;
 
@@ -46,14 +47,17 @@ public class Movie extends BaseTimeEntity {
     @Enumerated(value = jakarta.persistence.EnumType.STRING)
     private MovieState movieState;
 
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Subtitle> subtitleList;
+
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserMovie> userMovies;
+
     public Movie(MovieDownDto movieDownDto) {
         this.imdbId = movieDownDto.getImdbId();
         this.torrentHash = movieDownDto.getTorrentHash();
         this.movieState = MovieState.DOWNLOADING;
     }
-
-    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserMovie> userMovies;
 
     public void setMovieState(MovieState movieState) {
         this.movieState = movieState;
