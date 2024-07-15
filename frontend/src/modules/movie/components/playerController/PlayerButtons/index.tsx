@@ -17,6 +17,8 @@ type Props = {
   action?: any
   upperContent?: JSX.Element | null
   rightContent?: JSX.Element | null
+  outSideRef?: any
+  videoRef?: any
 }
 
 function selectIcon(icon: ButtonType): JSX.Element[] {
@@ -39,9 +41,11 @@ export default function PlayerButton({
   action = null,
   upperContent = null,
   rightContent = null,
+  outSideRef = null,
+  videoRef = null,
 }: Props) {
   console.log('Component rendered type :', type, " upperContent: ", upperContent)
-  const [toggle, isToggle] = useState<boolean>(false)
+  const [toggle, setToggle] = useState<boolean>(false)
   const [active, deactive] = selectIcon(type)
 
   useEffect(() => {
@@ -51,13 +55,39 @@ export default function PlayerButton({
     }
   }, [toggle, action])
 
+  useEffect(() => {
+    const switchToggle = (event : React.MouseEvent<HTMLUListElement, MouseEvent>) => {
+      const target = event.target as HTMLLIElement
+      if (!target.matches('video')) return;
+      setToggle((prev) => !prev)   
+    }
+    const handleEnded = () => {
+      console.log("END!")
+      setToggle(false)
+    }
+
+    if (type == 'play') {
+      if (outSideRef){
+        outSideRef.addEventListener('click', switchToggle)
+      }
+      if (videoRef){
+        videoRef.addEventListener('ended', handleEnded)
+      }
+    }
+    
+    return () => {
+      if (outSideRef) outSideRef.removeEventListener('click', switchToggle)
+      if (videoRef) videoRef.removeEventListener('ended', handleEnded)
+    }
+  }, [outSideRef, videoRef])
+
   return (
     <div className={styles.container}>
       <div className={`${styles.upperContent} ${toggle ? styles.on : styles.off}`}>{upperContent}</div>
       <div className={styles.buttonWrapper}>
         <button
           className={styles.button}
-          onClick={() => isToggle((prev) => !prev)}
+          onClick={() => setToggle((prev) => !prev)}
         >
           {toggle ? deactive : active}
         </button>

@@ -1,46 +1,46 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 
 type Props = { videoRef: any }
-export default function VideoTimeController({ videoRef }: Props) {
-  const [time, setTime] = useState<number>(0)
 
-  const videoTimeController = useCallback(
-    (e: any) => {
-      if (videoRef) {
-        setTime(e.target.value)
-        videoRef.currentTime = e.target.value
-      }
-    },
-    [videoRef],
-  )
+export default function VideoTimeController({ videoRef }: Props) {
+  const seekbarRef = useRef<HTMLInputElement>(null);
+  
+  const videoTimeController = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const currentTime = parseFloat(e.target.value);
+    if (videoRef) {
+      videoRef.currentTime = currentTime;
+    }
+  }, [videoRef]);
 
   useEffect(() => {
     const handleTimeUpdate = () => {
-      if (videoRef) setTime(videoRef.currentTime)
-    }
+      if (videoRef && seekbarRef.current) {
+        seekbarRef.current.value = videoRef.currentTime.toString();
+      }
+    };
 
     if (videoRef) {
-      videoRef.addEventListener('timeupdate', handleTimeUpdate)
+      videoRef.addEventListener('timeupdate', handleTimeUpdate);
     }
 
     return () => {
       if (videoRef) {
-        videoRef.removeEventListener('timeupdate', handleTimeUpdate)
+        videoRef.removeEventListener('timeupdate', handleTimeUpdate);
       }
-    }
-  }, [videoRef])
+    };
+  }, [videoRef]);
 
   return (
     <input
+      ref={seekbarRef}
       type="range"
       id="seekbar"
       min="0"
       max={videoRef?.duration ? videoRef.duration : 0}
-      value={time}
       step="0.1"
       onChange={videoTimeController}
     />
-  )
+  );
 }

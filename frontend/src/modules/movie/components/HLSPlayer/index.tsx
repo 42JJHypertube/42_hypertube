@@ -30,6 +30,7 @@ export default function HLSplayer({
       setShowController(false)
     }, 3000) // 3초 후 컨트롤러 숨김
   }
+  
 
   useEffect(() => {
     const videoElement = document.getElementById(

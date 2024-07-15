@@ -40,7 +40,8 @@ function PlayerController({ videoRef, hlsRef, outSideRef }: Props) {
             videoElement.requestFullscreen()
           }
         }
-      } else {
+      } 
+      if (!b) {
         document
           .exitFullscreen()
           .then(() => console.log('exit full screen'))
@@ -55,7 +56,7 @@ function PlayerController({ videoRef, hlsRef, outSideRef }: Props) {
       <VideoTimeController videoRef={videoRef} />
       <div className={styles.videoController}>
         <div className={styles.leftController}>
-          <PlayerButton type="play" action={playAction} />
+          <PlayerButton type="play" action={playAction} outSideRef={outSideRef} videoRef={videoRef} />
           <PlayerButton
             type="volume"
             action={volumeAction}

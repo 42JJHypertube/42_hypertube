@@ -1,5 +1,6 @@
 'use client'
 
+// HLSPlayListPath 앞에 / 붙도록 수정해야함.
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import TorrentProgress from '../torrentProgress'
 import styles from './index.module.scss'
@@ -80,7 +81,7 @@ function VideoPlayer({ imdb_id }: { imdb_id: number }) {
               <TorrentProgress hash={hash!} setMovieState={setMovieState} />
             ) : movieState === 'AVAILABLE' ? (
               <div>
-                <HLSplayer hlsPlaylistPath={'tt0063350/master.m3u8'} />
+                <HLSplayer hlsPlaylistPath={'/tt0063350/master.m3u8'} />
               </div>
             ) : null)} */}
           {play && (
