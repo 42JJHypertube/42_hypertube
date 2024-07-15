@@ -1,4 +1,4 @@
-package com.seoulJJ.hypertube.domain.movie_comment;
+package com.seoulJJ.hypertube.domain.movie.comment;
 
 import java.util.List;
 
@@ -8,11 +8,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.seoulJJ.hypertube.domain.movie.comment.dto.CommentDto;
+import com.seoulJJ.hypertube.domain.movie.comment.dto.CreateCommentReqDto;
+import com.seoulJJ.hypertube.domain.movie.comment.dto.UpdateCommentReqDto;
 import com.seoulJJ.hypertube.domain.movie.dto.MovieCommentsResDto;
 import com.seoulJJ.hypertube.domain.movie.exception.MovieNotFoundException;
-import com.seoulJJ.hypertube.domain.movie_comment.dto.CommentDto;
-import com.seoulJJ.hypertube.domain.movie_comment.dto.CreateCommentReqDto;
-import com.seoulJJ.hypertube.domain.movie_comment.dto.UpdateCommentReqDto;
 import com.seoulJJ.hypertube.global.security.UserPrincipal;
 import com.seoulJJ.hypertube.global.utils.argumentresolver.LoginPrincipal;
 

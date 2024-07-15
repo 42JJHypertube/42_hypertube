@@ -1,9 +1,11 @@
-package com.seoulJJ.hypertube.domain.movie_comment.dto;
+package com.seoulJJ.hypertube.domain.movie.comment.dto;
 
 import java.time.LocalDateTime;
 
+import org.springframework.cglib.core.Local;
+
+import com.seoulJJ.hypertube.domain.movie.comment.Comment;
 import com.seoulJJ.hypertube.domain.movie.dto.MovieDto;
-import com.seoulJJ.hypertube.domain.movie_comment.Comment;
 import com.seoulJJ.hypertube.domain.user.dto.UserDto;
 
 import lombok.AllArgsConstructor;

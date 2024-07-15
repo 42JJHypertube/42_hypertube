@@ -1,7 +1,7 @@
-package com.seoulJJ.hypertube.domain.movie_subtitle;
+package com.seoulJJ.hypertube.domain.movie.comment;
 
 import com.seoulJJ.hypertube.domain.movie.Movie;
-import com.seoulJJ.hypertube.domain.movie_subtitle.type.LanguageType;
+import com.seoulJJ.hypertube.domain.user.User;
 import com.seoulJJ.hypertube.global.utils.BaseTimeEntity;
 
 import jakarta.persistence.Column;
@@ -18,25 +18,30 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Subtitle extends BaseTimeEntity {
+public class Comment extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "path", nullable = false)
-    private String path;
-
-    @Column(name = "language", nullable = false)
-    private LanguageType language;
-
     @JoinColumn(name = "movie_id", nullable = false)
     @ManyToOne
     private Movie movie;
 
-    public Subtitle(String path, LanguageType language, Movie movie) {
-        this.path = path;
-        this.language = language;
+    @JoinColumn(name = "user_id", nullable = false, unique = false)
+    @ManyToOne
+    private User user;
+
+    @Column(name = "content", nullable = false)
+    private String content;
+
+    public Comment(Movie movie, User user, String content) {
         this.movie = movie;
+        this.user = user;
+        this.content = content;
+    }
+
+    public void updateContent(String content) {
+        this.content = content;
     }
 }

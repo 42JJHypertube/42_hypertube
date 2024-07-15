@@ -1,4 +1,4 @@
-package com.seoulJJ.hypertube.domain.movie_comment;
+package com.seoulJJ.hypertube.domain.movie.comment;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

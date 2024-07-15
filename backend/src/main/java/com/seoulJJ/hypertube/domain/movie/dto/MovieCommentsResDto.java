@@ -5,7 +5,7 @@ import lombok.Getter;
 
 import java.util.List;
 
-import com.seoulJJ.hypertube.domain.movie_comment.dto.CommentDto;
+import com.seoulJJ.hypertube.domain.movie.comment.dto.CommentDto;
 
 @Getter
 @AllArgsConstructor

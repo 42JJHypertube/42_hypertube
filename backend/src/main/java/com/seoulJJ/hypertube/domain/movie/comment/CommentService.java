@@ -1,4 +1,4 @@
-package com.seoulJJ.hypertube.domain.movie_comment;
+package com.seoulJJ.hypertube.domain.movie.comment;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -6,10 +6,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.seoulJJ.hypertube.domain.movie.Movie;
 import com.seoulJJ.hypertube.domain.movie.MovieRepository;
+import com.seoulJJ.hypertube.domain.movie.comment.dto.CommentDto;
+import com.seoulJJ.hypertube.domain.movie.comment.exception.CommentForbiddenException;
+import com.seoulJJ.hypertube.domain.movie.comment.exception.CommentNotFoundException;
 import com.seoulJJ.hypertube.domain.movie.exception.MovieNotFoundException;
-import com.seoulJJ.hypertube.domain.movie_comment.dto.CommentDto;
-import com.seoulJJ.hypertube.domain.movie_comment.exception.CommentForbiddenException;
-import com.seoulJJ.hypertube.domain.movie_comment.exception.CommentNotFoundException;
 import com.seoulJJ.hypertube.domain.user.User;
 import com.seoulJJ.hypertube.domain.user.UserRepository;
 import com.seoulJJ.hypertube.domain.user.exception.UserNotFoundException;
@@ -31,7 +31,7 @@ public class CommentService {
     private MovieRepository movieRepository;
 
     @Transactional(readOnly = true)
-    public List<CommentDto> findCommentsByMovieId(Long movieId) throws MovieNotFoundException {
+    public List<CommentDto> findCommentsByMovieId(Long movieId) throws MovieNotFoundException{
         movieRepository.findById(movieId).orElseThrow(() -> new MovieNotFoundException());
         List<Comment> comments = commentRepository.findByMovieIdOrderByModifiedAtDesc(movieId);
         return comments.stream().map(CommentDto::from).collect(Collectors.toList());

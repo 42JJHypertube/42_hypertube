@@ -22,7 +22,6 @@ import com.seoulJJ.hypertube.global.exception.custom.CustomRuntimeException;
 import com.seoulJJ.hypertube.global.exception.custom.DuplicationException;
 import com.seoulJJ.hypertube.global.exception.custom.ForbiddenException;
 import com.seoulJJ.hypertube.global.exception.custom.NotExistException;
-import com.seoulJJ.hypertube.global.exception.custom.OpenSubtitleAPIException;
 import com.seoulJJ.hypertube.global.exception.custom.PageNotFoundException;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -113,13 +112,6 @@ public class GlobalExceptionHandler {
         log.error("처리되지 않은 에러입니다.", ex);
         ErrorResponse response = new ErrorResponse(ErrorCode.INTERNAL_SERVER_ERR);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
-    }
-
-    @ExceptionHandler({ OpenSubtitleAPIException.class})
-    public ResponseEntity<ErrorResponse> openSubtitleAPIException(OpenSubtitleAPIException ex) {
-        log.error("OpenSubtitle API Error", ex);
-        ErrorResponse response = new ErrorResponse(ex.getErrorCode(), ex.getMessage(), null);
-        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus())) ;
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
