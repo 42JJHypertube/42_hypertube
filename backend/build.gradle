@@ -3,10 +3,19 @@ plugins {
 	id 'war'
 	id 'org.springframework.boot' version '3.1.7'
 	id 'io.spring.dependency-management' version '1.1.4'
+	id "org.sonarqube" version "5.1.0.4882"
 }
 
 springBoot {
     version = '3.1.7'
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectKey", "hypertube"
+        property "sonar.host.url", "http://localhost:9000"
+        property "sonar.login", "sqp_015ba94f1a8b9474cbc3b3ca4a82bc9e95425d71"
+    }
 }
 
 group = 'com.42seoulJJ'
