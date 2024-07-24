@@ -9,6 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -40,7 +41,8 @@ public class SecurityConfig {
 				.formLogin(formLogin -> formLogin.disable())
 				.httpBasic((httpBasicConfig) -> httpBasicConfig.disable())
 				.cors((corsConfig) -> corsConfig.configurationSource(corsConfigurationSource()))
-				.csrf((csrfConfig) -> csrfConfig.disable())
+				.csrf((csrfConfig) -> csrfConfig
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
 				.sessionManagement(
 						(sessionManagement) -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.headers(
