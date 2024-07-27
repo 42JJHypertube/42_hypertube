@@ -32,7 +32,7 @@ function PlayerController({ videoRef, hlsRef, outSideRef }: Props) {
   )
 
   const fullScreenAction = useCallback(
-    (b: boolean) => {
+    (b: boolean, f: any) => {
       const videoElement = outSideRef
       if (b) {
         if (videoElement) {
@@ -42,10 +42,12 @@ function PlayerController({ videoRef, hlsRef, outSideRef }: Props) {
         }
       } 
       if (!b) {
-        document
-          .exitFullscreen()
-          .then(() => console.log('exit full screen'))
-          .catch(() => console.log('error occured'))
+        if (document.fullscreenElement){
+          document
+            .exitFullscreen()
+            .then(() => console.log('exit full screen'))
+            .catch(() => console.log('error occured'))
+        }
       }
     },
     [outSideRef],

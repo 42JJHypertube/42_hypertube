@@ -12,6 +12,7 @@ import { AiFillSound } from 'react-icons/ai' // 사운드 설정 버튼
 import styles from './index.module.scss'
 
 type ButtonType = 'play' | 'volume' | 'subtitle' | 'quality' | 'fullScreen'
+
 type Props = {
   type: ButtonType
   action?: any
@@ -36,6 +37,14 @@ function selectIcon(icon: ButtonType): JSX.Element[] {
   }
 }
 
+/**
+ * @param {ButtonType} type - 동영상 버튼의 타입들
+ * @param {any} action - 활성화 / 비 활성화 될 때 동작할 함수
+ * @param {JSX.Element | null} upperContent - 활성화시 버튼 위에 표시될 컴포넌트
+ * @param {JSX.Element | null} rightContent - 활성화 버튼 오른쪽에 표시될 컴포넌트
+ * @param {any} outSideRef - 동영상 플레이어를 감싸고있는 div tag
+ * @param {any} videoRef - video tag
+ */
 export default function PlayerButton({
   type,
   action = null,
@@ -50,8 +59,8 @@ export default function PlayerButton({
 
   useEffect(() => {
     if (action) {
-      if (toggle) action(true)
-      if (!toggle) action(false)
+      if (toggle) action(true, setToggle)
+      if (!toggle) action(false, setToggle)
     }
   }, [toggle, action])
 
@@ -62,8 +71,13 @@ export default function PlayerButton({
       setToggle((prev) => !prev)   
     }
     const handleEnded = () => {
-      console.log("END!")
       setToggle(false)
+    }
+    const handleFullscreen = () => {
+      console.log(document.fullscreenElement)
+      if (!document.fullscreenElement) {
+        setToggle(false)
+      }
     }
 
     if (type == 'play') {
@@ -74,10 +88,15 @@ export default function PlayerButton({
         videoRef.addEventListener('ended', handleEnded)
       }
     }
-    
+
+    if (type == 'fullScreen') {
+      document.addEventListener('fullscreenchange', handleFullscreen);
+    }
+
     return () => {
       if (outSideRef) outSideRef.removeEventListener('click', switchToggle)
       if (videoRef) videoRef.removeEventListener('ended', handleEnded)
+      if (type == 'fullScreen') document.removeEventListener('fullscreenchange', handleFullscreen)
     }
   }, [outSideRef, videoRef])
 
