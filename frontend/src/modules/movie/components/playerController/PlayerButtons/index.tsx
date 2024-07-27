@@ -74,7 +74,6 @@ export default function PlayerButton({
       setToggle(false)
     }
     const handleFullscreen = () => {
-      console.log(document.fullscreenElement)
       if (!document.fullscreenElement) {
         setToggle(false)
       }
