@@ -1,0 +1,29 @@
+.ul {
+    list-style-type: none;
+    padding: 0;
+    width: 5rem;
+    transform: translateX(-50%);
+    background: rgb(82, 82, 82, 0.7);
+    height: auto;
+    border-radius: 0.5rem;
+  }
+  
+  .li {
+    cursor: pointer;
+    border-radius: 3px;
+    padding: 0.2rem;
+    font-weight: normal;
+    transition: background-color 0.3s ease;
+    font-size: 0.7rem;
+    width: 100%;
+    height: auto;
+  
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.8); 
+    }
+  
+    &.active {
+      font-weight: bold; // 활성화된 항목 글자 두껍게
+      background-color: #e0e0e0; // 활성화된 항목 배경색
+    }
+  }

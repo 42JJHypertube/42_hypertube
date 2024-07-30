@@ -34,7 +34,7 @@ export default async function movieInfo({
   }
 
   const movieData = await getMovieInfo({ imdb_id })
-
+  console.log(movieData)
   return (
     <div className={styles.movieDetailContainer}>
       <div className={styles.detail}>
@@ -83,7 +83,7 @@ export default async function movieInfo({
           <div className={styles.div} />
           <div className={styles.overview}>{overview}</div>
         </div>
-        <CommentSection movieId={movieData.data.id} />{' '}
+        <CommentSection movieId={movieData.data?.id} />
         {/* movieId should be changed */}
       </div>
     </div>

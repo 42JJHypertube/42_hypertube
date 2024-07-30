@@ -341,12 +341,12 @@ export async function setProfile(
   currentState: { message: string | null; profileImage: Blob | null },
   formData: FormData,
 ) {
-  const profileImage = formData.get('profileImage') as Blob
+  const profileImage = formData.get('file') as File
   console.log(profileImage)
   if (profileImage) {
-    const res = await changeProfile(profileImage)
+    const res = await changeProfile(formData)
     console.log(res)
-    if (res.response !== 200)
+    if (res.response.status !== 200)
       return {
         profileImage: currentState.profileImage,
         message: '제출에 실패했습니다.',
