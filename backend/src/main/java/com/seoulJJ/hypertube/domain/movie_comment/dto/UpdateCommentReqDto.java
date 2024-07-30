@@ -1,4 +1,4 @@
-package com.seoulJJ.hypertube.domain.movie.comment.dto;
+package com.seoulJJ.hypertube.domain.movie_comment.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;

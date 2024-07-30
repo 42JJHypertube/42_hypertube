@@ -125,7 +125,7 @@ public class JlibtorrentDownloader {
             videoFileManager.convertVideoToHls(videoFile, destDir.getPath());
 
             movie.setMovieState(MovieState.AVAILABLE);
-            movie.setHlsPlaylistPath(imdbId + "/master.m3u8");
+            movie.setHlsPlaylistPath("/" + imdbId + "/master.m3u8");
             movieRepository.saveAndFlush(movie);
             progressDto.setStatus(MovieState.AVAILABLE);
             movieDownloadSocketHandler.updateProgress(movieDownDto.getTorrentHash(), progressDto);
