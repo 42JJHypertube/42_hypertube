@@ -52,39 +52,29 @@ class Socket {
    * @returns boolean - 서버에 요청을 성공했을 때 true / 실패시 false
    */
   connect(torrentHash: string): boolean {
-    // 현재 socket이 죽어있는 상태면, 새로 소켓을 init.
-    if (!this.clients) {
-      this.init()
-      return false
-    }
-
-    // 서버에 요청을 보낼 양식.
     const message = JSON.stringify({
       transactionId: '',
       action: 'JOIN',
       torrentHash,
     })
-
-    // 소켓이 open 상태일때만 보냄.
-    if (this.clients.readyState === 1) {
-      this.clients.send(message)
-      return true
-    }
-    return false
+    return this.send(message)
   }
 
   disconnect(torrentHash: string): boolean {
-    if (!this.clients) return false
     const message = JSON.stringify({
       action: 'DETACH',
       torrentHash: torrentHash,
     })
-    this.clients.send(message)
-    return true
+    return this.send(message)
   }
   
   send(message: string){
-
+    if(!this.clients) {this.init(); return false;}
+    if(this.clients.readyState === WebSocket.OPEN){
+      this.clients.send(message)
+      return true;
+    }
+    return false;
   }
 }
 
