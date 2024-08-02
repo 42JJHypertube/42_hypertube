@@ -30,7 +30,6 @@ export default function HLSplayer({
       setShowController(false)
     }, 3000) // 3초 후 컨트롤러 숨김
   }
-  
 
   useEffect(() => {
     const videoElement = document.getElementById(
@@ -87,8 +86,16 @@ export default function HLSplayer({
         Your browser does not support the video tag.
         <track src="/subtitle.vtt" kind="subtitles" label="English" default />
       </video>
-      <div className={showController ? `${styles.controllerOn}` : `${styles.controllerOff}`} >
-        <PlayerController hlsRef={hlsRef.current} videoRef={videoRef.current} outSideRef={outSideRef.current}/>
+      <div
+        className={
+          showController ? `${styles.controllerOn}` : `${styles.controllerOff}`
+        }
+      >
+        <PlayerController
+          hlsRef={hlsRef.current}
+          videoRef={videoRef.current}
+          outSideRef={outSideRef.current}
+        />
       </div>
     </div>
   )

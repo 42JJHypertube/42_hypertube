@@ -3,7 +3,12 @@
 import ProfileImage from '@/modules/common/components/profileImage'
 import styles from './commentList.module.scss'
 import { Comment as CommentInfo } from '@/types/comment/type'
-import { actionWrapper, deleteComment, getProfile, updateComment } from '@/lib/data'
+import {
+  actionWrapper,
+  deleteComment,
+  getProfile,
+  updateComment,
+} from '@/lib/data'
 import { dateToString } from '@/lib/utill/dateUtils'
 import { useState } from 'react'
 import FormButton from '@/modules/common/components/formButton'

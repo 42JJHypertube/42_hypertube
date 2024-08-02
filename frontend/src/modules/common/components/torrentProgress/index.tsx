@@ -1,10 +1,15 @@
 'use client'
-import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react'
-// import wsClient from '@/lib/socket/socket'
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react'
 import TorrentLoadingSpinner from '../spinner/torrentLoading'
 import styles from './index.module.scss'
-// import useSocket from '@/lib/hooks/useSocket'
 import newSocket from '@/lib/newSocket/newSocket'
+import downloadBroker from '@/lib/broker/resource/download'
 
 function TorrentProgress({
   hash,
@@ -15,58 +20,46 @@ function TorrentProgress({
 }) {
   const [progressPer, setProgress] = useState<number>(0)
   const [curState, setCurState] = useState<string>('')
-  const [tryCount, setTryCount] = useState<number>(0)
+  const [socketError, setSocketError] = useState<boolean>(false)
   const broker = newSocket.movieBroker
 
-  const updateProgress = useCallback((e: Event) => {
-    const event = e as CustomEvent
-    const data = JSON.parse(event.detail)
-    console.log(typeof data)
-    const { imdbId, torrentHash, progress, status } = data
-    console.log(torrentHash)
-    if (hash === torrentHash) {
-      if (progress != progressPer) setProgress(progress)
-      if (curState != status) {
-        setCurState(status)
-        setMovieState(status)
+  const updateProgress = useCallback(
+    (e: Event) => {
+      const event = e as CustomEvent
+      const data = JSON.parse(event.detail)
+      const { imdbId, torrentHash, progress, status } = data
+      if (hash === torrentHash) {
+        if (progress != progressPer) setProgress(progress)
+        if (curState != status) {
+          setCurState(status)
+          setMovieState(status)
+        }
       }
-    }
-  }
-  , [hash])
+    },
+    [hash, setMovieState],
+  )
 
-  const tryConnect = () => {
-    if (!newSocket.clients) newSocket.init()
-    if (newSocket.clients?.readyState === 1) {
-      let success = newSocket.connect(hash)
-      if (success) {
-        broker.subscribe(hash, updateProgress)
-        return ;
-      }
-    }
+  const tryConnect = useCallback((count: number) => {
+    const success = downloadBroker.subscribe(hash, updateProgress)
+    if (success) return
     setTimeout(() => {
-      if (tryCount > 3) return ;
-      tryConnect();
-      setTryCount((prev) => prev + 1)
+      // 3회 이상 실패시, 에러 설정
+      if (count > 2) {
+        setSocketError(true)
+        return
+      }
+      tryConnect(count + 1)
     }, 1000)
-  }
+    return false
+  }, [hash, updateProgress])
 
   useEffect(() => {
-    tryConnect();
+    tryConnect(0)
+
     return () => {
-      newSocket.movieBroker.unsubscribe(hash, updateProgress)
+      downloadBroker.unsubscribe(hash, updateProgress)
     }
   }, [hash])
-
-
-  // useEffect(() => {
-  //   console.log('setSocket')
-  //   console.log(readyState)
-  //   if (readyState === WebSocket.OPEN) {
-  //     console.log('openSocket')
-  //     wsClient.connect('asdfasdf', hash)
-  //     wsClient.setMessage(hash, updateProgress)
-  //   }
-  // }, [readyState])
 
   return (
     <div className={styles.container}>
