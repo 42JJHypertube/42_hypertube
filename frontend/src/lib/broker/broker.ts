@@ -31,10 +31,10 @@ class Broker {
       const nextCallbacks = callbacks.filter((f) => f !== callback)
       if (nextCallbacks.length != 0) {
         this.listener.set(key, nextCallbacks)
-        return ;
+        return
       }
-      // 더 이상 key를 구독하고 있는 컴포넌트가 존재하지 않으면, 소켓에서 key disconnet  
-      newSocket.disconnect(key);
+      // 더 이상 key를 구독하고 있는 컴포넌트가 존재하지 않으면, 소켓에서 key disconnet
+      newSocket.disconnect(key)
       this.listener.delete(key)
     }
   }

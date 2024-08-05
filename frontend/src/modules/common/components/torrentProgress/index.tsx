@@ -27,6 +27,7 @@ function TorrentProgress({
     (e: Event) => {
       const event = e as CustomEvent
       const data = JSON.parse(event.detail)
+      console.log(data)
       const { imdbId, torrentHash, progress, status } = data
       if (hash === torrentHash) {
         if (progress != progressPer) setProgress(progress)
@@ -39,19 +40,22 @@ function TorrentProgress({
     [hash, setMovieState],
   )
 
-  const tryConnect = useCallback((count: number) => {
-    const success = downloadBroker.subscribe(hash, updateProgress)
-    if (success) return
-    setTimeout(() => {
-      // 3회 이상 실패시, 에러 설정
-      if (count > 2) {
-        setSocketError(true)
-        return
-      }
-      tryConnect(count + 1)
-    }, 1000)
-    return false
-  }, [hash, updateProgress])
+  const tryConnect = useCallback(
+    (count: number) => {
+      const success = downloadBroker.subscribe(hash, updateProgress)
+      if (success) return
+      setTimeout(() => {
+        // 3회 이상 실패시, 에러 설정
+        if (count > 2) {
+          setSocketError(true)
+          return
+        }
+        tryConnect(count + 1)
+      }, 1000)
+      return false
+    },
+    [hash, updateProgress],
+  )
 
   useEffect(() => {
     tryConnect(0)

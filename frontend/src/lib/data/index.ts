@@ -271,6 +271,46 @@ export async function deleteComment(commentId: number) {
     .catch((error) => error)
 }
 
+export async function getPopularMovie(page: number) {
+  const customHeaders = getCustomHeaders([])
+  return HypeClient.movie
+    .getMoviePopular(page)
+    .then((res) => {
+      return { data: res.data, response: { status: res.response.status } }
+    })
+    .catch((err) => err)
+}
+
+export async function getTopRatedMovie(page: number) {
+  const customHeaders = getCustomHeaders([])
+  return HypeClient.movie
+    .getMovieTopRated(page)
+    .then((res) => {
+      return { data: res.data, response: { status: res.response.status } }
+    })
+    .catch((err) => err)
+}
+
+export async function getUpComingMovie(page: number) {
+  const customHeaders = getCustomHeaders([])
+  return HypeClient.movie
+    .getMovieUpcoming(page)
+    .then((res) => {
+      return { data: res.data, response: { status: res.response.status } }
+    })
+    .catch((err) => err)
+}
+
+export async function getNowPlayingMovie(page: number) {
+  const customHeaders = getCustomHeaders([])
+  return HypeClient.movie
+    .getMovieNowPalying(page)
+    .then((res) => {
+      return { data: res.data, response: { status: res.response.status } }
+    })
+    .catch((err) => err)
+}
+
 /**
  * Client에서 사용하는 ServerAction에만 Wrapping 한다.
  *

@@ -21,7 +21,7 @@ class Socket {
     this.clients = new WebSocket(
       'wss://localhost/socket/movies/download/progress',
     )
-    
+
     // 열렸을 때 처리
     // 해당 이벤트를 받고 connect를 호출하도록 유도.
     this.clients.onopen = () => {
@@ -67,14 +67,17 @@ class Socket {
     })
     return this.send(message)
   }
-  
-  send(message: string){
-    if(!this.clients) {this.init(); return false;}
-    if(this.clients.readyState === WebSocket.OPEN){
-      this.clients.send(message)
-      return true;
+
+  send(message: string) {
+    if (!this.clients) {
+      this.init()
+      return false
     }
-    return false;
+    if (this.clients.readyState === WebSocket.OPEN) {
+      this.clients.send(message)
+      return true
+    }
+    return false
   }
 }
 

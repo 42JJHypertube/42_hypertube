@@ -74,7 +74,7 @@ export default function MovieSection({
               key={info.id as number}
               title={info.title as string}
               movie_id={info.id as number}
-              imgUrl={`https://image.tmdb.org/t/p/w500${info.poster_path}`}
+              imgUrl={info.poster_path}
             />
           ))}
           {isFetching ? (
