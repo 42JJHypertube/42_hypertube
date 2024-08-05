@@ -3,7 +3,6 @@ import newSocket from '@/lib/newSocket/newSocket'
 
 class DownloadBroker extends Broker {
   publish(key: string, data: string) {
-    console.log(key, data)
     this.event.dispatchEvent(new CustomEvent(key, { detail: data }))
   }
 }

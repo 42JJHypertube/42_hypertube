@@ -47,7 +47,7 @@ class Socket {
 
   /**
    * 특정 torrentHash 에 대한 다운로드 정보를 요청.
-   * @param transactionId - 연결에 필요한 unique Id (필요없을 듯?)
+   * @param transactionId - 연결에 필요한 unique Id (으... 나중에)
    * @param torrentHash - 연결을 원하는 torrentHash
    * @returns boolean - 서버에 요청을 성공했을 때 true / 실패시 false
    */
