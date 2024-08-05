@@ -1,9 +1,15 @@
 'use client'
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
-import wsClient from '@/lib/socket/socket'
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react'
 import TorrentLoadingSpinner from '../spinner/torrentLoading'
 import styles from './index.module.scss'
-import useSocket from '@/lib/hooks/useSocket'
+import newSocket from '@/lib/newSocket/newSocket'
+import downloadBroker from '@/lib/broker/resource/download'
 
 function TorrentProgress({
   hash,
@@ -14,13 +20,14 @@ function TorrentProgress({
 }) {
   const [progressPer, setProgress] = useState<number>(0)
   const [curState, setCurState] = useState<string>('')
-  const { socket, readyState } = useSocket()
+  const [socketError, setSocketError] = useState<boolean>(false)
+  const broker = newSocket.movieBroker
 
-  function updateProgress(hash: string, event: MessageEvent) {
-    try {
-      const res = JSON.parse(event.data)
-      console.log(res)
-      const { imdbId, torrentHash, progress, status } = res
+  const updateProgress = useCallback(
+    (e: Event) => {
+      const event = e as CustomEvent
+      const data = JSON.parse(event.detail)
+      const { imdbId, torrentHash, progress, status } = data
       if (hash === torrentHash) {
         if (progress != progressPer) setProgress(progress)
         if (curState != status) {
@@ -28,20 +35,31 @@ function TorrentProgress({
           setMovieState(status)
         }
       }
-    } catch (error) {
-      console.error('Failed to parse message data as JSON:', error)
-    }
-  }
+    },
+    [hash, setMovieState],
+  )
+
+  const tryConnect = useCallback((count: number) => {
+    const success = downloadBroker.subscribe(hash, updateProgress)
+    if (success) return
+    setTimeout(() => {
+      // 3회 이상 실패시, 에러 설정
+      if (count > 2) {
+        setSocketError(true)
+        return
+      }
+      tryConnect(count + 1)
+    }, 1000)
+    return false
+  }, [hash, updateProgress])
 
   useEffect(() => {
-    console.log('setSocket')
-    console.log(readyState)
-    if (readyState === WebSocket.OPEN) {
-      console.log('openSocket')
-      wsClient.connect('asdfasdf', hash)
-      wsClient.setMessage(hash, updateProgress)
+    tryConnect(0)
+
+    return () => {
+      downloadBroker.unsubscribe(hash, updateProgress)
     }
-  }, [readyState])
+  }, [hash])
 
   return (
     <div className={styles.container}>

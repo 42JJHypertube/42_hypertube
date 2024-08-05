@@ -7,7 +7,7 @@ import QualitySelector from './PlayerButtons/qualitySelector'
 import { memo, useCallback } from 'react'
 import styles from './index.module.scss'
 
-type Props = { videoRef: any; hlsRef: any, outSideRef: any}
+type Props = { videoRef: any; hlsRef: any; outSideRef: any }
 
 // 버그 : 풀스크린상태에서 esc로 취소했을시 버튼의 디자인이 변경되지않음.
 function PlayerController({ videoRef, hlsRef, outSideRef }: Props) {
@@ -40,9 +40,9 @@ function PlayerController({ videoRef, hlsRef, outSideRef }: Props) {
             videoElement.requestFullscreen()
           }
         }
-      } 
+      }
       if (!b) {
-        if (document.fullscreenElement){
+        if (document.fullscreenElement) {
           document
             .exitFullscreen()
             .then(() => console.log('exit full screen'))
@@ -58,7 +58,12 @@ function PlayerController({ videoRef, hlsRef, outSideRef }: Props) {
       <VideoTimeController videoRef={videoRef} />
       <div className={styles.videoController}>
         <div className={styles.leftController}>
-          <PlayerButton type="play" action={playAction} outSideRef={outSideRef} videoRef={videoRef} />
+          <PlayerButton
+            type="play"
+            action={playAction}
+            outSideRef={outSideRef}
+            videoRef={videoRef}
+          />
           <PlayerButton
             type="volume"
             action={volumeAction}

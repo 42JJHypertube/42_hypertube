@@ -53,7 +53,12 @@ export default function PlayerButton({
   outSideRef = null,
   videoRef = null,
 }: Props) {
-  console.log('Component rendered type :', type, " upperContent: ", upperContent)
+  console.log(
+    'Component rendered type :',
+    type,
+    ' upperContent: ',
+    upperContent,
+  )
   const [toggle, setToggle] = useState<boolean>(false)
   const [active, deactive] = selectIcon(type)
 
@@ -65,10 +70,12 @@ export default function PlayerButton({
   }, [toggle, action])
 
   useEffect(() => {
-    const switchToggle = (event : React.MouseEvent<HTMLUListElement, MouseEvent>) => {
+    const switchToggle = (
+      event: React.MouseEvent<HTMLUListElement, MouseEvent>,
+    ) => {
       const target = event.target as HTMLLIElement
-      if (!target.matches('video')) return;
-      setToggle((prev) => !prev)   
+      if (!target.matches('video')) return
+      setToggle((prev) => !prev)
     }
     const handleEnded = () => {
       setToggle(false)
@@ -80,28 +87,33 @@ export default function PlayerButton({
     }
 
     if (type == 'play') {
-      if (outSideRef){
+      if (outSideRef) {
         outSideRef.addEventListener('click', switchToggle)
       }
-      if (videoRef){
+      if (videoRef) {
         videoRef.addEventListener('ended', handleEnded)
       }
     }
 
     if (type == 'fullScreen') {
-      document.addEventListener('fullscreenchange', handleFullscreen);
+      document.addEventListener('fullscreenchange', handleFullscreen)
     }
 
     return () => {
       if (outSideRef) outSideRef.removeEventListener('click', switchToggle)
       if (videoRef) videoRef.removeEventListener('ended', handleEnded)
-      if (type == 'fullScreen') document.removeEventListener('fullscreenchange', handleFullscreen)
+      if (type == 'fullScreen')
+        document.removeEventListener('fullscreenchange', handleFullscreen)
     }
   }, [outSideRef, videoRef])
 
   return (
     <div className={styles.container}>
-      <div className={`${styles.upperContent} ${toggle ? styles.on : styles.off}`}>{upperContent}</div>
+      <div
+        className={`${styles.upperContent} ${toggle ? styles.on : styles.off}`}
+      >
+        {upperContent}
+      </div>
       <div className={styles.buttonWrapper}>
         <button
           className={styles.button}
