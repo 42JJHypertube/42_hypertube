@@ -1,0 +1,22 @@
+.section {
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: block;
+  margin-left: 40px;
+  padding-bottom: 1rem;
+  font-size: 3rem;
+  font-weight: 600;
+  color: red;
+  text-align: left;
+}
+
+.listContainer {
+  display: flex;
+  justify-content: center;
+  width: auto;
+  gap: 1rem;
+  padding-bottom: 10px;
+}

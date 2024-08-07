@@ -6,7 +6,8 @@ import {
   getPopularMovie,
 } from '@/lib/data'
 import LoadingMovieRecommnedSection from './loading'
-import MovieCard from '../movieCard'
+import MovieRecommendList from '../movieRecommendList'
+import styles from './index.module.scss'
 
 type RecommendType = 'NowPlaying' | 'Popular' | 'TopRated' | 'UpComing'
 
@@ -15,7 +16,7 @@ type Props = {
 }
 
 // API에서 주는 Result의 기본 포맷, 나중에 type 위치를 바꿔야할 필요가있을듯.
-type MovieData = {
+export type MovieData = {
   adult: boolean // 성인용 콘텐츠 여부
   backdrop_path: string // 배경 이미지 경로
   genre_ids: number[] // 장르 ID 배열
@@ -59,14 +60,7 @@ async function MovieRecommnedContent({
     return <div> error ... 새로고침 버튼 </div>
   }
   const movieData = data.results
-  return (
-    <ul>
-      {movieData.map((e: MovieData) => {
-        // return <li key={e.id}> <MovieCard title={e.title} imgUrl={e.poster_path} movie_id={e.id}/> </li>
-        return <li key={e.id}> {e.title}</li>
-      })}
-    </ul>
-  )
+  return <MovieRecommendList movieData={movieData} />
 }
 
 function MovieRecommnedSection({ recommnedType }: Props) {
@@ -74,11 +68,13 @@ function MovieRecommnedSection({ recommnedType }: Props) {
   const fetchFun = getFetchFun(recommnedType)
 
   return (
-    <section>
-      <header> {header} </header>
-      <Suspense fallback={<LoadingMovieRecommnedSection />}>
-        <MovieRecommnedContent fetchFun={fetchFun} />
-      </Suspense>
+    <section className={styles.section}>
+      <header className={styles.header}> {header} </header>
+      <div className={styles.listContainer}>
+        <Suspense fallback={<LoadingMovieRecommnedSection />}>
+          <MovieRecommnedContent fetchFun={fetchFun} />
+        </Suspense>
+      </div>
     </section>
   )
 }

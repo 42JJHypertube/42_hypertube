@@ -1,7 +1,7 @@
 import MovieSection from '@/modules/common/components/movieSection'
 import { getMovie } from '@/lib/data'
 import styles from './main.module.scss'
-import MovieRecommnedSection from '@/modules/common/components/movieRecommendSection'
+import MovieRecommnedSection from '@/modules/main/components/movieRecommendSection'
 
 export default async function Home() {
   const { data, response } = await getMovie({ pages: 1 })
