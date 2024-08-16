@@ -5,6 +5,7 @@ import MovieCard from '@/modules/common/components/movieCard'
 import styles from './index.module.scss'
 import { useEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
+import { randomUUID } from 'crypto'
 
 type Props = {
   movieData: MovieData[]
@@ -13,7 +14,7 @@ type Props = {
 export default function MovieRecommendList({ movieData }: Props) {
   const selectedRef = useRef<HTMLLIElement>(null);
   const [index, setIndex] = useState(() => 0);
-
+  
   const handleLeftClick = () => {
     flushSync(() => {
       if (0 < index) {
@@ -46,7 +47,7 @@ export default function MovieRecommendList({ movieData }: Props) {
 
   return (
     <>
-      <button onClick={handleLeftClick}>left</button>
+      <button className={styles.button} onClick={handleLeftClick}> {'<'} </button>
       <ul className={styles.ul}>
         {movieData.map((e: MovieData, idx: number) => {
           return (
@@ -62,7 +63,7 @@ export default function MovieRecommendList({ movieData }: Props) {
           )
         })}
       </ul>
-      <button onClick={handleRightClick}>right</button>
+      <button className={styles.button} onClick={handleRightClick}> {'>'} </button>
     </>
   )
 }

@@ -1,11 +1,12 @@
 .section {
   display: flex;
   flex-direction: column;
+  width: 100%;
+  max-width: 1080px;
 }
 
 .header {
   display: block;
-  margin-left: 40px;
   padding-bottom: 1rem;
   font-size: 3rem;
   font-weight: 600;
@@ -16,7 +17,8 @@
 .listContainer {
   display: flex;
   justify-content: center;
-  width: auto;
+  width: 1080px;
+  min-width: 600px;
   gap: 1rem;
-  padding-bottom: 10px;
+  background-color: rgba(0, 0, 0, 0.8);
 }

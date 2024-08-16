@@ -1,21 +1,27 @@
 .ul {
-  display: inline-flex;
+  display: flex;
   list-style-type: none; /* 기본 불릿 제거 */
-  width: 1080px;
-  height: 500px;
-  margin: 40px 0px;
+  width: 100%;
+  align-items: flex-start;
+  justify-content: flex-start;
   overflow-x: hidden;
   overflow-y: hidden;
-  background-color: rgba(0, 0, 0, 0.5); /* 검정색, 50% 투명도 */
 }
 
 .button {
-  display: inline-block
+  display: block;
+  background-color: rgba(255, 102, 102, 1);
+  padding: 0 0.4rem;
+  font-size: x-large;
+  border: none;
+  border-radius: 8px;
 }
 
 .item {
   position: relative;
-  padding: 40px 10px 0 10px; /* 항목 간의 간격 설정 */
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 10px;
 }
 
 .focus {
@@ -25,6 +31,11 @@
 }
 
 .cardContainer {
-  width: 256px;
-  height: 384px;
+  width: 150px;
+  height: 150 * (3 / 2) + px;
+}
+
+.listContainer{
+  width: 100%;
+  display: flex;
 }

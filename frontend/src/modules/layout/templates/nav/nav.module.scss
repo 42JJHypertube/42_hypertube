@@ -1,9 +1,11 @@
 .stickyContainer {
   position: sticky;
+  display:flex;
+  justify-content: center;
   top: 0;
   width: 100%;
   height: 10%;
-  padding: 0.5rem 0;
+  padding: 24px 48px;
   background-color: rgba(0, 0, 0, 0.6);
   z-index: 1000;
 }
@@ -12,7 +14,10 @@
   position: relative;
   display: flex;
   justify-content: space-between;
-  padding: 0.5rem 4%;
+  width: calc(66.66666666666666% - (3rem * 2));
+  min-width: 780px;
+  padding-left: 3rem;
+  padding-right: 3rem; 
   align-items: center;
 }
 

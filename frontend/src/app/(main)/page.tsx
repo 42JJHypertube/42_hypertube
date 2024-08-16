@@ -9,12 +9,6 @@ export default async function Home() {
 
   return (
     <div className={styles.main}>
-      {/* <MovieSection
-        initData={data.results}
-        total_pages={data.total_pages}
-        loadFunction={getMovie}
-        loadParams={{ pages: 1 }}
-      /> */}
       <MovieRecommnedSection recommnedType="NowPlaying" />
       <MovieRecommnedSection recommnedType="Popular" />
       <MovieRecommnedSection recommnedType="TopRated" />
