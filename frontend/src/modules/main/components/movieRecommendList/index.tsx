@@ -46,8 +46,8 @@ export default function MovieRecommendList({ movieData }: Props) {
   };
 
   return (
-    <>
-      <button className={styles.button} onClick={handleLeftClick}> {'<'} </button>
+    <div className={styles.listContainer}>
+       <button className={styles.buttonLeft} onClick={handleLeftClick}> {'<'} </button>
       <ul className={styles.ul}>
         {movieData.map((e: MovieData, idx: number) => {
           return (
@@ -63,7 +63,7 @@ export default function MovieRecommendList({ movieData }: Props) {
           )
         })}
       </ul>
-      <button className={styles.button} onClick={handleRightClick}> {'>'} </button>
-    </>
+      <button className={styles.buttonRight} onClick={handleRightClick}> {'>'} </button>
+    </div>
   )
 }
