@@ -1,4 +1,3 @@
-import MovieSection from '@/modules/common/components/movieSection'
 import { getMovie } from '@/lib/data'
 import styles from './main.module.scss'
 import MovieRecommnedSection from '@/modules/main/components/movieRecommendSection'
