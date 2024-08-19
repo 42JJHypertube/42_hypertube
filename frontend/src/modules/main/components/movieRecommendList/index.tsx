@@ -3,55 +3,48 @@
 import { MovieData } from '../movieRecommendSection'
 import MovieCard from '@/modules/common/components/movieCard'
 import styles from './index.module.scss'
-import { useEffect, useRef, useState } from 'react'
-import { flushSync } from 'react-dom'
-import { randomUUID } from 'crypto'
+import { useCallback, useRef } from 'react'
+import useThrottle from '@/lib/hooks/useThrottle'
 
 type Props = {
   movieData: MovieData[]
 }
 
 export default function MovieRecommendList({ movieData }: Props) {
-  const selectedRef = useRef<HTMLLIElement>(null);
-  const [index, setIndex] = useState(() => 0);
-  
-  const handleLeftClick = () => {
-    flushSync(() => {
-      if (0 < index) {
-        setIndex(index - 1);
-      } else {
-        setIndex(movieData.length - 1);
-      }
-    });
-    selectedRef.current?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'center',
-      inline: 'center'
-    });   
-  };
+  const removeAnimation = useCallback((dir: boolean) => {
+    // left
+    if (dir == false) {
+      if (ulRef?.current)
+        ulRef.current.classList.remove(styles.moveLeft)  
+    }
+    if (dir == true) {
+      if (ulRef?.current)
+        ulRef.current.classList.remove(styles.moveRight)  
+    }
+  }, [movieData])
 
-  const handleRightClick = () => {
-    flushSync(() => {
-      if (index < movieData.length - 1) {
-        setIndex(index + 1);
-      } else {
-        setIndex(0);
-      }
-    }); 
-    selectedRef.current?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'nearest',
-      inline: 'center'
-    });   
-  };
+  const handleClick = useCallback((dir: boolean) => {
+    // left
+    if (dir == false) {
+      if (ulRef?.current)
+        ulRef.current.classList.add(styles.moveLeft)  
+    }
+    if (dir == true) {
+      if (ulRef?.current)
+        ulRef.current.classList.add(styles.moveRight)  
+    }
+  }, [movieData])
+  
+  const ulRef = useRef<HTMLUListElement>(null)
+  const { throttleFunc: animate } = useThrottle(1000, handleClick, removeAnimation)
 
   return (
     <div className={styles.listContainer}>
-       <button className={styles.buttonLeft} onClick={handleLeftClick}> {'<'} </button>
-      <ul className={styles.ul}>
-        {movieData.map((e: MovieData, idx: number) => {
+       <button className={styles.buttonLeft} onClick={() => {animate(false)}}> <b>{'<'}</b></button>
+      <ul className={styles.ul} ref={ulRef}>
+        {movieData.map((e: MovieData) => {
           return (
-            <li key={e.id} ref={idx === index ? selectedRef : null } className={idx == index ? `${styles.item} ${styles.focus}` : `${styles.item}`}>
+            <li key={e.id} className={styles.item}>
               <div className={styles.cardContainer}>
                 <MovieCard
                   title={e.title}
@@ -63,7 +56,7 @@ export default function MovieRecommendList({ movieData }: Props) {
           )
         })}
       </ul>
-      <button className={styles.buttonRight} onClick={handleRightClick}> {'>'} </button>
+      <button className={styles.buttonRight} onClick={() => {animate(true)}}> {'>'} </button>
     </div>
   )
 }
