@@ -1,3 +1,30 @@
+.listContainer {
+  display: flex;
+  justify-content: center;
+  width: 1080px;
+  min-width: 600px;
+  gap: 1rem;
+
+  .buttonLeft, .buttonRight {
+    display: block;
+    visibility: hidden;
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 0 1rem;
+    font-size: x-large;
+    border: none;
+    border-radius: 1px;
+  }
+
+  &:hover {
+    .buttonLeft {
+      visibility: visible;
+    }
+    .buttonRight{
+      visibility: visible;
+    }
+  }
+}
+
 .ul {
   display: flex;
   list-style-type: none; /* 기본 불릿 제거 */
@@ -6,15 +33,6 @@
   justify-content: flex-start;
   overflow-x: hidden;
   overflow-y: hidden;
-}
-
-.button {
-  display: block;
-  background-color: rgba(255, 102, 102, 1);
-  padding: 0 0.4rem;
-  font-size: x-large;
-  border: none;
-  border-radius: 8px;
 }
 
 .item {
