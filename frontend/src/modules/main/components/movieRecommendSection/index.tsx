@@ -70,11 +70,9 @@ function MovieRecommnedSection({ recommnedType }: Props) {
   return (
     <section className={styles.section}>
       <header className={styles.header}> {header} </header>
-      <div className={styles.listContainer}>
-        <Suspense fallback={<LoadingMovieRecommnedSection />}>
-          <MovieRecommnedContent fetchFun={fetchFun} />
-        </Suspense>
-      </div>
+      <Suspense fallback={<LoadingMovieRecommnedSection />}>
+        <MovieRecommnedContent fetchFun={fetchFun} />
+      </Suspense>
     </section>
   )
 }

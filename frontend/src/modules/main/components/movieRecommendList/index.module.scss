@@ -1,27 +1,24 @@
-.listContainer {
+.slider {
   position: relative;
-  display: flex;
-  justify-content: center;
   width: 100%;
-  min-width: 600px;
-  overflow-x: visible;
   padding: 0 4%;
+  white-space: nowrap;
 
   .buttonLeft, .buttonRight {
     position: absolute;
     display: flex;
     cursor: pointer;
-    height: 100%;
     width: 4%;
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgba(0, 0, 0, 0.6);
     font-size: x-large;
     justify-content: center;
     align-items: center;
-    text-align: center;
     border: none;
-    border-radius: 1px;
+    border-radius: 4px;
     visibility: hidden;
     z-index: 20;
+    top: 0;
+    bottom: 0;
   }
   .buttonLeft {
     left: 0px;
@@ -40,43 +37,33 @@
   }
 }
 
-.ul {
-  display: flex;
-  list-style-type: none; /* 기본 불릿 제거 */
+.showPeek {
   width: 100%;
-  align-items: flex-start;
-  justify-content: flex-start;
+  overflow-x: visible;
+}
+
+.ul {
+  width: 100%;
   z-index: 10;
-  transform: translate3d(0, 0, 0);
-  transition: transform 1s ease;
-}
-
-.item {
-  position: relative;
-  padding-top: 20px;
-  padding-bottom: 20px;
-  padding-left: 10px;
-}
-
-.focus {
-  border: 2px solid #00f; /* 기본 테두리 없음, 포커스 시에만 보이게 */
-  outline: none; /* 기본 브라우저 포커스 테두리 제거 */
-  box-shadow: 0 0 5px 2px rgba(0, 0, 255, 0.5); /* 파란색 빛나는 효과 */
+  transform: translate3d(-100%, 0, 0);
+  overflow-x: visible;
 }
 
 .cardContainer {
-  width: 150px;
-  height: 150 * (3 / 2) + px;
-}
-
-.listContainer{
-  width: 100%;
-  display: flex;
+  display: inline-block;
+  width: 25%;
+  height: 200 * (3 / 2) + px;
 }
 
 .moveLeft {
-  transform: translate3d(100%, 0, 0);
+  transition: transform 0.75s ease;
+  transform: translate3d(0, 0, 0);
 }
 .moveRight {
-  transform: translate3d(-100%, 0, 0);
+  transition: transform 0.75s ease;
+  transform: translate3d(-200%, 0, 0);
+}
+
+.slideContent {
+  width: 100%;
 }
