@@ -1,19 +1,19 @@
-import { useState } from "react"
+import { useState } from 'react'
 
 const useThrottle = (ms: number, callback?: any) => {
-    const [isWorking, setIsWorking] = useState<boolean>(false)
+  const [isWorking, setIsWorking] = useState<boolean>(false)
 
-    const throttleFunc = (arg: any) => {
-        if (isWorking) return;
+  const throttleFunc = (arg: any) => {
+    if (isWorking) return
 
-        setIsWorking(true);
-        setTimeout(() => {
-            if(callback) callback(arg);
-            setIsWorking(false);
-        }, ms)
-    }
+    setIsWorking(true)
+    setTimeout(() => {
+      if (callback) callback(arg)
+      setIsWorking(false)
+    }, ms)
+  }
 
-    return { throttleFunc }
+  return { throttleFunc }
 }
 
-export default useThrottle;
+export default useThrottle

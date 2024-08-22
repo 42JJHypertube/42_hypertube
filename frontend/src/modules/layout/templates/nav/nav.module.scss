@@ -1,6 +1,6 @@
 .stickyContainer {
   position: sticky;
-  display:flex;
+  display: flex;
   justify-content: center;
   top: 0;
   width: 100%;
@@ -15,9 +15,9 @@
   display: flex;
   justify-content: space-between;
   width: calc(66.66666666666666% - (3rem * 2));
-  min-width: 780px;
+  min-width: 736px;
   padding-left: 3rem;
-  padding-right: 3rem; 
+  padding-right: 3rem;
   align-items: center;
 }
 

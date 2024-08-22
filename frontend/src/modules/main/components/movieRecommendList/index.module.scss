@@ -4,7 +4,8 @@
   padding: 0 4%;
   white-space: nowrap;
 
-  .buttonLeft, .buttonRight {
+  .buttonLeft,
+  .buttonRight {
     position: absolute;
     display: flex;
     cursor: pointer;
@@ -31,7 +32,7 @@
     .buttonLeft {
       visibility: visible;
     }
-    .buttonRight{
+    .buttonRight {
       visibility: visible;
     }
   }
@@ -51,8 +52,16 @@
 
 .cardContainer {
   display: inline-block;
+  box-sizing: border-box;
   width: 25%;
-  height: 200 * (3 / 2) + px;
+  padding: 0 0.5vw;
+  aspect-ratio: 2 / 3;
+}
+
+@media (min-width: 1080px) and (max-width: 1260px) {
+  .cardContainer {
+    width: calc(100% / 6);
+  }
 }
 
 .moveLeft {
