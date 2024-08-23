@@ -55,12 +55,16 @@ async function MovieRecommnedContent({
 }: {
   fetchFun: (page: number) => Promise<any>
 }) {
-  const { data, response } = await fetchFun(1)
-  if (response.status !== 200) {
+  try {
+    const { data, response } = await fetchFun(1)
+    if (response.status !== 200) return <div> error ... 새로고침 버튼 </div>
+
+    const movieData = data.results
+    return <MovieRecommendList movieData={movieData} />
+  } catch (e) {
+    console.log(e)
     return <div> error ... 새로고침 버튼 </div>
   }
-  const movieData = data.results
-  return <MovieRecommendList movieData={movieData} />
 }
 
 function MovieRecommnedSection({ recommnedType }: Props) {
