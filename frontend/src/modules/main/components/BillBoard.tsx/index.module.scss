@@ -1,0 +1,11 @@
+.video {
+    width: 80vw;
+    height: calc(80vw * 9 / 16);
+}
+
+@media (min-width: 1080px) {
+    .video {
+        width: 1080px;
+        height: calc(1080px * 9 / 16);
+    }
+}

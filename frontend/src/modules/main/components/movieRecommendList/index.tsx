@@ -3,13 +3,7 @@
 import { MovieData } from '../movieRecommendSection'
 import MovieCard from '@/modules/common/components/movieCard'
 import styles from './index.module.scss'
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import usePreventDup from '@/lib/hooks/usePreventDup'
 import useThrottle from '@/lib/hooks/useThrottle'
 
