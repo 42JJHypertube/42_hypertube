@@ -81,23 +81,16 @@
 
 html,
 body {
-  max-width: 100vw;
+  max-width: calc(100vw - 16px);
   overflow-x: visible;
+  overflow-y: visible;
 }
 
 body {
   background-image: url('/loginBackground.jpg');
   background-size: cover; /* 화면에 맞게 이미지 크기 조정 */
   background-repeat: no-repeat; /* 이미지 반복 방지 */
-  background-position: center; /* 중앙에 배치 */
   background-attachment: fixed;
-  /* color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb)); */
 }
 
 a {
@@ -109,4 +102,15 @@ a {
   html {
     color-scheme: dark;
   }
+}
+
+::-webkit-scrollbar {
+  width: 8px; /* 스크롤바 너비 */
+}
+::-webkit-scrollbar-thumb {
+  background: #888; /* 스크롤바 핸들 색상 */
+  border-radius: 4px; /* 핸들의 모서리 반경 */
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1; /* 스크롤바 트랙 색상 */
 }

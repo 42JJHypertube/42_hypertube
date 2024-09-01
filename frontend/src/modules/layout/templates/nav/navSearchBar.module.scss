@@ -1,11 +1,9 @@
 .search {
   align-items: center;
   justify-content: center;
-  width: 100%;
-  position: absolute;
-  @media screen and (max-width: 400px) {
-    position: relative;
-  }
+  width: 80vw;
+  max-width: 800px;
+  min-width: 200px;
   display: flex;
   justify-content: center;
   pointer-events: none;
@@ -14,10 +12,7 @@
     font-weight: 300;
     font-size: 14px;
     height: 37px;
-    width: 20%;
-    @media screen and (max-width: 400px) {
-      width: 100%;
-    }
+    width: 100%;
     background: transparent;
     color: white;
     appearance: none;
@@ -33,10 +28,6 @@
 
     &:focus {
       border: 2px solid red;
-      width: 30%;
-      @media screen and (max-width: 400px) {
-        width: 100%;
-      }
     }
   }
 }

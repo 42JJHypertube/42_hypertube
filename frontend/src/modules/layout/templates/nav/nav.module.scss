@@ -1,9 +1,12 @@
 .stickyContainer {
   position: sticky;
+  display: flex;
+  justify-content: center;
   top: 0;
-  width: 100%;
+  width: 100vw;
+  min-width: 300px;
   height: 10%;
-  padding: 0.5rem 0;
+  padding: 24px 48px;
   background-color: rgba(0, 0, 0, 0.6);
   z-index: 1000;
 }
@@ -11,8 +14,13 @@
 .navContainer {
   position: relative;
   display: flex;
+  gap: 5vw;
   justify-content: space-between;
-  padding: 0.5rem 4%;
+  width: 100%;
+  max-width: 1080px;
+  min-width: 400px;
+  padding-left: 3rem;
+  padding-right: 3rem;
   align-items: center;
 }
 
@@ -23,11 +31,19 @@
 
 .home {
   font-size: 1.5rem;
+  text-align: center;
+  white-space: nowrap;
   color: red;
   @media screen and (max-width: 400px) {
     font-size: 1rem;
   }
   &:hover {
     color: white;
+  }
+}
+
+@media (max-width: 600px){
+  .home {
+    display: none;
   }
 }

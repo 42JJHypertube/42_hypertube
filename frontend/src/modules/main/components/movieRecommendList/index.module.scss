@@ -1,0 +1,79 @@
+.slider {
+  position: relative;
+  width: 100%;
+  padding: 0 4%;
+  white-space: nowrap;
+  overflow-x: hidden;
+
+  .buttonLeft,
+  .buttonRight {
+    position: absolute;
+    display: flex;
+    cursor: pointer;
+    width: 4%;
+    background-color: rgba(0, 0, 0, 0.6);
+    font-size: x-large;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    border-radius: 4px;
+    visibility: hidden;
+    z-index: 20;
+    top: 0;
+    bottom: 0;
+  }
+  .buttonLeft {
+    left: 0px;
+  }
+  .buttonRight {
+    right: 0px;
+  }
+
+  &:hover {
+    .buttonLeft {
+      visibility: visible;
+    }
+    .buttonRight {
+      visibility: visible;
+    }
+  }
+}
+
+.showPeek {
+  width: 100%;
+  overflow-x: visible;
+}
+
+.ul {
+  width: 100%;
+  z-index: 10;
+  transform: translate3d(-100%, 0, 0);
+  overflow-x: visible;
+}
+
+.cardContainer {
+  display: inline-block;
+  box-sizing: border-box;
+  width: 25%;
+  padding: 0 0.5vw;
+  aspect-ratio: 2 / 3;
+}
+
+@media (min-width: 1080px) {
+  .cardContainer {
+    width: calc(100% / 6);
+  }
+}
+
+.moveLeft {
+  transition: transform 0.75s ease;
+  transform: translate3d(0, 0, 0);
+}
+.moveRight {
+  transition: transform 0.75s ease;
+  transform: translate3d(-200%, 0, 0);
+}
+
+.slideContent {
+  width: 100%;
+}
