@@ -27,8 +27,7 @@ function makeSlideData(
 
 function calcDisplayCount() {
   const width = document.documentElement.clientWidth
-  if (1680 < width) return 8
-  if (1080 <= width && width <= 1680) return 6
+  if (1080 <= width) return 6
   return 4
 }
 
@@ -108,7 +107,7 @@ export default function MovieRecommendList({ movieData }: Props) {
         <div className={styles.ul} ref={ulRef}>
           {slideData.map((e: MovieData, idx: number) => {
             return (
-              <div key={e.id + idx} className={styles.cardContainer}>
+              <div key={e.id} className={styles.cardContainer}>
                 <MovieCard
                   title={e.title}
                   imgUrl={e.poster_path}
