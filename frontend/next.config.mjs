@@ -19,6 +19,19 @@ const nextConfig = {
   images: {
     domains: ['image.tmdb.org', 'lh3.googleusercontent.com', 'localhost'],
   },
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin',
+          },
+        ],
+      },
+    ]
+  },
   reactStrictMode: false,
 }
 

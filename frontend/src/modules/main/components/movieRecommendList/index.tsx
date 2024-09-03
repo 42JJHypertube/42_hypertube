@@ -3,7 +3,13 @@
 import { MovieData } from '../movieRecommendSection'
 import MovieCard from '@/modules/common/components/movieCard'
 import styles from './index.module.scss'
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react'
 import usePreventDup from '@/lib/hooks/usePreventDup'
 import useThrottle from '@/lib/hooks/useThrottle'
 
@@ -45,28 +51,23 @@ export default function MovieRecommendList({ movieData }: Props) {
     setSlideData(makeSlideData(idx, viewCount, movieData))
   }, [idx])
 
-  const removeAnimation = useCallback(({
-    dir,
-    data,
-    idx,
-  }: {
-    dir: Dir
-    data: MovieData[]
-    idx: number
-  }) => {
-    if (!ulRef?.current) return
-    const dIdx = dir === 'left' ? -displayCount : displayCount
-    const newidx = (idx + data.length + dIdx) % data.length
-    setSlideData(makeSlideData(newidx, displayCount, movieData))
-    setIdx(newidx)
-    ulRef.current.classList.remove(
-      dir === 'left' ? styles.moveLeft : styles.moveRight,
-    )
-  }, [displayCount])
+  const removeAnimation = useCallback(
+    ({ dir, data, idx }: { dir: Dir; data: MovieData[]; idx: number }) => {
+      if (!ulRef?.current) return
+      const dIdx = dir === 'left' ? -displayCount : displayCount
+      const newidx = (idx + data.length + dIdx) % data.length
+      setSlideData(makeSlideData(newidx, displayCount, movieData))
+      setIdx(newidx)
+      ulRef.current.classList.remove(
+        dir === 'left' ? styles.moveLeft : styles.moveRight,
+      )
+    },
+    [displayCount],
+  )
 
   const { preventFunc: animate } = usePreventDup(1000, removeAnimation)
   const { throttleFunc: handleWindowResize } = useThrottle(1000, changeCount)
-  
+
   const handleClick = useCallback(
     ({ dir, data, idx }: { dir: Dir; data: MovieData[]; idx: number }) => {
       if (!ulRef?.current) return
@@ -88,7 +89,7 @@ export default function MovieRecommendList({ movieData }: Props) {
 
   useLayoutEffect(() => {
     const viewCount = calcDisplayCount()
-    if (viewCount == displayCount) return ;
+    if (viewCount == displayCount) return
     setDisplayCount(viewCount)
     setSlideData(makeSlideData(idx, viewCount, movieData))
   }, [displayCount, idx])
