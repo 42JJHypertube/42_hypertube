@@ -1,0 +1,56 @@
+.slide {
+  position: relative;
+  width: 100%;
+  padding: 0 4%;
+  white-space: nowrap;
+  overflow-x: hidden;
+  z-index: 999;
+  &:hover {
+    .buttonLeft {
+      visibility: visible;
+    }
+    .buttonRight {
+      visibility: visible;
+    }
+  }
+}
+
+.buttonLeft,
+.buttonRight {
+  position: absolute;
+  display: flex;
+  cursor: pointer;
+  width: 4%;
+  background-color: rgba(0, 0, 0, 0.6);
+  font-size: x-large;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  border-radius: 4px;
+  visibility: hidden;
+  z-index: 20;
+  top: 0;
+  bottom: 0;
+}
+.buttonLeft {
+  left: 0px;
+}
+.buttonRight {
+  right: 0px;
+}
+
+.contentContainer {
+    width: 100%;
+    overflow-x: visible;
+    transform: translate3d(-100%, 0, 0);
+}
+
+.moveLeft {
+    transition: transform 0.75s ease;
+    transform: translate3d(0, 0, 0);
+}
+
+.moveRight {
+    transition: transform 0.75s ease;
+    transform: translate3d(-200%, 0, 0);
+}

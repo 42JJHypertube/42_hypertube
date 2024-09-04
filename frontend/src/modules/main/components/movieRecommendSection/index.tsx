@@ -6,7 +6,8 @@ import {
   getPopularMovie,
 } from '@/lib/data'
 import LoadingMovieRecommnedSection from './loading'
-import MovieRecommendList from '../movieRecommendList'
+// import MovieRecommendList from '../movieRecommendList'
+import MovieRecommendList from '../movieRecommendList/refact'
 import styles from './index.module.scss'
 
 type RecommendType = 'NowPlaying' | 'Popular' | 'TopRated' | 'UpComing'

@@ -1,33 +1,48 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import PageIndicator from '../pageIndicator'
+import SlideContent from '../slideContent/slideContent'
 import useSlider from '@/lib/hooks/useSlider'
+import styles from './index.module.scss'
 
 type Props = {
   contentData: any
-  getKey: () => any
+  ContentComponent: JSX.ElementType
+  getKeyAndProps: (data: any) => { key: any; props: any }
   getViewCount: () => number
 }
 
-function Slide({ contentData, getKey, getViewCount }: Props) {
+function Slide({
+  contentData,
+  getKeyAndProps,
+  getViewCount,
+  ContentComponent,
+}: Props) {
   const [animate, setAnimate] = useState<boolean>(false)
   const { slideData, index, viewCount, setNewSlideData, setIndex } = useSlider({
     getViewCount,
     data: contentData,
   })
-
-  const handleClick = (dir: 'next' | 'prev') => {
+  const slideRef = useRef<HTMLDivElement>(null)
+ 
+  const handleClick = (dir: 'next' | 'prev', slideRef: any) => {
     if (animate) return
 
     setAnimate(true)
-    setTimeout(() => {
-      if (!animate) return
+    slideRef.current.classList.add(
+      dir === 'prev' ? styles.moveLeft : styles.moveRight,
+    )
 
+    setTimeout(() => {
       setAnimate(false)
-      const nextIdx = index + viewCount >= contentData.length ? 0 : index + viewCount
+      let nextIdx =
+        index + viewCount >= contentData.length ? 0 : index + viewCount
       setIndex(nextIdx)
-      setNewSlideData(nextIdx)
+      setNewSlideData(nextIdx, viewCount)
+      slideRef.current.classList.remove(
+        dir === 'prev' ? styles.moveLeft : styles.moveRight,
+      )
     }, 1000)
   }
 
@@ -35,10 +50,21 @@ function Slide({ contentData, getKey, getViewCount }: Props) {
   const pageIdx = Math.floor(index / viewCount)
 
   return (
-    <div>
-      <PageIndicator pageCount={pageCount} pageIdx={pageIdx} />
-      <button onClick={() => handleClick('prev')}> {'<'} </button>
-      <button onClick={() => handleClick('next')}> {'>'} </button>
+    <div className={styles.slide}>
+      {/* <PageIndicator pageCount={pageCount} pageIdx={pageIdx} /> */}
+      <button className={styles.buttonLeft} onClick={() => handleClick('prev', slideRef)}>
+        {'<'}
+      </button>
+      <div className={styles.contentContainer} ref={slideRef}>
+        <SlideContent
+          slideData={slideData}
+          getKeyAndProps={getKeyAndProps}
+          ContentComponent={ContentComponent}
+        />
+      </div>
+      <button className={styles.buttonRight} onClick={() => handleClick('next', slideRef)}>
+        {'>'}
+      </button>
     </div>
   )
 }

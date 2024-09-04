@@ -17,22 +17,27 @@ const makeSlideData = (data: any, viewCount: number, curIndex: number) => {
 
 const useSlider = ({ data, getViewCount }: Props) => {
   const [index, setIndex] = useState<number>(0)
-  const [viewCount, setViewCount] = useState<number>(getViewCount)
-  const [slideData, setSlideData] = useState(
-    () => makeSlideData(data, viewCount, index)
+  const [viewCount, setViewCount] = useState<number>(4)
+  const [slideData, setSlideData] = useState(() =>
+    makeSlideData(data, viewCount, index),
   )
 
   const resizeViewCount = useCallback(() => {
     const newViewCount = getViewCount()
-    setViewCount(newViewCount)
-  }, [getViewCount])
+    if (newViewCount === viewCount) return;
+    setViewCount(newViewCount);
+    setNewSlideData(index, newViewCount);
+  }, [getViewCount, viewCount, index])
 
-  const setNewSlideData = useCallback((index: number) => {
-    const newSlidedata = makeSlideData(data, viewCount, index)
-    setSlideData(newSlidedata)
-  }, [viewCount, data])
-
-  const { throttleFunc: handleResize } = useThrottle(1000, resizeViewCount)
+  const setNewSlideData = useCallback(
+    (index: number, viewCount: number) => {
+      const newSlidedata = makeSlideData(data, viewCount, index)
+      setSlideData(newSlidedata)
+    },
+    [data],
+  )
+  
+  const { throttleFunc: handleResize } = useThrottle(200, resizeViewCount)
 
   useEffect(() => {
     window.addEventListener('resize', handleResize)

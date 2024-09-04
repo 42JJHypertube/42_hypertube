@@ -1,24 +1,24 @@
 import { useState, useCallback } from 'react'
 
 const useThrottle = (ms: number, callback?: any) => {
-  const [isWorking, setIsWorking] = useState<boolean>(false)
-  const [nextArg, setNextArg] = useState<any>(null)
-
+  let isWorking : boolean = false;
+  let nextArg : any = null;
+  
   const throttleFunc = useCallback(
     (arg: any) => {
       if (isWorking) {
-        setNextArg(arg)
+        nextArg = arg
         return
       }
 
-      setIsWorking(true)
+      isWorking = true;
       callback(arg)
 
       setTimeout(() => {
-        setIsWorking(false)
+        isWorking = false;
         if (nextArg) {
-          callback(nextArg)
-          setNextArg(null)
+          throttleFunc(nextArg)
+          nextArg = null
         }
       }, ms)
     },

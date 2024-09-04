@@ -11,9 +11,9 @@ export default async function Home() {
     <div className={styles.main}>
       <BillBoard />
       <MovieRecommnedSection recommnedType="NowPlaying" />
-      <MovieRecommnedSection recommnedType="Popular" />
+      {/* <MovieRecommnedSection recommnedType="Popular" />
       <MovieRecommnedSection recommnedType="TopRated" />
-      <MovieRecommnedSection recommnedType="UpComing" />
+      <MovieRecommnedSection recommnedType="UpComing" /> */}
     </div>
   )
 }
