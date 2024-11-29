@@ -17,6 +17,7 @@ const nextConfig = {
     TMDB_API_KEY: process.env.TMDB_API_KEY,
   },
   images: {
+    formats: ['image/webp'], // WebP 형식으로도 최적화하여 지원
     domains: ['image.tmdb.org', 'lh3.googleusercontent.com', 'localhost'],
   },
   reactStrictMode: false,

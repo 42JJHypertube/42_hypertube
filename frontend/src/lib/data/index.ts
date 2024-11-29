@@ -35,10 +35,7 @@ export async function getAuthCode(payload: { email: string }) {
     .catch((error) => error)
 }
 
-export async function veriftyAuthCode(payload: {
-  email: string
-  code: string
-}) {
+export async function verifyAuthCode(payload: { email: string; code: string }) {
   return HypeClient.auth
     .verifyCode(payload)
     .then((res) => res)
@@ -75,7 +72,7 @@ export async function getMovie({ pages }: { pages: number }) {
     .catch((error) => error)
 }
 
-export async function checkEmail(email: string) {
+export async function getAccountInfo(email: string) {
   return HypeClient.auth
     .checkEmail({ email })
     .then((res) => res)

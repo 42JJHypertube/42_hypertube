@@ -1,38 +1,18 @@
 'use client'
 
-import React, { useEffect, useState, Dispatch, SetStateAction } from 'react'
 import { LoginViewEnum, LoginView } from '@/types/account/type'
+import { useAccountContext } from '../../components/accountProvider'
 import LoginTemplate from '../login'
 import ResetPwTemplate from '../resetPw'
 import RegisterTemplate from '../register'
 import styles from './index.module.scss'
 
-interface ViewProps {
-  email: string
-  currentView: LoginView
-  setCurrentView: Dispatch<SetStateAction<LoginViewEnum>>
-  setEmail: Dispatch<React.SetStateAction<string>>
-}
-
-const viewSelector = ({
-  email,
-  currentView,
-  setCurrentView,
-  setEmail,
-}: ViewProps) => {
+const viewSelector = (currentView: LoginView) => {
   switch (currentView) {
     case LoginViewEnum.SIGN_IN:
-      return (
-        <LoginTemplate setCurrentView={setCurrentView} setEmail={setEmail} />
-      )
+      return <LoginTemplate />
     case LoginViewEnum.REGISTER:
-      return (
-        <RegisterTemplate
-          setCurrentView={setCurrentView}
-          email={email}
-          setEmail={setEmail}
-        />
-      )
+      return <RegisterTemplate />
     case LoginViewEnum.FIND_PW:
       return <ResetPwTemplate />
     default:
@@ -65,39 +45,22 @@ const infoSelector = (currentView: LoginView) => {
 }
 
 function AccountTemplate() {
-  const [currentView, setCurrentView] = useState<LoginViewEnum>(
-    LoginViewEnum.SIGN_IN,
-  )
-  const [info, setInfo] = useState(infoSelector(currentView))
-  const [email, setEmail] = useState<string>('')
-  const [isAnimating, setIsAnimating] = useState(true)
+  const { currentView } = useAccountContext()
 
-  // 광클했을 때 애니메이션이 적용되지않는 문제가있음..
-  useEffect(() => {
-    setInfo(infoSelector(currentView))
-    const timer = setTimeout(() => {
-      setIsAnimating(false)
-    }, 2000)
-
-    return () => {
-      clearTimeout(timer)
-      setIsAnimating(true)
-    }
-  }, [currentView])
+  // 최적화?
+  const info = infoSelector(currentView)
+  const page = viewSelector(currentView)
 
   return (
     <div className={styles.container}>
       <div
-        className={
-          isAnimating
-            ? `${styles.information} ${styles.infoAni}`
-            : styles.information
-        }
+        key={currentView}
+        className={`${styles.information} ${styles.infoAni}`}
       >
         <div className={styles.bigInfo}>{info?.title}</div>
         <div className={styles.smallInfo}>{info?.content}</div>
       </div>
-      {viewSelector({ email, currentView, setCurrentView, setEmail })}
+      {page}
     </div>
   )
 }

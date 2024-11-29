@@ -21,19 +21,18 @@
 //     "vote_count": 3937
 //   }
 
-import styles from "./index.module.scss"
+import styles from './index.module.scss'
 function BillBoard() {
-    return (
-        <div>
-            <iframe 
-            className={styles.video}
-            src="https://www.youtube-nocookie.com/embed/bXocSEhAQ2M?autoplay=1&mute=1"
-            frameBorder='no'
-            allow="fullscreen; accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-            >
-            </iframe>
-        </div>
-    )
+  return (
+    <div>
+      <iframe
+        className={styles.video}
+        src="https://www.youtube-nocookie.com/embed/bXocSEhAQ2M?autoplay=1&mute=1"
+        frameBorder="no"
+        allow="fullscreen; accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      ></iframe>
+    </div>
+  )
 }
 
 export default BillBoard

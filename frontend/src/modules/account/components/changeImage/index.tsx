@@ -8,7 +8,7 @@ import FormButton from '@/modules/common/components/formButton'
 import fileToBlob from '@/lib/utill/fileToBlob'
 import ChangeInfo from '../changeInfo'
 import styles from './index.module.scss'
-import { setProfile } from '../../action'
+import { setProfile } from '../../resetAction'
 
 type ImageForm = {
   message: string | null
