@@ -2,7 +2,7 @@ import React from 'react'
 import styles from './input.module.scss'
 
 type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
-  innerButton?: React.ReactNode
+  innerButton?: React.ReactNode | null
   error?: boolean
 }
 
@@ -13,7 +13,7 @@ function Input({
   value,
   readOnly = false,
   onChange = undefined,
-  innerButton,
+  innerButton = null,
   error,
 }: InputProps) {
   // 불필요한 공백을 제거하기위한 trim() 사용.

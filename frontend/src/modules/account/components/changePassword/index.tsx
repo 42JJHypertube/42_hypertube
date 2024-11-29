@@ -3,7 +3,7 @@
 import { useFormState } from 'react-dom'
 import FormButton from '@/modules/common/components/formButton'
 import Input from '@/modules/common/components/input'
-import { setPassword } from '../../action2'
+import { setPassword } from '../../loginAction'
 import ChangeInfo from '../changeInfo'
 
 export type ChangePasswordForm = {

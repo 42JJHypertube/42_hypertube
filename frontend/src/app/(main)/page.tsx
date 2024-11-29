@@ -9,7 +9,7 @@ export default async function Home() {
 
   return (
     <div className={styles.main}>
-      <BillBoard/>
+      <BillBoard />
       <MovieRecommnedSection recommnedType="NowPlaying" />
       <MovieRecommnedSection recommnedType="Popular" />
       <MovieRecommnedSection recommnedType="TopRated" />

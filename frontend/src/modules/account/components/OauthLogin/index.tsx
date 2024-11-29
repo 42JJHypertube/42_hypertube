@@ -2,7 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import styles from './index.module.scss'
 
-function AccountNav() {
+function OauthLogin() {
   return (
     <nav className={styles.AccountNavContainer}>
       <div className={styles.seperatorContainer}>
@@ -49,4 +49,4 @@ function AccountNav() {
   )
 }
 
-export default AccountNav
+export default OauthLogin
