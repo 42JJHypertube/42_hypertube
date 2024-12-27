@@ -39,8 +39,6 @@ const infoSelector = (currentView: LoginView) => {
         title: '비밀번호를 잊으셨나요?',
         content: '새로 비밀번호를 설정하고 모험을 시작하세요.',
       }
-    default:
-      return null
   }
 }
 

@@ -9,7 +9,7 @@ import {
   verifyAuthCode,
 } from '@/lib/data'
 import getCookieOption from '@/lib/utill/cookieOption'
-import { LoginForm, LoginType } from '@/types/account/type'
+import { LoginForm  } from '@/types/account/type'
 import { cookies } from 'next/headers'
 import { updateError, updateForm } from '@/lib/utill/formUtils'
 

@@ -76,9 +76,9 @@ function VideoPlayer({ imdb_id }: { imdb_id: number }) {
               Play
             </button>
           )}
-          {play && (
+          {/* {play && (
             <TorrentProgress hash={'TEST'} setMovieState={setMovieState} />
-          )}
+          )} */}
           {/* {play &&
             (movieState === 'DOWNLOADING' || movieState === 'CONVERTING' ? (
               <TorrentProgress hash={'TEST'} setMovieState={setMovieState} />
@@ -86,12 +86,12 @@ function VideoPlayer({ imdb_id }: { imdb_id: number }) {
               <div>
                 <HLSplayer hlsPlaylistPath={'/tt0063350/master.m3u8'} />
               </div>
-            ) : null)}
+            ) : null)} */}
           {play && (
-            <div>
+         
               <HLSplayer hlsPlaylistPath={'tt0063350/master.m3u8'} />
-            </div>
-          )} */}
+         
+          )}
         </>
       ) : (
         <div> No Torrent Data </div>

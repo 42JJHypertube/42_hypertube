@@ -40,6 +40,7 @@ export default function VideoTimeController({ videoRef }: Props) {
       ref={seekbarRef}
       type="range"
       id="seekbar"
+      value={videoRef?.currentTime}
       min="0"
       max={videoRef?.duration ? videoRef.duration : 0}
       step="0.1"

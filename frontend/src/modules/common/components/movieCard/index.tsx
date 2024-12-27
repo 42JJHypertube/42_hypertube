@@ -20,7 +20,7 @@ function MovieCard({ title, imgUrl, movie_id }: MovieCardProps) {
         onClick={() => router.push(`/movie/${movie_id}`)}
       >
         <Image
-          src={`https://image.tmdb.org/t/p/w500${imgUrl}`}
+          src={imgUrl ? `https://image.tmdb.org/t/p/w500${imgUrl}` : '/noPoster.webp'}
           alt={title}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
