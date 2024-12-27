@@ -7,10 +7,10 @@ import { actionWrapper, createComment, getCommentList } from '@/lib/data'
 import { Comment } from '@/types/comment/type'
 import CommentInputForm from '../commentInput'
 
-export default function CommentSection({ movieId }: { movieId: number }) {
+export default async function CommentSection({ movieId }: { movieId: number }) {
   const [comments, setComments] = useState<Comment[]>([])
   const [isMovieExist, setIsMovieExist] = useState<boolean>(false)
-
+  
   const fetchComments = async () => {
     const res = await actionWrapper({
       action: getCommentList,
